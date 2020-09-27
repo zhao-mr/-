@@ -6,7 +6,8 @@ const user = {
     token: localStorage.getItem('token') ? localStorage.getItem('token') : null,
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    userInfo: {}
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -18,6 +19,9 @@ const user = {
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
+    },
+    SET_USER_INFO: (state, userInfo) => {
+      state.userInfo = userInfo
     }
   },
   actions: {
@@ -25,11 +29,12 @@ const user = {
     login({commit}, userInfo) {
       const {username, password} = userInfo
       return new Promise((resolve, reject) => {
-        login({username: username.trim(), password: password}).then(response => {
-          const {data} = response
-          commit('SET_TOKEN', data.token)
-          localStorage.setItem('token', data.token)
-          resolve()
+        login({userName: username.trim(), password: password}).then(response => {
+          const {data, token} = response
+          commit('SET_USER_INFO', data)
+          commit('SET_TOKEN', token)
+          localStorage.setItem('token', token)
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -40,7 +45,8 @@ const user = {
       return new Promise((resolve, reject) => {
         try {
           localStorage.clear()
-          commit('SET_TOKEN', '')
+          commit('SET_TOKEN', null)
+          commit('SET_USER_INFO', null)
           resetRouter()
           resolve()
         } catch (error) {

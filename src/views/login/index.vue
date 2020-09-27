@@ -69,11 +69,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -103,18 +103,17 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          store.commit('SET_TOKEN', 'token.....')
-          // setToken(data.token)
-          this.$router.push({ path: '/home' })
-          // this.loading = true
-          // this.$store.dispatch('login', this.loginForm).then(() => {
-          //   this.$router.push({ path: this.redirect || '/index' })
-          //   this.loading = false
-          // }).catch(() => {
-          //   this.loading = false
-          // })
+          this.loading = true
+          this.$store.dispatch('login', this.loginForm).then(res => {
+            if (res.code === 200) {
+              this.loading = false
+              this.$router.push({ path: '/home' })
+            }
+          }).catch(error => {
+            this.loading = false
+          })
         } else {
-          console.log('error submit!!')
+          this.$message.warning('请输入正确的格式');
           return false
         }
       })
