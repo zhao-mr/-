@@ -14,7 +14,7 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     const token = store.state.user.token;
-    if (token) {
+    if (token !== null && token !== '') {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation

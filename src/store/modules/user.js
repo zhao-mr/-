@@ -3,7 +3,7 @@ import {resetRouter} from '@/router'
 
 const user = {
   state: {
-    token: localStorage.getItem('token') ? localStorage.getItem('token') : null,
+    token: localStorage.getItem('token') ? localStorage.getItem('token') : '',
     name: '',
     avatar: '',
     roles: [],
@@ -20,6 +20,9 @@ const user = {
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
+    SET_ROLES: (state, roles) => {
+      state.roles = roles
+    },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
     }
@@ -31,6 +34,9 @@ const user = {
       return new Promise((resolve, reject) => {
         login({userName: username.trim(), password: password}).then(response => {
           const {data, token} = response
+          commit('SET_NAME', data.userName)
+          commit('SET_AVATAR', data.avatar)
+          commit('SET_ROLES', data.roles)
           commit('SET_USER_INFO', data)
           commit('SET_TOKEN', token)
           localStorage.setItem('token', token)

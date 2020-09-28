@@ -42,6 +42,7 @@
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button style="width:100%;" @click="toRegister">还没账号，去注册</el-button>
     </el-form>
   </div>
 </template>
@@ -73,7 +74,7 @@ export default {
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur' }],
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -117,6 +118,9 @@ export default {
           return false
         }
       })
+    },
+    toRegister() {
+      this.$router.push({ path: '/register' })
     }
   }
 }
@@ -228,5 +232,9 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+}
+
+.el-button+.el-button {
+  margin-left: 0;
 }
 </style>
