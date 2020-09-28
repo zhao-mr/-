@@ -30,6 +30,9 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+
+const routerMain = () => import('@/layout/components/AppMain')
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -54,6 +57,28 @@ export const constantRoutes = [
         name: 'home',
         component: () => import('@/views/index'),
         meta: {title: '首页', icon: 'user'},
+      },
+      {
+        path: 'projectList',
+        name: 'projectList',
+        redirect: '/projectList/list',
+        component: routerMain,
+        meta: {title: '项目列表', icon: ''},
+        children: [
+          {
+            path: 'list',
+            name: 'list',
+            component: () => import('@/views/addProject/projectList'),
+            meta: {title: '所有项目', icon: ''},
+          },
+          {
+            path: 'addProject',
+            name: 'addProject',
+            component: () => import('@/views/addProject/addProject'),
+            meta: {title: '添加项目', icon: ''},
+            hidden: true
+          }
+        ]
       },
       {
         path: 'projectMaintain',
