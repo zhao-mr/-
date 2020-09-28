@@ -17,6 +17,16 @@
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
+
+        <!--项目添加员-->
+        <template v-if="roles === 'addProject'">
+          <el-menu-item index="/projectList/list">
+            <i class="el-icon-set-up"></i>
+            <span slot="title">项目列表</span>
+          </el-menu-item>
+        </template>
+
+        <!--教师-->
         <template v-if="roles === 'teacher'">
           <el-menu-item index="/projectMaintain">
             <i class="el-icon-set-up"></i>
@@ -105,9 +115,9 @@
         const route = this.$route
         const { meta, path } = route
         // if set path, the sidebar will highlight the path you set
-        if (meta.activeMenu) {
-          return meta.activeMenu
-        }
+        // if (meta.activeMenu) {
+        //   return meta.activeMenu
+        // }
         // console.info(path)
         return path
       },
@@ -122,8 +132,8 @@
       },
       roles(){
         // console.info(this.$store.state.user.roles)
-        // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生
-        return 'teacher'
+        // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生; addProject 项目添加员
+        return 'addProject'
       }
     }
   }

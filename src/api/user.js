@@ -2,7 +2,23 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/user/login',
+    method: 'post',
+    data
+  })
+}
+
+export function getCode(data) {
+  return request({
+    url: '/user/registerEmail',
+    method: 'post',
+    data
+  })
+}
+
+export function register(data) {
+  return request({
+    url: '/user/register',
     method: 'post',
     data
   })
