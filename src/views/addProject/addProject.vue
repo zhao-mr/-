@@ -1,56 +1,66 @@
 <!--项目列表-->
 <template>
   <div>
-    <div class="data-table">
-      <el-table
-        :data="projectList.data"
-        stripe>
-        <el-table-column label="序号" align="center" width="80">
-          <template slot-scope="scope">
-            {{scope.$index+1}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="userName" align="center" label="实验名称" min-width="120">
-        </el-table-column>
-        <el-table-column prop="totalScore" label="类型" align="center" min-width="180">
-        </el-table-column>
-        <el-table-column prop="scaleScore" label="操作" align="center" min-width="180">
-        </el-table-column>
-        <
-      </el-table>
-    </div>
-    <div class="mtop20 text-right">
-      <el-pagination
-        background
-        :current-page.sync="projectList.pageNum"
-        :page-size="projectList.pageSize"
-        :page-sizes="[10, 15, 20, 30]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="projectList.total">
-      </el-pagination>
+    <h2 class="text-center">添加实验</h2>
+    <div style="width: 800px;margin: 50px auto;">
+      <el-form label-position="left" label-width="100px" :model="form" :rules="rules" ref="form">
+        <el-form-item prop="projectName" label="实验名称">
+          <el-input placeholder="实验名称" maxlength="15" style="width: 400px;" v-model.trim="form.projectName"></el-input>
+        </el-form-item>
+        <el-form-item prop="projectType" label="实验类型">
+          <el-input placeholder="实验类型" maxlength="15" style="width: 400px;" v-model.trim="form.projectName"></el-input>
+        </el-form-item>
+        <el-form-item prop="tooltip" label="浏览器提示">
+          <editor id="editor_id" height="500px" width="700px" :content.sync="form.tooltip"
+                  :afterChange="afterChange()"
+                  :loadStyleMode="false"
+                  @on-content-change="onContentChange"></editor>
+        </el-form-item>
+      </el-form>
+      <div class="text-center">
+        <el-button type="primary">保存</el-button>
+        <el-button type="primary" class="mleft20" @click="$router.back(-1)">取消</el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+  import editor from '../../components/KindEditor'
 export default {
   name: 'addProject',
   computed: {
   },
+  components: {
+    editor
+  },
   data(){
     return {
-      projectList: {
-        data: [],
-        keyword: '',
-        pageSize: 10,
-        pageNum: 1,
-        total: 0
+      form: {
+        projectName: '',
+        projectType: 0,
+        tooltip: ''
       },
-      viewVisible: false
+      rules: {
+        projectName: [{required:true, trigger: 'blur'}],
+        projectType: [{required: true, trigger: 'blur'}]
+      },
+      editorText: '直接初始化值', // 双向同步的变量
+      editorTextCopy: ''  // content-change 事件回掉改变的对象
+    }
+  },
+  methods: {
+    onContentChange (val) {
+      this.editorTextCopy = val;
+      window.console.log(this.editorTextCopy)
+    },
+    afterChange () {
     }
   }
 }
 </script>
-
+<style>
+  @import "../../styles/common.css";
+</style>
 <style lang="scss" scoped>
 </style>

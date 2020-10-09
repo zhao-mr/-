@@ -1,12 +1,13 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
+import { apiPath } from "../config/env";
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: apiPath,
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 50000 // request timeout
 })
 
 // request interceptor
@@ -15,10 +16,7 @@ service.interceptors.request.use(
     // do something before request is sent
     const token = store.state.user.token;
     if (token !== null && token !== '') {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['Authorization'] = token
+      config.headers['Authorization'] = `Bearer ${token}`
     }
     return config
   },
@@ -54,7 +52,7 @@ service.interceptors.response.use(
 
       return Promise.reject(new Error(res.msg || 'Error'))
     } else {
-      return res
+      return res.data
     }
   },
   error => {
