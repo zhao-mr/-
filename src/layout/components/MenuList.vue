@@ -133,7 +133,7 @@
       roles(){
         // console.info(this.$store.state.user.roles)
         // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生; addProject 项目添加员
-        return 'addProject'
+        return 'superAdmin'
       }
     }
   }
