@@ -2,7 +2,7 @@
   <div class="bos">
     <div class="botntop">
       <el-row>
-        <el-button type="primary" round>返 回</el-button>
+        <el-button type="primary" @click="turnback">返 回</el-button>
       </el-row>
     </div>
     <div class="Boaoute">
@@ -59,6 +59,10 @@ export default {
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
+    },
+    //返回
+    turnback() {
+      this.$router.push({ path: "/teachInner" });
     }
   },
   mounted() {}

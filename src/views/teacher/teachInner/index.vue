@@ -210,7 +210,15 @@ export default {
 
     //点击名称查看
     handJump() {
-      // this.$router.push({ path: "/teachInner/project" });
+      this.$router.push({ path: "/teachInner/project" });
+    },
+    //布置实验
+    handleEdit() {
+      this.$router.push({ path: "/teachInner/release" });
+    },
+    //查看布置
+    handleDelete() {
+      this.$router.push({ path: "/teachInner/projectArrangement" });
     }
   },
   mounted() {}

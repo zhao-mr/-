@@ -29,13 +29,21 @@ import Layout from '@/layout'
  * constantRoutes
  * a base page that does not have permission requirements
  * all roles can be accessed
- */
+//  */
+
+
+const routerMain = () => import('@/layout/components/AppMain')
+
 export const constantRoutes = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true
+  },
   {
     path: '/404',
     component: () => import('@/views/404'),
@@ -55,6 +63,36 @@ export const constantRoutes = [{
           title: '首页',
           icon: 'user'
         },
+      },
+      {
+        path: 'projectList',
+        name: 'projectList',
+        redirect: '/projectList/list',
+        component: routerMain,
+        meta: {
+          title: '项目列表',
+          icon: ''
+        },
+        children: [{
+            path: 'list',
+            name: 'list',
+            component: () => import('@/views/addProject/projectList'),
+            meta: {
+              title: '所有项目',
+              icon: ''
+            },
+          },
+          {
+            path: 'addProject',
+            name: 'addProject',
+            component: () => import('@/views/addProject/addProject'),
+            meta: {
+              title: '添加项目',
+              icon: ''
+            },
+            hidden: true
+          }
+        ]
       },
       {
         path: 'projectMaintain',
@@ -92,30 +130,88 @@ export const constantRoutes = [{
           icon: ''
         },
       },
+
       {
         path: 'teachInner',
         name: 'teachInner',
-        component: () => import('@/views/teacher/teachInner'),
-        meta: {
-          title: '校内教学',
-          icon: '',
-        },
-        children: [
-          // {
-          //   path: 'teachInner',
-          //   component: () => import('@/views/teacher/teachInner'),
-          // },
+        redirect: '/teachInner',
+        component: routerMain,
+        // meta: {
+        //   title: '校内教学',
+        //   icon: ''
+        // },
+        children: [{
+            path: '/teachInner',
+            name: 'teachInner',
+            component: () => import('@/views/teacher/teachInner'),
+            meta: {
+              title: '校内教学',
+              icon: ''
+            },
+          },
           {
-            path: "project",
-            name: "project",
-            component: () => import("@/views/teacher/teachInner/project"),
+            path: 'project',
+            name: 'project',
+            component: () => import('@/views/teacher/teachInner/project'),
             meta: {
               title: '项目信息查看',
               icon: ''
             },
+            hidden: true
           },
+          {
+            path: 'release',
+            name: 'release',
+            component: () => import('@/views/teacher/teachInner/release'),
+            meta: {
+              title: '项目发布',
+              icon: ''
+            },
+            hidden: true
+          },
+          {
+            path: 'projectArrangement',
+            name: 'projectArrangement',
+            component: () => import('@/views/teacher/teachInner/projectArrangement'),
+            meta: {
+              title: '查看布置',
+              icon: ''
+            },
+            hidden: true
+          },
+          {
+            path: 'correctList',
+            name: 'correctList',
+            component: () => import('@/views/teacher/teachInner/correctList'),
+            meta: {
+              title: '批改列表',
+              icon: ''
+            },
+            hidden: true
+          },
+          {
+            path: 'Correcting',
+            name: 'Correcting',
+            component: () => import('@/views/teacher/teachInner/Correcting'),
+            meta: {
+              title: '批改内容',
+              icon: ''
+            },
+            hidden: true
+          }
         ]
       },
+
+
+      // {
+      //   path: 'teachInner',
+      //   name: 'teachInner',
+      //   component: () => import('@/views/teacher/teachInner'),
+      //   meta: {
+      //     title: '校内教学',
+      //     icon: '',
+      //   },
+      // },
       // {
       //   path: 'teachInner/project',
       //   name: 'teachInner/project',
