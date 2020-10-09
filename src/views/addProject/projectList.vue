@@ -3,13 +3,18 @@
   <div>
     <el-row>
       <el-col :span="20">
-        <el-input type="text" style="width: 260px;" v-model="projectList.keyword" placeholder="请输入关键字" />
+        <el-input type="text" style="width: 260px;" v-model="projectList.keyword" placeholder="请输入关键字">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="prefix">
+          </i>
+        </el-input>
       </el-col>
       <el-col :span="4" align="right">
-        <el-button type="primary" @click="addVisible = true">添加实验</el-button>
+        <el-button type="primary" @click="toAdd()">添加实验</el-button>
       </el-col>
     </el-row>
-    <div class="data-table mtop10">
+    <div class="data-table mtop20">
       <el-table
         :data="projectList.data"
         stripe>
@@ -40,7 +45,9 @@
 </template>
 
 <script>
-export default {
+  import { addProjectList } from "../../api/addProject";
+
+  export default {
   name: 'projectList',
   computed: {
   },
@@ -58,12 +65,21 @@ export default {
     }
   },
   mounted(){
-
+    this.getDataList()
   },
   methods:{
     // 实验类型
     getDataList(){
-
+      addProjectList({
+        "pageNum": 1,
+        "pageSize": 10,
+        "projectName": ""
+      }).then(res=>{
+        console.info(res)
+      })
+    },
+    toAdd(){
+      this.$router.push({path: '/projectList/addProject'})
     }
   }
 }
@@ -73,6 +89,9 @@ export default {
 </style>
 <style lang="scss" scoped>
   .data-table{
-
+    .el-table thead td{
+      background: #409EFF;
+      color: #fff;
+    }
   }
 </style>

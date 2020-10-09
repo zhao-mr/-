@@ -302,3 +302,8 @@ div::-webkit-scrollbar-track , body::-webkit-scrollbar-track {
   z-index: 2;
   background: rgba(0,0,0,.70);
 }
+
+.data-table .el-table td, .el-table th.is-leaf{
+  background: rgba(45, 107, 166, 0.78);
+  color: #fff;
+}
