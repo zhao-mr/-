@@ -29,7 +29,7 @@ export function logout() {
 //   return request({
 //     url: `/user/getAllUser?`,
 //     method: 'get',
-//     params: {·
+//     params: {
 //       params
 //     }
 //   })
@@ -38,6 +38,16 @@ export function logout() {
 export function getAllUser(data) {
   return request({
     url: '/user/getAllUser',
+    method: 'post',
+    data
+
+  })
+}
+
+
+export function disabledUser(data) {
+  return request({
+    url: '/user/disabledUser',
     method: 'post',
     data
   })

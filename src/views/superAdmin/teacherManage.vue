@@ -4,7 +4,7 @@
     <div class="Bosxx">
       <div class="BosTop">
         <el-button @click="adduser">添加教工</el-button>
-        <el-button>批量删除</el-button>
+        <el-button @click="qwehwu">批量删除</el-button>
         <el-button>批量启用</el-button>
         <el-button type="primary">教工导入</el-button>
         <el-button type="primary">教工导出</el-button>
@@ -166,7 +166,7 @@
 </template>
 
 <script>
-import { getAllUser } from "@/api/superAdmin";
+import { getAllUser, disabledUser } from "@/api/superAdmin";
 export default {
   name: "teacherManage",
   computed: {},
@@ -261,6 +261,14 @@ export default {
     //增加
     adduser() {
       this.centerDialogVisible = true;
+    },
+    qwehwu() {
+      alert(1);
+      disabledUser({ userIds: 1 })
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {});
     }
   },
   mounted() {
