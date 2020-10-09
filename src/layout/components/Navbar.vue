@@ -27,6 +27,12 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <!-- 未读消息 -->
+    <div class="unread-messages">
+      <i class="el-icon-bell"></i>
+      <span class="count">10</span>
+    </div>
   </div>
 </template>
 
@@ -74,6 +80,27 @@ export default {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+
+  .unread-messages {
+    position: relative;
+    float: right;
+    height: 100%;
+    margin-right: 3%;
+    i {
+      font-size: 32px;
+      margin-top: 14px;
+    }
+    .count {
+      padding: 4px;
+      background-color: red;
+      color: white;
+      border-radius: 45%;
+      font-size: 12px;
+      position: absolute;
+      top: 4px;
+      left: 28px;
+    }
+  }
 
   .hamburger-container {
     line-height: 46px;
