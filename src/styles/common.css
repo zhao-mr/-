@@ -303,7 +303,12 @@ div::-webkit-scrollbar-track , body::-webkit-scrollbar-track {
   background: rgba(0,0,0,.70);
 }
 
-.data-table .el-table td, .el-table th.is-leaf{
-  background: rgba(45, 107, 166, 0.78);
-  color: #fff;
+.operate-view,
+.operate-edit{
+  padding: 6px 12px;
+}
+
+.data-table .el-table th{
+  /*background: rgba(45, 107, 166, 0.78);*/
+  /*color: #fff;*/
 }
