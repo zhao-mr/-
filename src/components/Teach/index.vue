@@ -1,5 +1,5 @@
 <template>
-  <div class="inside-teach">
+  <div class="teach">
     <el-collapse v-model="activeNames">
       <el-collapse-item name="first">
         <template slot="title">
@@ -36,7 +36,7 @@
           </div>
         </template>
         <div class="collapse-content usage">
-          <div id="usageChart" style="width: 100%; height: 500px"></div>
+          <div id="usageChart" style="width: 100%; height: 500px;"></div>
         </div>
       </el-collapse-item>
       <el-collapse-item name="second">
@@ -86,8 +86,8 @@
         </template>
         <div class="collapse-content score-distribution">
           <div
-            id="scoreDistributionChart"
-            style="width: 100%; height: 500px"
+            id="scoreDistributionChart2"
+            style="width: 100%; height: 500px;"
           ></div>
         </div>
       </el-collapse-item>
@@ -138,7 +138,7 @@
 
 <script>
 export default {
-  name: "InsideTeach",
+  name: "Teach",
   data() {
     return {
       activeNames: ["first", "second", "three"],
@@ -181,7 +181,26 @@ export default {
           name: "王小虎",
           address: "上海市普陀区金沙江路 1516 弄",
         },
-      ]
+      ],
+      experimentList: [
+        {
+          label: 'label1',
+          value: 'value1'
+        },
+        {
+          label: 'label2',
+          value: 'value2'
+        },
+        {
+          label: 'label3',
+          value: 'value3'
+        },
+        {
+          label: 'label4',
+          value: 'value4'
+        },
+      ],
+      experimentSelect: ''
     };
   },
   mounted() {
@@ -223,8 +242,9 @@ export default {
       });
     },
     draw2() {
+      console.log('-----------draw2---------')
       const scoreDistributionChart = this.$echarts.init(
-        document.getElementById("scoreDistributionChart")
+        document.getElementById("scoreDistributionChart2")
       );
       const option = {
         tooltip: {
@@ -259,7 +279,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.inside-teach {
+.teach {
   .collapse-content {
     width: 100%;
     border: 1px solid #f0f0f0;

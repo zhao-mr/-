@@ -82,8 +82,9 @@
         </ul>
       </div>
       <div class="tab-item">
-        <!-- <sharing-statistic /> -->
-        <inside-teach />
+        <div v-if="navItem === 1"><sharing-statistic /></div>
+        <div v-if="navItem === 2 || navItem === 3"><teach :type="type" /></div>
+        <div v-if="navItem === 4"><reporting-statistics /></div>
       </div>
     </div>
   </div>
@@ -91,13 +92,15 @@
 
 <script>
 import SharingStatistic from '@/components/SharingStatistic'
-import InsideTeach from '@/components/InsideTeach'
+import Teach from '@/components/Teach'
+import ReportingStatistics from '@/components/ReportingStatistics'
 
 export default {
   name: "projectStatistics",
   components: {
     SharingStatistic,
-    InsideTeach
+    Teach,
+    ReportingStatistics
   },
   data() {
     return {
@@ -148,7 +151,9 @@ export default {
           name: "王小虎",
           address: "上海市普陀区金沙江路 1516 弄",
         },
-      ]
+      ],
+      navItem: 1,
+      type: ''
     };
   },
   computed: {},
@@ -158,6 +163,12 @@ export default {
   methods: {
     handleSelect(val) {
       this.isActive = val;
+      this.navItem = val;
+      if (this.isActive === 2) {
+        this.type = 'inside'
+      } else if (this.isActive === 3) {
+        this.type = 'outside'
+      }
     },
     draw() {
       this.option = {

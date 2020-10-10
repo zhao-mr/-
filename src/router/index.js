@@ -34,7 +34,8 @@ import Layout from '@/layout'
 
 const routerMain = () => import('@/layout/components/AppMain')
 
-export const constantRoutes = [{
+export const constantRoutes = [
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
