@@ -35,11 +35,11 @@ import Layout from '@/layout'
 const routerMain = () => import('@/layout/components/AppMain')
 
 export const constantRoutes = [
-  {
-    path: '/home',
-    component: () => import('@/views/homePage/index'),
-    hidden: true
-  },
+  // {
+  //   path: '/home',
+  //   component: () => import('@/views/homePage/index'),
+  //   hidden: true
+  // },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -62,15 +62,15 @@ export const constantRoutes = [
     redirect: '/home',
     mark: true,
     children: [
-      // {
-      //   path: 'home',
-      //   name: 'home',
-      //   component: () => import('@/views/index'),
-      //   meta: {
-      //     title: '首页',
-      //     icon: 'user'
-      //   },
-      // },
+      {
+        path: 'home',
+        name: 'home',
+        component: () => import('@/views/index'),
+        meta: {
+          title: '首页',
+          icon: 'user'
+        },
+      },
       {
         path: 'projectList',
         name: 'projectList',
