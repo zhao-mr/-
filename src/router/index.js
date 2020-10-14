@@ -34,7 +34,13 @@ import Layout from '@/layout'
 
 const routerMain = () => import('@/layout/components/AppMain')
 
-export const constantRoutes = [{
+export const constantRoutes = [
+  // {
+  //   path: '/home',
+  //   component: () => import('@/views/homePage/index'),
+  //   hidden: true
+  // },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -55,7 +61,8 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/home',
     mark: true,
-    children: [{
+    children: [
+      {
         path: 'home',
         name: 'home',
         component: () => import('@/views/index'),

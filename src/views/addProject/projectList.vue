@@ -17,20 +17,28 @@
     <div class="data-table mtop20">
       <el-table
         :data="projectList.data"
+        v-loading="projectList.loading"
         stripe>
         <el-table-column label="序号" align="center" width="80">
           <template slot-scope="scope">
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="userName" align="center" label="实验名称" min-width="120">
+        <el-table-column prop="projectName" align="center" label="实验名称" min-width="120">
         </el-table-column>
         <el-table-column prop="totalScore" label="类型" align="center" min-width="180">
+          <template slot-scope="scope">
+            {{getName(scope.row.experimentKind)}}
+          </template>
         </el-table-column>
         <el-table-column prop="scaleScore" label="操作" align="center" min-width="180">
+          <template slot-scope="scope">
+            <el-button type="primary" class="operate-view">查看</el-button>
+            <el-button type="primary" class="operate-edit" @click="toEdit(scope.row.projectId)">编辑</el-button>
+          </template>
         </el-table-column>
       </el-table>
-      <div class="mtop20 text-right">
+      <div class="mtop20 text-center">
         <el-pagination
           background
           :current-page.sync="projectList.pageNum"
@@ -46,6 +54,7 @@
 
 <script>
   import { addProjectList } from "../../api/addProject";
+  import { getTypeName } from "../../utils/default";
 
   export default {
   name: 'projectList',
@@ -54,6 +63,7 @@
   data(){
     return {
       projectList: {
+        loading: false,
         data: [],
         keyword: '',
         pageSize: 10,
@@ -70,16 +80,27 @@
   methods:{
     // 实验类型
     getDataList(){
+      this.projectList.loading = true
       addProjectList({
         "pageNum": 1,
-        "pageSize": 10,
-        "projectName": ""
+          "pageSize": 10,
+          "projectName": ""
       }).then(res=>{
-        console.info(res)
+        this.projectList.data = res.data.list
+        this.projectList.total = res.data.total
+      }).finally(()=>{
+        this.projectList.loading = false
       })
     },
     toAdd(){
       this.$router.push({path: '/projectList/addProject'})
+    },
+    toEdit(_id){
+      this.$router.push({path: '/projectList/addProject', query: {projectId: _id}})
+    },
+    // 获取实验类型名称
+    getName(val){
+      return getTypeName(val) || '--'
     }
   }
 }
