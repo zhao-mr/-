@@ -177,7 +177,7 @@ export default {
           // console.log(res);
           this.Boslist = res.data.list;
           this.zongshu = res.data.total;
-          this.currentPage1 = res.data.pageNum;
+          this.currentPage = res.data.pageNum;
           this.pageSize = res.data.pageSize;
         })
         .catch(err => {});
