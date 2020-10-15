@@ -28,23 +28,22 @@
       </el-dropdown>
     </div>
 
-    
-
     <el-popover
       placement="bottom"
       width="280"
       trigger="click"
+      v-model="isShow"
       class="unread-messages-box"
     >
       <div class="unread-messages-content">
         <p class="title">通知</p>
-        <!-- <p class="no-content">暂无最新通知</p> -->
-        <ul>
+        <ul v-if="noticeList.length > 0">
           <li v-for="notice in noticeList" :key="notice.noticeId">
             <span class="red"></span>
             {{notice.noticeContent}}
           </li>
         </ul>
+        <p class="no-content" v-else>暂无最新通知</p>
         <div class="lookAll" @click="toNoticeList">查看全部</div>
       </div>
       <!-- 未读消息 -->
@@ -69,6 +68,7 @@ export default {
   },
   data() {
     return {
+      isShow: false,
       noticeList: []
     }
   },
@@ -115,7 +115,7 @@ export default {
       })
     },
     toNoticeList () {
-      // scope._self.$refs[popover-${scope.$index}].doClose()
+      this.isShow = false;
       this.$router.push('/noReadNotice')
     }
   },
