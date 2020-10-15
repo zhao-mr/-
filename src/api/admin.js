@@ -1,26 +1,31 @@
 import request from '@/utils/request'
 
-export function login(data) {
+/**
+ * 项目管理员 - 列表
+ * @param data
+ */
+export function manageProList(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/experiment/searchArrangementProject',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+// 修改基本信息
+export function updateBasicInfo(data) {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: {
-      token
-    }
+    url: '/experiment/arrangementProject',
+    method: 'post',
+    data
   })
 }
 
-export function logout() {
+// 判断该实验是否被布置
+export function checkAssigned(data) {
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/experiment/checkAssignStatus',
+    method: 'post',
+    data
   })
 }

@@ -1,4 +1,4 @@
-body{
+body {
   font-family: "source han sans";
   margin: 0px;
 }
@@ -119,6 +119,7 @@ flex-right-end {
 .text-right {
   text-align: right;
 }
+
 .pointer {
   cursor: pointer;
 }
@@ -162,10 +163,10 @@ flex-right-end {
 .margin10 {
   margin: 10px;
 }
+
 .margin20 {
   margin: 20px;
 }
-
 
 .padding0 {
   padding: 0;
@@ -257,35 +258,35 @@ ellipsis2 {
   -webkit-box-orient: vertical
 }
 
-
 .notScrollBar::-webkit-scrollbar { /*去滚动条*/
   width: 0px !important;
 }
 
-
-div::-webkit-scrollbar,body::-webkit-scrollbar {    /*滚动条整体样式*/
+div::-webkit-scrollbar, body::-webkit-scrollbar { /*滚动条整体样式*/
   width: 8px;
   height: 8px;
 }
-div::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb  {  /*滚动块*/
+
+div::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { /*滚动块*/
   border-radius: 5px;
   /*-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);*/
   background: rgba(102, 102, 102, 0.6);
 }
-div::-webkit-scrollbar-track , body::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0);
+
+div::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
   opacity: 0.8;
 }
 
-.font-size12{
+.font-size12 {
   font-size: 12px;
 }
 
-.font-size14{
+.font-size14 {
   font-size: 14px;
 }
 
-.p-fixed{
+.p-fixed {
   position: fixed;
   top: 0;
   left: 0;
@@ -293,22 +294,111 @@ div::-webkit-scrollbar-track , body::-webkit-scrollbar-track {
   bottom: 0;
 }
 
-.dialog-box{
+.dialog-box {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 2;
-  background: rgba(0,0,0,.70);
+  background: rgba(0, 0, 0, .70);
 }
 
 .operate-view,
-.operate-edit{
+.operate-edit,
+.operate-delete{
   padding: 6px 12px;
 }
 
-.data-table .el-table th{
+.data-table{
+  margin-top: 20px;
+  padding: 10px;
+  background: #fff;
+}
+
+.data-table .el-table th {
   /*background: rgba(45, 107, 166, 0.78);*/
   /*color: #fff;*/
+}
+
+.param-card {
+  padding: 20px 15px;
+  box-shadow: 0 0 15px #e6ecf1;
+  font-size: 14px;
+  background: #fff;
+}
+
+.param-card1 {
+  padding: 20px 15px;
+  font-size: 14px;
+  background: #eee;
+}
+
+.project-card {
+  margin-left: .8%;
+  margin-top: 20px;
+  position: relative;
+  border-radius: 4px;
+  .cover {
+    width: 100%;
+    height: 100%;
+
+  }
+  .el-image__inner{
+    object-fit: cover;
+  }
+  .text {
+    padding: 15px;
+  }
+  .project-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .tag {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    color: #fff;
+    width: 60px;
+    padding: 4px 0;
+    background: #ae3b3d;
+    font-size: 12px;
+    border-radius: 4px;
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 1401px) {
+  .project-card {
+    width: 23%;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .project-card {
+    width: 32%;
+  }
+}
+
+.start-experiment {
+  padding: 8px 16px !important;
+  border-radius: 20px;
+}
+
+.project-card {
+  box-shadow: 0 0 15px #e6ecf1;
+}
+
+.no-share {
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #666;
+  max-width: 100px;
+  background: #eee;
+}
+
+.no-share:hover {
+  cursor: not-allowed;
 }

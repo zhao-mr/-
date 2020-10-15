@@ -205,10 +205,11 @@
         type: Function
       },
       afterUpload: {
-        type: Function
+        type: Function,
       },
       uploadJson: {
-        type: String
+        type: String,
+        // default: "https://blog.csdn.net/"
       },
       fileManagerJson: {
         type: Function

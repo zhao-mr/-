@@ -134,7 +134,6 @@ export const constantRoutes = [
 
       {
         path: 'teachInner',
-        name: 'teachInner',
         redirect: '/teachInner',
         component: routerMain,
         // meta: {

@@ -71,7 +71,10 @@ export default {
 
 <style scoped>
 .bos {
-  padding: 0 50px;
+  padding: 10px 50px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 15px #e6ecf1;
 }
 .botntop {
   width: 100%;

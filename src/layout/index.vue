@@ -7,7 +7,7 @@
       <div :class="{'fixed-header':true}">
         <navbar />
       </div>
-      <app-main style="padding: 70px 30px 30px 30px;" />
+      <app-main style="padding: 70px 30px 30px 30px;background: #F7F8FA;min-height: 100vh;" />
     </div>
   </div>
 </template>
