@@ -55,7 +55,7 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="handleDelete(scope.$index, scope.row)"
+                @click="handleDelete(scope.row.projectId)"
                 >查看布置</el-button
               >
             </template>
@@ -228,8 +228,11 @@ export default {
       });
     },
     //查看布置
-    handleDelete() {
-      this.$router.push({ path: "/teachInner/projectArrangement" });
+    handleDelete(val) {
+      this.$router.push({
+        path: "/teachInner/projectArrangement",
+        query: { projectId: val }
+      });
     }
   },
   mounted() {

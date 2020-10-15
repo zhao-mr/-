@@ -7,7 +7,7 @@
           <el-button type="primary" @click="turnback">返回</el-button>
         </div>
         <div class="">
-          <el-input placeholder="请输入已布置实验名称" v-model="input">
+          <el-input placeholder="请输入已布置实验名称" v-model="assignName">
             <i
               slot="suffix"
               class="el-input__icon el-icon-search"
@@ -19,25 +19,38 @@
       </div>
       <!-- 列表 -->
       <div class="Boslei">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="bosliet" style="width: 100%">
           <el-table-column label="实验名称" min-width="100%">
             <template slot-scope="scope">
               <!-- <a href="">实验的名字倒是</a> -->
               <el-button
                 type="text"
                 size="mini"
-                @click="handJump(scope.$index, scope.row)"
-                >实验的名字倒是</el-button
+                @click="handJump(scope.row.assignId)"
+                >{{ scope.row.assignName }}</el-button
               >
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="教学教师" width="">
+          <el-table-column prop="realName" label="教学教师" width="">
           </el-table-column>
-          <el-table-column prop="address" label="实验人数	" width="">
+          <el-table-column
+            prop="count"
+            label="实验人数"
+            :formatter="formcount"
+            width=""
+          >
           </el-table-column>
-          <el-table-column prop="address" label="实验时间" width="">
+          <el-table-column prop="" label="实验时间" width="">
+            <template slot-scope="scope">
+              {{ scope.row.projectBeginTime }} ~ {{ scope.row.projectEndTime }}
+            </template>
           </el-table-column>
-          <el-table-column prop="address" label="待批改" width="">
+          <el-table-column
+            prop="waitCount"
+            label="待批改"
+            :formatter="formwait"
+            width=""
+          >
           </el-table-column>
           <el-table-column label="操作" min-width="60%">
             <template slot-scope="scope">
@@ -70,7 +83,7 @@
           background
           layout="prev, pager, next,total"
           @current-change="handleCurrentChange"
-          :total="1000"
+          :total="total"
         >
         </el-pagination>
       </div>
@@ -79,51 +92,59 @@
 </template>
 
 <script>
-const cityOptions = ["上海", "北京", "广州", "深圳"];
+import { checkAssign } from "@/api/teacher";
 export default {
   components: {},
   data() {
     return {
-      input: "", //搜索值
-      //列表
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区"
-        }
-      ],
-      region: ""
+      projectId: "", //id
+      bosliet: [], //列表
+      assignName: "", //名称
+
+      total: null, //总条数
+      pageNum: 1 //当前页
     };
   },
   methods: {
+    //获取信息列表
+    checkAssign() {
+      checkAssign({
+        projectId: this.projectId,
+        pageNum: this.pageNum,
+        pageSize: 10,
+        assignName: this.assignName
+      })
+        .then(res => {
+          console.log(res);
+          if (res.code == 200) {
+            this.bosliet = res.data.list;
+            this.total = res.data.total;
+          }
+        })
+        .catch(err => {});
+    },
+
+    formcount: function(row, column, val) {
+      return val + "人";
+    },
+    formwait: function(row, column, val) {
+      return val + "人";
+    },
+
+    //点击实验名称查看实验信息
+    handJump(val) {
+      alert(val);
+    },
+
     //选择第几页
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+      this.pageNum = val;
+      this.checkAssign();
     },
     //搜索
     btnsearch() {
-      alert(11);
+      this.checkAssign();
     },
 
     //返回
@@ -140,7 +161,10 @@ export default {
       this.$router.push({ path: "/teachInner/correctList" });
     }
   },
-  mounted() {}
+  mounted() {
+    this.projectId = this.$route.query.projectId;
+    this.checkAssign();
+  }
 };
 </script>
 

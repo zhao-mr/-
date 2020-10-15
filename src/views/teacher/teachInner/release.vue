@@ -378,6 +378,7 @@ export default {
 
     assignExperiment() {
       assignExperiment({
+        assignProjectId: this.projectId, //实验ID
         assignName: this.projectName, //名称
         projectBeginTime: this.startTime, //开始时间
         projectEndTime: this.endTime, //结束时间

@@ -55,3 +55,11 @@ export function assignExperiment(data) {
     data
   })
 } 
+//查看布置实验列表
+export function checkAssign(data) {
+  return request({
+    url: '/schoolTeaching/checkAssign',
+    method: 'post',
+    data
+  })
+} 
