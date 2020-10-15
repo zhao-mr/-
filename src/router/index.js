@@ -35,6 +35,11 @@ import Layout from '@/layout'
 const routerMain = () => import('@/layout/components/AppMain')
 
 export const constantRoutes = [
+  // {
+  //   path: '/home',
+  //   component: () => import('@/views/homePage/index'),
+  //   hidden: true
+  // },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -56,7 +61,8 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     mark: true,
-    children: [{
+    children: [
+      {
         path: 'home',
         name: 'home',
         component: () => import('@/views/index'),
@@ -75,24 +81,24 @@ export const constantRoutes = [
           icon: ''
         },
         children: [{
-            path: 'list',
-            name: 'list',
-            component: () => import('@/views/addProject/projectList'),
-            meta: {
-              title: '所有项目',
-              icon: ''
-            },
+          path: 'list',
+          name: 'list',
+          component: () => import('@/views/addProject/projectList'),
+          meta: {
+            title: '所有项目',
+            icon: ''
           },
-          {
-            path: 'addProject',
-            name: 'addProject',
-            component: () => import('@/views/addProject/addProject'),
-            meta: {
-              title: '添加项目',
-              icon: ''
-            },
-            hidden: true
-          }
+        },
+        {
+          path: 'addProject',
+          name: 'addProject',
+          component: () => import('@/views/addProject/addProject'),
+          meta: {
+            title: '添加项目',
+            icon: ''
+          },
+          hidden: true
+        }
         ]
       },
       {
@@ -125,11 +131,35 @@ export const constantRoutes = [
       {
         path: 'adminNotice',
         name: 'adminNotice',
-        component: () => import('@/views/projectAdmin/notice'),
+        component: () => import('@/views/projectAdmin/noticeManagement/index'),
         meta: {
           title: '通知公告',
           icon: ''
         },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/projectAdmin/noticeManagement/notice'),
+          },
+          {
+            path: 'addNotice',
+            name: 'addNotice',
+            component: () => import('@/views/projectAdmin/noticeManagement/addNotice'),
+            meta: {
+              title: '发布通知',
+              icon: ''
+            }
+          },
+          {
+            path: 'lookNotice',
+            name: 'lookNotice',
+            component: () => import('@/views/projectAdmin/noticeManagement/lookNotice'),
+            meta: {
+              title: '查看通知',
+              icon: ''
+            }
+          }
+        ]
       },
 
       {
@@ -141,64 +171,64 @@ export const constantRoutes = [
         //   icon: ''
         // },
         children: [{
-            path: '/teachInner',
-            name: 'teachInner',
-            component: () => import('@/views/teacher/teachInner'),
-            meta: {
-              title: '校内教学',
-              icon: ''
-            },
+          path: '/teachInner',
+          name: 'teachInner',
+          component: () => import('@/views/teacher/teachInner'),
+          meta: {
+            title: '校内教学',
+            icon: ''
           },
-          {
-            path: 'project',
-            name: 'project',
-            component: () => import('@/views/teacher/teachInner/project'),
-            meta: {
-              title: '项目信息查看',
-              icon: ''
-            },
-            hidden: true
+        },
+        {
+          path: 'project',
+          name: 'project',
+          component: () => import('@/views/teacher/teachInner/project'),
+          meta: {
+            title: '项目信息查看',
+            icon: ''
           },
-          {
-            path: 'release',
-            name: 'release',
-            component: () => import('@/views/teacher/teachInner/release'),
-            meta: {
-              title: '项目发布',
-              icon: ''
-            },
-            hidden: true
+          hidden: true
+        },
+        {
+          path: 'release',
+          name: 'release',
+          component: () => import('@/views/teacher/teachInner/release'),
+          meta: {
+            title: '项目发布',
+            icon: ''
           },
-          {
-            path: 'projectArrangement',
-            name: 'projectArrangement',
-            component: () => import('@/views/teacher/teachInner/projectArrangement'),
-            meta: {
-              title: '查看布置',
-              icon: ''
-            },
-            hidden: true
+          hidden: true
+        },
+        {
+          path: 'projectArrangement',
+          name: 'projectArrangement',
+          component: () => import('@/views/teacher/teachInner/projectArrangement'),
+          meta: {
+            title: '查看布置',
+            icon: ''
           },
-          {
-            path: 'correctList',
-            name: 'correctList',
-            component: () => import('@/views/teacher/teachInner/correctList'),
-            meta: {
-              title: '批改列表',
-              icon: ''
-            },
-            hidden: true
+          hidden: true
+        },
+        {
+          path: 'correctList',
+          name: 'correctList',
+          component: () => import('@/views/teacher/teachInner/correctList'),
+          meta: {
+            title: '批改列表',
+            icon: ''
           },
-          {
-            path: 'Correcting',
-            name: 'Correcting',
-            component: () => import('@/views/teacher/teachInner/Correcting'),
-            meta: {
-              title: '批改内容',
-              icon: ''
-            },
-            hidden: true
-          }
+          hidden: true
+        },
+        {
+          path: 'Correcting',
+          name: 'Correcting',
+          component: () => import('@/views/teacher/teachInner/Correcting'),
+          meta: {
+            title: '批改内容',
+            icon: ''
+          },
+          hidden: true
+        }
         ]
       },
 
@@ -234,11 +264,35 @@ export const constantRoutes = [
       {
         path: 'teacherNotice',
         name: 'teacherNotice',
-        component: () => import('@/views/teacher/notice'),
+        component: () => import('@/views/teacher/noticeManagement/index'),
         meta: {
           title: '通知管理',
           icon: ''
         },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/teacher/noticeManagement/notice')
+          },
+          {
+            path: 'addNotice',
+            name: 'addNotice',
+            component: () => import('@/views/teacher/noticeManagement/addNotice'),
+            meta: {
+              title: '发布通知',
+              icon: ''
+            }
+          },
+          {
+            path: 'lookNotice',
+            name: 'lookNotice',
+            component: () => import('@/views/teacher/noticeManagement/lookNotice'),
+            meta: {
+              title: '查看通知',
+              icon: ''
+            }
+          }
+        ]
       },
       {
         path: 'allExperiment',
@@ -267,23 +321,23 @@ export const constantRoutes = [
           icon: 'user'
         },
         children: [{
-            path: 'teacher',
-            name: 'teacher',
-            component: () => import('@/views/superAdmin/teacherManage'),
-            meta: {
-              title: '教师管理',
-              icon: 'user'
-            },
+          path: 'teacher',
+          name: 'teacher',
+          component: () => import('@/views/superAdmin/teacherManage'),
+          meta: {
+            title: '教师管理',
+            icon: 'user'
           },
-          {
-            path: 'student',
-            name: 'student',
-            component: () => import('@/views/superAdmin/studentManage'),
-            meta: {
-              title: '学生管理',
-              icon: 'user'
-            },
+        },
+        {
+          path: 'student',
+          name: 'student',
+          component: () => import('@/views/superAdmin/studentManage'),
+          meta: {
+            title: '学生管理',
+            icon: 'user'
           },
+        },
         ]
       },
       {
@@ -295,25 +349,34 @@ export const constantRoutes = [
           icon: 'user'
         },
         children: [{
-            path: 'college',
-            name: 'college',
-            component: () => import('@/views/superAdmin/collegeManage'),
-            meta: {
-              title: '院校管理',
-              icon: 'user'
-            },
+          path: 'college',
+          name: 'college',
+          component: () => import('@/views/superAdmin/collegeManage'),
+          meta: {
+            title: '院校管理',
+            icon: 'user'
           },
-          {
-            path: 'clazz',
-            name: 'clazz',
-            component: () => import('@/views/superAdmin/classManage'),
-            meta: {
-              title: '班级管理',
-              icon: 'user'
-            },
+        },
+        {
+          path: 'clazz',
+          name: 'clazz',
+          component: () => import('@/views/superAdmin/classManage'),
+          meta: {
+            title: '班级管理',
+            icon: 'user'
           },
+        },
         ]
       },
+      {
+        path: 'noReadNotice',
+        name: 'noReadNotice',
+        component: () => import('@/views/noReadNotice'),
+        meta: {
+          title: '通知列表',
+          icon: ''
+        }
+      }
     ]
   },
   /*

@@ -28,11 +28,31 @@
       </el-dropdown>
     </div>
 
-    <!-- 未读消息 -->
-    <div class="unread-messages">
-      <i class="el-icon-bell"></i>
-      <span class="count">10</span>
-    </div>
+    
+
+    <el-popover
+      placement="bottom"
+      width="280"
+      trigger="click"
+      class="unread-messages-box"
+    >
+      <div class="unread-messages-content">
+        <p class="title">通知</p>
+        <!-- <p class="no-content">暂无最新通知</p> -->
+        <ul>
+          <li v-for="notice in noticeList" :key="notice.noticeId">
+            <span class="red"></span>
+            {{notice.noticeContent}}
+          </li>
+        </ul>
+        <div class="lookAll" @click="toNoticeList">查看全部</div>
+      </div>
+      <!-- 未读消息 -->
+      <div class="unread-messages" slot="reference">
+        <i class="el-icon-bell"></i>
+        <span class="count">10</span>
+      </div>
+    </el-popover>
   </div>
 </template>
 
@@ -40,17 +60,26 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { getNewNotice } from '@/api/admin'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      noticeList: []
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar'
     ])
+  },
+  mounted() {
+    this.getNewNotice();
   },
   methods: {
     toggleSideBar() {
@@ -68,11 +97,32 @@ export default {
         // 如果取消跳转地址栏会变化，这时保持地址栏不变
         window.history.go(1)
       })
+    },
+    getNewNotice() {
+      getNewNotice()
+      .then(res => {
+        if (res.code === 200) {
+          let arr = res.data;
+          if (arr.length > 3 || arr.length === 3) {
+            this.noticeList = arr.slice(0, 3)
+          } else {
+            this.noticeList = arr
+          }
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    toNoticeList () {
+      // scope._self.$refs[popover-${scope.$index}].doClose()
+      this.$router.push('/noReadNotice')
     }
-  }
+  },
+
+ 
 }
 </script>
-
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
@@ -170,5 +220,48 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style scoped>
+.unread-messages-content {
+  cursor: pointer;
+}
+.unread-messages-content .title{
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  color: #4a535c;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eaeef1;
+  font-family: '微软雅黑';
+}
+.unread-messages-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid #eaeef1;
+  padding: 16px;
+}
+.unread-messages-content ul li {
+  line-height: 25px;
+  word-break: keep-all; /* 不换行 */
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
+  text-overflow: ellipsis;
+}
+.unread-messages-content .no-content {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  padding: 20px 0;
+  color: #666;
+  font-size: 12px;
+  border-bottom: 1px solid #eaeef1;
+
+}
+.unread-messages-content .lookAll {
+  margin-top: 16px;
+  text-align: center;
 }
 </style>
