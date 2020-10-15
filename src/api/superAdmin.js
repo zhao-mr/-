@@ -24,16 +24,7 @@ export function logout() {
     method: 'post'
   })
 }
-// pageNum=${params.pageNum}&pageSize=${params.pageSize}&roleIds=${params.roleIds}
-// export function getAllUser(params) {
-//   return request({
-//     url: `/user/getAllUser?`,
-//     method: 'get',
-//     params: {
-//       params
-//     }
-//   })
-// }
+
 //获取教工列表
 export function getAllUser(data) {
   return request({

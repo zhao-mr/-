@@ -4,7 +4,7 @@
       <h1>教学列表</h1>
       <div class="Bosaote">
         <div class="">
-          <el-input placeholder="请输入实验名称" v-model="input">
+          <el-input placeholder="请输入实验名称" v-model="projectName">
             <i
               slot="suffix"
               class="el-input__icon el-icon-search"
@@ -21,41 +21,35 @@
       </div>
       <!-- 列表 -->
       <div class="Boslei">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="datalist" style="width: 100%">
           <el-table-column min-width="60%">
             <template slot-scope="scope">
               <div class="Imgbos">
-                <img
-                  src="http://wenjian.rofall.net/group41/M00/00/1E/wKgAP15wa-2ELn6lAAAAAEpcK7I478.png"
-                  alt="图片"
-                />
+                <img :src="scope.row.cover" alt="图片" />
               </div>
             </template>
           </el-table-column>
           <el-table-column label="实验名称" min-width="100%">
             <template slot-scope="scope">
-              <!-- <a href="">实验的名字倒是</a> -->
-              <el-button
-                type="text"
-                size="mini"
-                @click="handJump(scope.$index, scope.row)"
-                >实验的名字倒是</el-button
-              >
+              <el-button type="text" size="mini" @click="handJump(scope.row)">
+                {{ scope.row.projectName }}
+              </el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="学院" width=""> </el-table-column>
-          <el-table-column prop="address" label="学科" width="">
+          <el-table-column prop="collegeName" label="学院" width="">
           </el-table-column>
-          <el-table-column prop="address" label="学时" width="">
+          <el-table-column prop="majorName" label="学科" width="">
           </el-table-column>
-          <el-table-column prop="address" label="项目负责人" width="">
+          <el-table-column prop="projectPeriod" label="学时" width="">
+          </el-table-column>
+          <el-table-column prop="userName" label="项目负责人" width="">
           </el-table-column>
           <el-table-column label="操作" min-width="60%">
             <template slot-scope="scope">
               <el-button
                 type="text"
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
+                @click="handleEdit(scope.row.projectId)"
                 >布置实验</el-button
               >
               <el-button
@@ -70,11 +64,20 @@
       </div>
       <!-- 分页 -->
       <div class="beiye">
-        <el-pagination
+        <!-- <el-pagination
           background
           layout="prev, pager, next,total"
           @current-change="handleCurrentChange"
           :total="1000"
+        >
+        </el-pagination> -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageNum"
+          :page-size="pageSize"
+          layout="prev, pager, next, jumper"
+          :total="total"
         >
         </el-pagination>
       </div>
@@ -139,39 +142,18 @@
 
 <script>
 const cityOptions = ["上海", "北京", "广州", "深圳"];
+import { getChargeProject } from "@/api/teacher";
 export default {
   components: {},
   data() {
     return {
       input: "", //搜索值
-      //列表
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区"
-        }
-      ],
+      datalist: [], //列表
+      projectName: "", //项目名称
+      pageNum: 1, //默认页
+      total: null, //总条数
+      pageSize: 10, //每页数量
+
       centerDialogVisible: false, // 导出弹窗
       region: "",
       formLabelWidth: "120px",
@@ -184,14 +166,39 @@ export default {
     };
   },
   methods: {
+    //获取列表
+    getChargeProject() {
+      getChargeProject({
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        projectName: this.projectName
+      })
+        .then(res => {
+          // console.log(res.data.list);
+          this.datalist = res.data.list;
+          this.total = res.data.total;
+          this.pageSize = res.data.pageSize;
+          this.pageNum = res.data.pageNum;
+        })
+        .catch(err => {});
+    },
+
+    handleSizeChange(val) {
+      this.pageSize = val;
+      console.log(`每页 ${val} 条`);
+      this.getChargeProject();
+    },
     //选择第几页
     handleCurrentChange(val) {
+      this.pageNum = val;
       console.log(`当前页: ${val}`);
+      this.getChargeProject();
     },
     //搜索
     btnsearch() {
-      alert(11);
+      this.getChargeProject();
     },
+
     // 导出
     exportbiao() {
       alert(111);
@@ -209,19 +216,25 @@ export default {
     },
 
     //点击名称查看
-    handJump() {
+    handJump(data) {
       this.$router.push({ path: "/teachInner/project" });
     },
     //布置实验
-    handleEdit() {
-      this.$router.push({ path: "/teachInner/release" });
+    handleEdit(val) {
+      // console.log(val);
+      this.$router.push({
+        path: "/teachInner/release",
+        query: { projectId: val }
+      });
     },
     //查看布置
     handleDelete() {
       this.$router.push({ path: "/teachInner/projectArrangement" });
     }
   },
-  mounted() {}
+  mounted() {
+    this.getChargeProject();
+  }
 };
 </script>
 

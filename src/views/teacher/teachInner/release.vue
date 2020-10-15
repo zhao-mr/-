@@ -5,25 +5,44 @@
         <el-button type="primary" @click="turnback">返 回</el-button>
       </el-row>
     </div>
-    <h2 style="text-align: center;">基于时空数据的政策评估虚拟仿真</h2>
+
+    <h2 style="text-align: center;">{{ projectName }}</h2>
     <div class="Condeaout">
       <ul>
         <li>
           <div class="Boslfeit">项目名称：</div>
           <div class="Boslrige">
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
+            <el-input v-model="projectName" placeholder="请输入内容"></el-input>
           </div>
         </li>
         <li>
           <div class="Boslfeit">开始时间：</div>
           <div class="Boslrige">
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
+            <el-date-picker
+              v-model="startTime"
+              type="date"
+              placeholder="开始日期"
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
+              :picker-options="pickerOptionsStart"
+              @change="startTimeStatus"
+            >
+            </el-date-picker>
           </div>
         </li>
         <li>
           <div class="Boslfeit">结束时间：</div>
           <div class="Boslrige">
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
+            <el-date-picker
+              v-model="endTime"
+              type="date"
+              placeholder="结束日期"
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
+              :picker-options="pickerOptionsEnd"
+              @change="endTimeStatus"
+            >
+            </el-date-picker>
           </div>
         </li>
         <li>
@@ -32,45 +51,90 @@
             class="Boslrige  rigeinp"
             style="display: flex;justify-content: space-between;"
           >
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
-            <el-input v-model="inputname" placeholder="请输入内容"></el-input>
+            <el-select
+              v-model="collegeId"
+              placeholder="请选择学院"
+              @change="boshuo1"
+            >
+              <el-option
+                v-for="item in options1"
+                :key="item.collegeId"
+                :label="item.collegeName"
+                :value="item.collegeId"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              v-model="major"
+              placeholder="请选择学科"
+              @change="boshuo2"
+            >
+              <el-option
+                v-for="item in options2"
+                :key="item.majorId"
+                :label="item.majorName"
+                :value="item.majorId"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              v-model="tbClassId"
+              placeholder="请选择班级"
+              @change="boshuo3"
+            >
+              <el-option
+                v-for="item in options3"
+                :key="item.tbClassId"
+                :label="item.tbClassName"
+                :value="item.tbClassId"
+              >
+              </el-option>
+            </el-select>
           </div>
         </li>
         <li>
           <div class="Boslfeit"></div>
           <div class="Boslrige">
-            <el-input
-              type="textarea"
-              :rows="10"
-              placeholder="请输入内容"
-              v-model="textarea"
-              class="resizeNone"
-            >
-            </el-input>
+            <div class="Bosbian">
+              <el-tag
+                v-for="tag in tagsleit"
+                :key="tag.userId"
+                closable
+                type="success"
+                @close="handleClose(tag)"
+              >
+                {{ tag.realName }}
+              </el-tag>
+              <!-- {{ tagsleit }} -->
+            </div>
           </div>
         </li>
         <li>
           <div class="Boslfeit">成绩比例：</div>
           <div class="Boslrige lrigechen">
             <div>
-              实验成绩<el-input
-                v-model="inputname"
-                placeholder="请输入内容"
+              实验成绩
+              <el-input
+                v-model="experimentScore"
+                placeholder="请输入"
+                maxlength="3"
+                oninput="value=value.replace(/[^\d]/g,'')"
               ></el-input
               >%
             </div>
             <div>
               报告成绩<el-input
-                v-model="inputname"
-                placeholder="请输入内容"
+                v-model="reportScore"
+                placeholder="请输入"
+                maxlength="3"
               ></el-input
               >%
             </div>
             <div>
               视频成绩<el-input
-                v-model="inputname"
-                placeholder="请输入内容"
+                v-model="videoScore"
+                placeholder="请输入"
+                maxlength="3"
               ></el-input
               >%
             </div>
@@ -79,7 +143,7 @@
         <li>
           <div class="auot">
             <el-row>
-              <el-button type="primary">提 交</el-button>
+              <el-button type="primary" @click="Submit">提 交</el-button>
             </el-row>
           </div>
         </li>
@@ -89,18 +153,259 @@
 </template>
 
 <script>
+import { getAssignProject, getStudent, assignExperiment } from "@/api/teacher";
+import { getGroup } from "@/api/superAdmin";
 export default {
   data() {
     return {
-      inputname: "",
-      textarea: ""
+      projectId: "", //项目ID值
+
+      projectName: "", //实验名称
+      experimentScore: 0, //实验成绩
+      reportScore: 0, //报告成绩
+      videoScore: 0, //视频成绩
+
+      startTime: "", //开始时间值
+      endTime: "", //结束时间值
+
+      pickerOptionsStart: {
+        disabledDate: time => {
+          if (this.endTime) {
+            return time.getTime() > new Date(this.endTime).getTime();
+          } else {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
+        }
+      },
+      pickerOptionsEnd: {
+        disabledDate: time => {
+          if (this.startTime) {
+            return (
+              time.getTime() <
+              new Date(this.startTime).getTime() - 0 * 24 * 60 * 60 * 1000
+            );
+          } else {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
+        }
+      },
+
+      options1: [], //学院列表
+      collegeId: "", //学院的值
+      opquan: "",
+      options2: [], //学科列表
+      major: "", //学科的值
+
+      banji: "",
+      options3: [], //班级列表
+      tbClassId: "", //班级的值
+
+      tagsleit: [], //学生值
+
+      bostagszhi: [] //传后台学生值
     };
   },
   methods: {
     //返回
     turnback() {
       this.$router.push({ path: "/teachInner" });
+    },
+
+    // 时间开始选择器
+    startTimeStatus: function(value) {
+      this.startTime = value;
+      this.endTime = "";
+    },
+    // 时间结束选择器
+    endTimeStatus: function(value) {
+      // console.log(value);
+      this.endTime = value;
+      if (this.startTime == "") {
+        this.$message({
+          showClose: true,
+          message: "请先选择开始时间",
+          type: "warning"
+        });
+        this.endTime = "";
+      }
+    },
+
+    //获取信息
+    getAssignProject() {
+      getAssignProject({
+        projectId: this.projectId
+      })
+        .then(res => {
+          // console.log(res);
+          if (res.code == 200) {
+            this.experimentScore = res.data.experimentScore;
+            this.reportScore = res.data.reportScore;
+            this.videoScore = res.data.videoScore;
+            this.projectName = res.data.projectName;
+          }
+        })
+        .catch(err => {});
+    },
+
+    // 获取学院角色信息
+    getGroup() {
+      getGroup()
+        .then(res => {
+          // console.log(res);
+          if (res.code == 200) {
+            this.options1 = res.college;
+            this.opquan = res.major;
+            this.banji = res.tbClass;
+          }
+        })
+        .catch(err => {
+          console.info(err);
+        });
+    },
+
+    //选中学院执行事件
+    boshuo1(value) {
+      this.collegeId = value;
+      this.major = "";
+      this.tbClassId = "";
+      this.options2 = [];
+      this.options3 = [];
+
+      var kezhi = this.opquan;
+      var boskzhi = [];
+      for (let k = 0; k < kezhi.length; k++) {
+        if (this.collegeId == kezhi[k].collegeId) {
+          boskzhi.push({
+            majorId: kezhi[k].majorId,
+            majorName: kezhi[k].majorName,
+            collegeId: kezhi[k].collegeId
+          });
+        }
+      }
+      this.options2 = boskzhi;
+      this.getStudent();
+    },
+    //选中学科执行事件
+    boshuo2(value) {
+      this.major = value;
+      this.tbClassId = "";
+      this.options3 = [];
+
+      var banzhi = this.banji;
+      var zuibosban = [];
+      for (let b = 0; b < banzhi.length; b++) {
+        if (this.major == banzhi[b].majorId) {
+          zuibosban.push({
+            tbClassId: banzhi[b].tbClassId,
+            tbClassName: banzhi[b].tbClassName,
+            majorId: banzhi[b].majorId
+          });
+        }
+      }
+      this.options3 = zuibosban;
+      this.getStudent();
+    },
+    //选中班级执行事件
+    boshuo3(value) {
+      this.tbClassId = value;
+      this.getStudent();
+    },
+
+    //获取学生信息
+    getStudent() {
+      getStudent({
+        collegeId: this.collegeId,
+        majorId: this.major,
+        tbClassId: this.tbClassId
+      })
+        .then(res => {
+          // console.log(res);
+          if (res.code == 200) {
+            this.tagsleit = res.data;
+          }
+        })
+        .catch(err => {});
+    },
+
+    handleClose(tag) {
+      this.tagsleit.splice(this.tagsleit.indexOf(tag), 1);
+    },
+
+    //提交
+    Submit() {
+      var xuenams = this.tagsleit;
+
+      for (let i = 0; i < xuenams.length; i++) {
+        this.bostagszhi.push(xuenams[i].userName);
+      }
+
+      var chenji1 = this.experimentScore; //实验成绩
+      var chenji2 = this.reportScore; //报告成绩
+      var chenji3 = this.videoScore; //视频成绩
+      var boschenji = Number(chenji1) + Number(chenji2) + Number(chenji3);
+
+      if (this.projectName == "") {
+        this.$message({
+          message: "请输入名称",
+          type: "warning"
+        });
+      } else if (this.startTime == "" || this.startTime == null) {
+        this.$message({
+          message: "请输入开始时间",
+          type: "warning"
+        });
+      } else if (this.endTime == "" || this.endTime == null) {
+        this.$message({
+          message: "请输入结束时间",
+          type: "warning"
+        });
+      } else if (this.tagsleit == "") {
+        this.$message({
+          message: "请选择学生",
+          type: "warning"
+        });
+      } else {
+        if (boschenji == 100) {
+          this.assignExperiment();
+        } else {
+          this.$message({
+            message: "实验成绩，报告成绩，视频成绩三者必须共达到100%",
+            type: "warning"
+          });
+        }
+      }
+    },
+
+    assignExperiment() {
+      assignExperiment({
+        assignName: this.projectName, //名称
+        projectBeginTime: this.startTime, //开始时间
+        projectEndTime: this.endTime, //结束时间
+        experimentScore: this.experimentScore, //实验分数
+        reportScore: this.reportScore, //报告分数
+        videoScore: this.videoScore, //视频分数
+        exercisesScore: "",
+        schoolYear: "",
+        userNames: this.bostagszhi //学生值
+      })
+        .then(res => {
+          console.log(res);
+          if (res.code == 200) {
+            this.$message({
+              showClose: true,
+              message: res.msg,
+              type: "success"
+            });
+            this.$router.push({ path: "/teachInner" });
+          }
+        })
+        .catch(err => {});
     }
+  },
+  mounted() {
+    this.projectId = this.$route.query.projectId;
+    this.getAssignProject();
+    this.getGroup();
   }
 };
 </script>
@@ -145,6 +450,16 @@ export default {
   width: 100%;
   text-align: center;
 }
+.Bosbian {
+  width: 100%;
+  height: 220px;
+  display: block;
+  border: 1px solid #dcdfe6;
+  /* padding: 5px 15px; */
+  line-height: 1.5;
+  border-radius: 4px;
+  overflow-y: auto;
+}
 </style>
 <style>
 .Condeaout li .Boslrige .el-input {
@@ -159,5 +474,9 @@ export default {
 .Condeaout li .lrigechen .el-input {
   width: 100px;
   margin: 0 5px;
+}
+
+.Bosbian .el-tag {
+  margin: 5px 8px;
 }
 </style>
