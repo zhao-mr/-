@@ -11,7 +11,10 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import VueBus from 'vue-bus';
+
 Vue.use(ElementUI)
+Vue.use(VueBus);
 Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false
 

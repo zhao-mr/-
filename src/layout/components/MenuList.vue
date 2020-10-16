@@ -19,7 +19,7 @@
         </el-menu-item>
 
         <!--项目添加员-->
-        <template v-if="roles === 'addProject'">
+        <template v-if="roles === 2">
           <el-menu-item index="/projectList/list">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目列表</span>
@@ -27,7 +27,7 @@
         </template>
 
         <!--教师-->
-        <template v-if="roles === 'teacher'">
+        <template v-if="roles === 4">
           <el-menu-item index="/projectMaintain">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目维护</span>
@@ -47,7 +47,7 @@
         </template>
 
         <!--项目管理员-->
-        <template v-if="roles === 'projectAdmin'">
+        <template v-if="roles === 3">
           <el-menu-item index="/projectManage">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目管理</span>
@@ -63,7 +63,7 @@
         </template>
 
         <!--学生-->
-        <template v-if="roles === 'student'">
+        <template v-if="roles === 5">
           <el-menu-item index="/allExperiment">
             <i class="el-icon-menu"></i>
             <span slot="title">全部实验</span>
@@ -75,7 +75,7 @@
         </template>
 
         <!--系统管理员-->
-        <template v-if="roles === 'superAdmin'">
+        <template v-if="roles === 1">
           <el-submenu index="/userManage">
             <template slot="title">
               <i class="el-icon-user"></i>
@@ -100,13 +100,19 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Logo from "./Sidebar/Logo";
 
 import variables from "@/styles/variables.scss";
+import user from '@/store/modules/user';
 
 export default {
   components: { Logo },
+  data() {
+    return {
+      roles: null
+    }
+  },
   computed: {
     ...mapGetters(["sidebar"]),
     activeMenu() {
@@ -128,10 +134,28 @@ export default {
     isCollapse() {
       return !this.sidebar.opened;
     },
-    roles() {
+  },
+  mounted() {
+    this.getRole();
+    this.$bus.on('changeRole',roleId => {
+      console.log('this.$bus.on====changeRole')
+      this.roles = roleId;
+    })
+  },
+  methods: {
+    getRole() {
       // console.info(this.$store.state.user.roles)
       // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生; addProject 项目添加员
-      return "teacher";
+      // 1：系统管理员；2：项目添加员； 3：项目管理员；4：教师；5：student
+      
+      let arr = this.$store.state.user.roles;
+      let role = arr[0]; // 最大的角色
+      arr.forEach(item => {
+        if (item.roleId < role.roleId) {
+          role = item
+        }
+      });
+      this.roles = role.roleId
     }
   }
 };

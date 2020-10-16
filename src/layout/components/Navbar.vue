@@ -16,11 +16,9 @@
               个人信息
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
-            <el-dropdown-item>
-              切换角色
-            </el-dropdown-item>
-          </router-link>
+          <el-dropdown-item @click.native="openDialog">
+            切换角色
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -38,9 +36,9 @@
       <div class="unread-messages-content">
         <p class="title">通知</p>
         <ul v-if="noticeList.length > 0">
-          <li v-for="notice in noticeList" :key="notice.noticeId">
+          <li v-for="notice in noticeList" :key="notice.noticeId" @click="toNoticeInfo(notice.noticeId)">
             <span class="red"></span>
-            {{notice.noticeContent}}
+            <span class="text">{{notice.noticeContent}}</span>
           </li>
         </ul>
         <p class="no-content" v-else>暂无最新通知</p>
@@ -49,9 +47,24 @@
       <!-- 未读消息 -->
       <div class="unread-messages" slot="reference">
         <i class="el-icon-bell"></i>
-        <span class="count">10</span>
+        <span class="count" v-if="count !== 0">{{count}}</span>
       </div>
     </el-popover>
+
+    <el-dialog
+      title="切换角色"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :modal-append-to-body="false"
+    >
+      <el-radio-group v-model="roleId">
+        <el-radio :label="role.roleId" v-for="role in roleList" :key="role.roleId" style="margin-bottom: 16px;">{{role.roleName}}</el-radio>
+      </el-radio-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -59,7 +72,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { getNewNotice } from '@/api/admin'
+import { getNewNotice, readNotice } from '@/api/admin'
 
 export default {
   components: {
@@ -69,7 +82,11 @@ export default {
   data() {
     return {
       isShow: false,
-      noticeList: []
+      count: 0,
+      noticeList: [],
+      dialogVisible: false,
+      roleId: null, // 选中的角色
+      roleList: [], // 用户所拥有的所有角色
     }
   },
   computed: {
@@ -79,7 +96,19 @@ export default {
     ])
   },
   mounted() {
+    this.roleList = this.$store.state.user.roles;
+    let role = this.roleList[0]; // 最大的角色
+    this.roleList.forEach(item => {
+      if (item.roleId < role.roleId) {
+        role = item
+      }
+    });
+    this.roleId = role.roleId;
     this.getNewNotice();
+    this.$bus.on('noRead', () => {
+      console.log('this.$bus.on,noRead')
+      this.getNewNotice();
+    })
   },
   methods: {
     toggleSideBar() {
@@ -108,6 +137,7 @@ export default {
           } else {
             this.noticeList = arr
           }
+          this.count = arr.length;
         }
       })
       .catch(err => {
@@ -117,7 +147,33 @@ export default {
     toNoticeList () {
       this.isShow = false;
       this.$router.push('/noReadNotice')
-    }
+    },
+    toNoticeInfo(noticeId) {
+      readNotice(noticeId)
+      .then(res => {
+        if (res.code === 200) {
+          this.getNewNotice();
+          this.$router.push({
+            path: '/teacherNotice/lookNotice',
+            query: {
+              noticeId: noticeId,
+              isNoReadPage: true
+            }
+          })
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    openDialog() {
+      this.dialogVisible = true;
+    },
+    changeRole() {
+      this.$bus.emit('changeRole', this.roleId)
+      console.log('this.$bus.emit====changeRole')
+      this.dialogVisible = false
+    },
   },
 
  
@@ -141,14 +197,18 @@ export default {
       margin-top: 14px;
     }
     .count {
-      padding: 4px;
       background-color: red;
       color: white;
-      border-radius: 45%;
+      border-radius: 50%;
       font-size: 12px;
       position: absolute;
       top: 4px;
       left: 28px;
+      width: 25px;
+      height: 25px;
+      display: inline-block;
+      text-align: center;
+      line-height: 25px;
     }
   }
 
@@ -220,6 +280,7 @@ export default {
       }
     }
   }
+
 }
 </style>
 
@@ -241,14 +302,27 @@ export default {
   padding: 0;
   list-style: none;
   border-bottom: 1px solid #eaeef1;
-  padding: 16px;
+  padding: 10px 16px;
 }
 .unread-messages-content ul li {
-  line-height: 25px;
+  line-height: 26px;
   word-break: keep-all; /* 不换行 */
   white-space: nowrap; /* 不换行 */
   overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
   text-overflow: ellipsis;
+  position: relative;
+}
+.unread-messages-content ul li .red {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: red;
+  position: absolute;
+  top: 10px;
+}
+.unread-messages-content ul li .text {
+  margin-left: 10px;
 }
 .unread-messages-content .no-content {
   margin: 0;

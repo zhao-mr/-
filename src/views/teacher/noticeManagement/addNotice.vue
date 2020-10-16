@@ -1,107 +1,110 @@
 <!--发布通知-->
 <template>
   <div class="add-notice">
-    <el-form
-      :model="addForm"
-      :rules="addRules"
-      ref="addForm"
-      label-width="100px"
-      class="add-form"
-    >
-      <el-form-item label="通知标题" prop="noticeContent">
-        <el-input
-          type="text"
-          v-model="addForm.noticeContent"
-          style="width: 46%"
-        ></el-input>
-      </el-form-item>
+    <el-card>
+      <el-form
+        :model="addForm"
+        :rules="addRules"
+        ref="addForm"
+        label-width="100px"
+        class="add-form"
+      >
+        <el-form-item label="通知标题" prop="noticeContent">
+          <el-input
+            type="text"
+            v-model="addForm.noticeContent"
+            style="width: 46%"
+          ></el-input>
+        </el-form-item>
 
-      <el-form-item label="通知正文" prop="noticeIntroduce">
-        <editor
-          id="editor_id"
-          height="300px"
-          width="100%"
-          :content.sync="addForm.noticeIntroduce"
-          :loadStyleMode="false"
-          @on-content-change="onContentChange"
-        ></editor>
-      </el-form-item>
+        <el-form-item label="通知正文" prop="noticeIntroduce">
+          <editor
+            id="editor_id"
+            height="300px"
+            width="100%"
+            :content.sync="addForm.noticeIntroduce"
+            :loadStyleMode="false"
+            @on-content-change="onContentChange"
+          ></editor>
+        </el-form-item>
 
-      <el-form-item label="有效期限" prop="validDate">
-        <el-date-picker
-          v-model="addForm.validDate"
-          type="date"
-          placeholder="请选择有限期限"
-          :picker-options="pickerOptions"
-        >
-        </el-date-picker>
-      </el-form-item>
-
-      <el-form-item label="选择实验" prop="experimentId">
-        <el-select
-          placeholder="请选择"
-          v-model="addForm.experimentId"
-          @change="handleExperimentChange"
-        >
-          <el-option
-            v-for="item in experimentList"
-            :key="item.projectId"
-            :label="item.projectName"
-            :value="item.projectId"
+        <el-form-item label="有效期限" prop="validDate">
+          <el-date-picker
+            v-model="addForm.validDate"
+            type="date"
+            placeholder="请选择有限期限"
+            :picker-options="pickerOptions"
           >
-          </el-option>
-        </el-select>
-      </el-form-item>
+          </el-date-picker>
+        </el-form-item>
 
-      <el-form-item label="选择安排" prop="assignId">
-        <el-select
-          placeholder="请选择"
-          v-model="addForm.assignId"
-          @change="handleAssignChange"
-        >
-          <el-option
-            v-for="item in assignList"
-            :key="item.assignId"
-            :label="item.assignName"
-            :value="item.assignId"
+        <el-form-item label="选择实验" prop="experimentId">
+          <el-select
+            placeholder="请选择"
+            v-model="addForm.experimentId"
+            @change="handleExperimentChange"
           >
-          </el-option>
-        </el-select>
-      </el-form-item>
+            <el-option
+              v-for="item in experimentList"
+              :key="item.projectId"
+              :label="item.projectName"
+              :value="item.projectId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="选择学生" prop="userIds">
-        <div class="studentBox">
-          <div class="allCheck">
-            <el-checkbox
-              :indeterminate="isIndeterminate"
-              v-model="checkAll"
-              @change="handleCheckAllChange"
-              >全选</el-checkbox
+        <el-form-item label="选择安排" prop="assignId">
+          <el-select
+            placeholder="请选择"
+            v-model="addForm.assignId"
+            @change="handleAssignChange"
+          >
+            <el-option
+              v-for="item in assignList"
+              :key="item.assignId"
+              :label="item.assignName"
+              :value="item.assignId"
             >
-          </div>
-          <div class="studentList">
-            <el-checkbox-group
-              v-model="checkedStudents"
-              @change="handleCheckedStudentsChange"
-            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="选择学生" prop="userIds">
+          <div class="studentBox">
+            <div class="allCheck">
               <el-checkbox
-                v-for="student in allStudents"
-                :label="student"
-                :key="student.userId"
-                >{{ `${student.userName}（${student.realName}）` }}</el-checkbox
+                :indeterminate="isIndeterminate"
+                v-model="checkAll"
+                @change="handleCheckAllChange"
+                >全选</el-checkbox
               >
-            </el-checkbox-group>
+            </div>
+            <div class="studentList">
+              <el-checkbox-group
+                v-model="checkedStudents"
+                @change="handleCheckedStudentsChange"
+              >
+                <el-checkbox
+                  v-for="student in allStudents"
+                  :label="student"
+                  :key="student.userId"
+                  >{{
+                    `${student.userName}（${student.realName}）`
+                  }}</el-checkbox
+                >
+              </el-checkbox-group>
+            </div>
           </div>
-        </div>
-      </el-form-item>
-
-      <el-form-item class="btn">
-        <el-button type="primary" round @click="handlePublish('addForm')"
-          >发布</el-button
-        >
-        <el-button round @click="goBack">取消</el-button>
-      </el-form-item>
-    </el-form>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <div class="btn">
+      <el-button type="primary" round @click="handlePublish('addForm')"
+        >发布</el-button
+      >
+      <el-button round @click="goBack">取消</el-button>
+    </div>
   </div>
 </template>
 
@@ -111,7 +114,7 @@ import {
   getExperimentList,
   getAssignList,
   getStudentList,
-  addNoticeOfTeacher
+  addNoticeOfTeacher,
 } from "@/api/admin";
 import { number } from "echarts/lib/export";
 
@@ -144,15 +147,9 @@ export default {
         noticeIntroduce: [
           { required: true, message: "请输入正文", trigger: "blur" },
         ],
-        experimentId: [
-          { required: true, message: "请选择", trigger: "blur" },
-        ],
-        assignId: [
-          { required: true, message: "请选择", trigger: "blur" },
-        ],
-        userIds: [
-          { validator: validateUser, trigger: "blur" },
-        ]
+        experimentId: [{ required: true, message: "请选择", trigger: "blur" }],
+        assignId: [{ required: true, message: "请选择", trigger: "blur" }],
+        userIds: [{ validator: validateUser, trigger: "blur" }],
       },
       pickerOptions: {
         disabledDate(time) {
@@ -180,13 +177,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let ids = [];
-          this.checkedStudents.forEach(item => {
-            ids.push(item.userId)
-          })
+          this.checkedStudents.forEach((item) => {
+            ids.push(item.userId);
+          });
           let param = {
             ...this.addForm,
-            userIds: ids
-          }
+            userIds: ids,
+          };
           addNoticeOfTeacher(param)
             .then((res) => {
               if (res.code === 200) {
@@ -252,7 +249,7 @@ export default {
       getStudentList(this.assignId)
         .then((res) => {
           if (res.code === 200) {
-            this.allStudents = []
+            this.allStudents = [];
             res.data.forEach((item) => {
               this.allStudents.push({
                 userId: item.userId,
@@ -284,8 +281,9 @@ export default {
 
 <style lang="scss" scoped>
 .add-notice {
-  padding-top: 15px;
   .btn {
+    text-align: center;
+    margin-top: 30px;
     .el-button {
       width: 120px;
     }

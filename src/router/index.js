@@ -266,7 +266,7 @@ export const constantRoutes = [
         name: 'teacherNotice',
         component: () => import('@/views/teacher/noticeManagement/index'),
         meta: {
-          title: '通知管理',
+          title: '通知列表',
           icon: ''
         },
         children: [
