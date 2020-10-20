@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="BosConer">
-      <h1>批改共享</h1>
       <div class="Bosaote">
         <div class="">
           <el-input placeholder="请输入实验名称" v-model="message">
@@ -21,51 +20,53 @@
       </div>
       <!-- 列表 -->
       <div class="Boslei">
-        <el-table :data="datalist" style="width: 100%">
-          <el-table-column min-width="60%">
-            <template slot-scope="scope">
-              <div class="Imgbos">
-                <img :src="url + scope.row.cover" alt="图片" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="实验名称" min-width="100%">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="mini"
-                @click="handJump(scope.row.projectId)"
-              >
-                {{ scope.row.projectName }}
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="collegeName" label="学院" width="">
-          </el-table-column>
-          <el-table-column prop="majorName" label="学科" width="">
-          </el-table-column>
-          <el-table-column prop="projectPeriod" label="学时" width="">
-          </el-table-column>
-          <el-table-column
-            prop="projectPrincipalName"
-            label="项目负责人"
-            width=""
-          >
-          </el-table-column>
-          <el-table-column prop="count" label="待批改" width="">
-            <template slot-scope="scope"> {{ scope.row.count }}人 </template>
-          </el-table-column>
-          <el-table-column label="操作" min-width="60%">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="mini"
-                @click="handleEdit(scope.row.projectId)"
-                >批改</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-card class="box-card">
+          <el-table :data="datalist" style="width: 100%">
+            <el-table-column min-width="60%">
+              <template slot-scope="scope">
+                <div class="Imgbos">
+                  <img :src="url + scope.row.cover" alt="图片" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="实验名称" min-width="100%">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handJump(scope.row.projectId)"
+                >
+                  {{ scope.row.projectName }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column prop="collegeName" label="学院" width="">
+            </el-table-column>
+            <el-table-column prop="majorName" label="学科" width="">
+            </el-table-column>
+            <el-table-column prop="projectPeriod" label="学时" width="">
+            </el-table-column>
+            <el-table-column
+              prop="projectPrincipalName"
+              label="项目负责人"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column prop="count" label="待批改" width="">
+              <template slot-scope="scope"> {{ scope.row.count }}人 </template>
+            </el-table-column>
+            <el-table-column label="操作" min-width="60%">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handleEdit(scope.row.projectId)"
+                  >批改</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
       </div>
       <!-- 分页 -->
       <div class="beiye">
@@ -171,10 +172,9 @@ export default {
 <style scoped>
 .BosConer {
   width: 100%;
-  padding: 0 50px;
 }
 .Bosaote {
-  width: 100;
+  width: 100%;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -186,7 +186,6 @@ export default {
 }
 .Boslei {
   width: 100%;
-  overflow: hidden;
 }
 .Boslei .Imgbos {
   width: 120px;
@@ -200,8 +199,9 @@ export default {
   width: 100%;
   overflow: hidden;
   text-align: center;
-  position: relative;
-  top: 50px;
+  margin-top: 35px;
+  /* position: relative;
+  top: 50px; */
 }
 </style>
 <style>

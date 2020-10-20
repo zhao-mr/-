@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="BosConer">
-      <h1>教学列表</h1>
       <div class="Bosaote">
         <div class="">
           <el-input placeholder="请输入实验名称" v-model="projectName">
@@ -21,50 +20,66 @@
       </div>
       <!-- 列表 -->
       <div class="Boslei">
-        <el-table :data="datalist" style="width: 100%">
-          <el-table-column min-width="60%">
-            <template slot-scope="scope">
-              <div class="Imgbos">
-                <img :src="url + scope.row.cover" alt="图片" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="实验名称" min-width="100%">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="mini"
-                @click="handJump(scope.row.projectId)"
-              >
-                {{ scope.row.projectName }}
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="collegeName" label="学院" width="">
-          </el-table-column>
-          <el-table-column prop="majorName" label="学科" width="">
-          </el-table-column>
-          <el-table-column prop="projectPeriod" label="学时" width="">
-          </el-table-column>
-          <el-table-column prop="userName" label="项目负责人" width="">
-          </el-table-column>
-          <el-table-column label="操作" min-width="60%">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="mini"
-                @click="handleEdit(scope.row.projectId)"
-                >布置实验</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="handleDelete(scope.row.projectId)"
-                >查看布置</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-card class="box-card">
+          <el-table :data="datalist" style="width: 100%">
+            <el-table-column min-width="60%">
+              <template slot-scope="scope">
+                <div class="Imgbos">
+                  <img :src="url + scope.row.cover" alt="图片" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="实验名称"
+              :show-overflow-tooltip="true"
+              min-width="100%"
+            >
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handJump(scope.row.projectId)"
+                >
+                  {{ scope.row.projectName }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="collegeName"
+              label="学院"
+              :show-overflow-tooltip="true"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column
+              prop="majorName"
+              label="学科"
+              :show-overflow-tooltip="true"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column prop="projectPeriod" label="学时" width="">
+            </el-table-column>
+            <el-table-column prop="userName" label="项目负责人" width="">
+            </el-table-column>
+            <el-table-column label="操作" min-width="60%">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handleEdit(scope.row.projectId)"
+                  >布置实验</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handleDelete(scope.row.projectId)"
+                  >查看布置</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
       </div>
       <!-- 分页 -->
       <div class="beiye">
@@ -81,7 +96,7 @@
           :current-page.sync="pageNum"
           :page-size="pageSize"
           background
-          layout="prev, pager, next, jumper"
+          layout="total,prev, pager, next, jumper"
           :total="total"
         >
         </el-pagination>
@@ -189,10 +204,9 @@ export default {
 <style scoped>
 .BosConer {
   width: 100%;
-  padding: 0 50px;
 }
 .Bosaote {
-  width: 100;
+  width: 100%;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -204,7 +218,6 @@ export default {
 }
 .Boslei {
   width: 100%;
-  overflow: hidden;
 }
 .Boslei .Imgbos {
   width: 120px;
@@ -218,8 +231,9 @@ export default {
   width: 100%;
   overflow: hidden;
   text-align: center;
-  position: relative;
-  top: 50px;
+  margin-top: 35px;
+  /* position: relative;
+  top: 50px; */
 }
 </style>
 <style>

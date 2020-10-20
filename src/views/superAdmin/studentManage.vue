@@ -7,11 +7,15 @@
           <el-button @click="adduser">添加用户</el-button>
           <el-button @click="bosdeletion">批量删除</el-button>
           <el-button @click="firing">批量启用</el-button>
-          <el-button type="primary" @click="importadd">导入学生</el-button>
+          <el-button @click="importadd">导入学生</el-button>
           <a :href="exporturl">
-            <el-button type="primary">导出学生</el-button>
+            <el-button>导出学生</el-button>
           </a>
-          <el-button type="text"><a :href="Temurl">下载模板</a></el-button>
+          <a :href="Temurl">
+            <el-button type="primary">
+              <i class="el-icon-download el-icon--left"></i>下载模板
+            </el-button>
+          </a>
         </div>
         <div class="Toprihng">
           <el-select v-model="college" placeholder="请选择学院">
@@ -28,87 +32,104 @@
         </div>
       </div>
       <div class="Bosleist">
-        <el-table
-          :data="Boslist"
-          border
-          style="width: 100%"
-          :header-cell-style="{ textAlign: 'center' }"
-          :cell-style="{ textAlign: 'center' }"
-          @selection-change="selectAll"
-        >
-          <!-- <el-checkbox-group v-model="checkList">
+        <el-card class="box-card">
+          <el-table
+            :data="Boslist"
+            style="width: 100%"
+            :header-cell-style="{ textAlign: 'center' }"
+            :cell-style="{ textAlign: 'center' }"
+            @selection-change="selectAll"
+          >
+            <!-- <el-checkbox-group v-model="checkList">
             <el-table-column prop="" label="" width="50%">
               <el-checkbox label=""></el-checkbox>
             </el-table-column>
           </el-checkbox-group> -->
-          <el-table-column
-            type="selection"
-            prop="userId"
-            label="全选"
-            width="80px"
-          >
-          </el-table-column>
-          <el-table-column prop="realName" label="学生姓名" width="">
-          </el-table-column>
-          <el-table-column prop="userName" label="学号/账号" width="">
-          </el-table-column>
-          <el-table-column prop="tbClassName" label="班级" width="">
-          </el-table-column>
-          <el-table-column prop="collegeName" label="院系" width="">
-          </el-table-column>
-          <el-table-column prop="majorName" label="专业" width="">
-          </el-table-column>
-          <el-table-column prop="sex" label="性别" width=""> </el-table-column>
-          <el-table-column prop="phone" label="电话" width="">
-          </el-table-column>
-          <el-table-column prop="email" label="邮箱" width="">
-          </el-table-column>
-          <el-table-column
-            prop="delStatus"
-            label="状态"
-            :formatter="delStatusList"
-            width=""
-          >
-          </el-table-column>
-          <el-table-column label="操作" width="">
-            <template slot-scope="scope">
-              <el-button type="text" size="mini" @click="modify(scope.row)"
-                >编辑</el-button
-              >
-              <el-button
-                v-if="scope.row.delStatus == 0"
-                type="text"
-                size="mini"
-                style="color: #e6a23c;"
-                @click="Disable(scope.row.userId)"
-                >禁用</el-button
-              >
-              <el-button
-                v-if="scope.row.delStatus == 2"
-                type="text"
-                size="mini"
-                @click="Enable(scope.row.userId)"
-                >启用</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="deleteout(scope.row.userId)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column
+              type="selection"
+              prop="userId"
+              label="全选"
+              width="50px"
+            >
+            </el-table-column>
+            <el-table-column prop="realName" label="学生姓名" width="">
+            </el-table-column>
+            <el-table-column prop="userName" label="学号/账号" width="">
+            </el-table-column>
+            <el-table-column prop="tbClassName" label="班级" width="">
+            </el-table-column>
+            <el-table-column
+              prop="collegeName"
+              label="院系"
+              :show-overflow-tooltip="true"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column
+              prop="majorName"
+              label="专业"
+              :show-overflow-tooltip="true"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column prop="sex" label="性别" width="">
+            </el-table-column>
+            <el-table-column prop="phone" label="电话" width="">
+            </el-table-column>
+            <el-table-column
+              prop="email"
+              label="邮箱"
+              :show-overflow-tooltip="true"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column prop="delStatus" label="状态" width="">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.delStatus == 0">正常</el-tag>
+                <el-tag v-else type="danger">已禁用</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="">
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" @click="modify(scope.row)"
+                  >编辑</el-button
+                >
+                <el-button
+                  v-if="scope.row.delStatus == 0"
+                  type="text"
+                  size="mini"
+                  style="color: #e6a23c;"
+                  @click="Disable(scope.row.userId)"
+                  >禁用</el-button
+                >
+                <el-button
+                  v-if="scope.row.delStatus == 2"
+                  type="text"
+                  size="mini"
+                  @click="Enable(scope.row.userId)"
+                  >启用</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="deleteout(scope.row.userId)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
       </div>
       <div class="Bospaging">
         <div class="block">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
+            background
             :current-page.sync="currentPage"
             :page-sizes="[10, 15, 20]"
             :page-size="pageSize"
-            layout="total, prev, pager, next,sizes"
+            layout="total, prev, pager, next,jumper"
             :total="zongshu"
           >
           </el-pagination>
@@ -149,8 +170,8 @@ export default {
   data() {
     return {
       url: apiPath,
-      Temurl: `${apiPath}user/getTemplate`, //下载模板地址
-      exporturl: `${apiPath}user/export?roleIds=5`, //导出
+      Temurl: `${apiPath}/user/getTemplate`, //下载模板地址
+      exporturl: `${apiPath}/user/export?roleIds=5`, //导出
       ctype: "", //传值
 
       roleIds: 5,
@@ -227,9 +248,9 @@ export default {
     },
 
     //状态判断
-    delStatusList(row) {
-      return row.delStatus == 0 ? "正常" : "禁用";
-    },
+    // delStatusList(row) {
+    //   return row.delStatus == 0 ? "正常" : "禁用";
+    // },
 
     //获取全选的值
     selectAll(val) {
@@ -380,9 +401,9 @@ export default {
 
 <style lang="scss" scoped>
 .Bosxx {
-  width: 80%;
+  width: 100%;
   overflow: hidden;
-  margin: 50px auto;
+  // margin: 50px auto;
 }
 .BosTop {
   width: 100%;

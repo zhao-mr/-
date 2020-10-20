@@ -6,71 +6,77 @@
         <el-button @click="adduser">添加教工</el-button>
         <el-button @click="bosdeletion">批量删除</el-button>
         <el-button @click="firing">批量启用</el-button>
-        <el-button type="primary" @click="importadd">教工导入</el-button>
-        <a :href="exporturl"><el-button type="primary">教工导出</el-button></a>
-        <el-button type="text"><a :href="Temurl">下载模板</a></el-button>
+        <el-button @click="importadd">教工导入</el-button>
+        <a :href="exporturl"><el-button>教工导出</el-button></a>
+        <a :href="Temurl">
+          <el-button type="primary">
+            <i class="el-icon-download el-icon--left"></i>下载模板
+          </el-button>
+        </a>
       </div>
       <div class="Bosleist">
-        <el-table
-          :data="Boslist"
-          border
-          style="width: 100%"
-          :header-cell-style="{ textAlign: 'center' }"
-          :cell-style="{ textAlign: 'center' }"
-          @selection-change="selectAll"
-        >
-          <el-table-column
-            type="selection"
-            prop="userId"
-            label="全选"
-            width="80px"
+        <el-card class="box-card">
+          <el-table
+            :data="Boslist"
+            style="width: 100%"
+            :header-cell-style="{ textAlign: 'center' }"
+            :cell-style="{ textAlign: 'center' }"
+            @selection-change="selectAll"
           >
-          </el-table-column>
-          <el-table-column prop="realName" label="姓名" width="">
-          </el-table-column>
-          <el-table-column prop="userName" label="账号 / 工号" width="">
-          </el-table-column>
-          <el-table-column prop="collegeName" label="所属院系" width="">
-          </el-table-column>
-          <el-table-column prop="majorName" label="专业" width="">
-          </el-table-column>
-          <el-table-column prop="sex" label="性别" width=""> </el-table-column>
-          <el-table-column
-            prop="delStatus"
-            label="状态"
-            :formatter="delStatusList"
-            width=""
-          >
-          </el-table-column>
-          <el-table-column label="操作" width="">
-            <template slot-scope="scope">
-              <el-button type="text" size="mini" @click="modify(scope.row)"
-                >编辑</el-button
-              >
-              <el-button
-                v-if="scope.row.delStatus == 0"
-                type="text"
-                size="mini"
-                style="color: #e6a23c;"
-                @click="Disable(scope.row.userId)"
-                >禁用</el-button
-              >
-              <el-button
-                v-if="scope.row.delStatus == 2"
-                type="text"
-                size="mini"
-                @click="Enable(scope.row.userId)"
-                >启用</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="deleteout(scope.row.userId)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column
+              type="selection"
+              prop="userId"
+              label="全选"
+              width="50px"
+            >
+            </el-table-column>
+            <el-table-column prop="realName" label="姓名" width="">
+            </el-table-column>
+            <el-table-column prop="userName" label="账号 / 工号" width="">
+            </el-table-column>
+            <el-table-column prop="collegeName" label="所属院系" width="">
+            </el-table-column>
+            <el-table-column prop="majorName" label="专业" width="">
+            </el-table-column>
+            <el-table-column prop="sex" label="性别" width="">
+            </el-table-column>
+            <el-table-column prop="delStatus" label="状态" width="">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.delStatus == 0">正常</el-tag>
+                <el-tag v-else type="danger">已禁用</el-tag>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="操作" width="">
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" @click="modify(scope.row)"
+                  >编辑</el-button
+                >
+                <el-button
+                  v-if="scope.row.delStatus == 0"
+                  type="text"
+                  size="mini"
+                  style="color: #e6a23c;"
+                  @click="Disable(scope.row.userId)"
+                  >禁用</el-button
+                >
+                <el-button
+                  v-if="scope.row.delStatus == 2"
+                  type="text"
+                  size="mini"
+                  @click="Enable(scope.row.userId)"
+                  >启用</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="deleteout(scope.row.userId)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
       </div>
       <div class="Bospaging">
         <div class="block">
@@ -78,9 +84,10 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
+            background
             :page-sizes="[10, 15, 20]"
             :page-size="pageSize"
-            layout="total, prev, pager, next,sizes"
+            layout="total, prev, pager, next,jumper"
             :total="zongshu"
           >
           </el-pagination>
@@ -125,8 +132,8 @@ export default {
       Boslist: [], //列表
       userIds: [], //启用禁用id
       url: apiPath,
-      Temurl: `${apiPath}user/getTemplate`, //下载模板地址
-      exporturl: `${apiPath}user/export`, //导出
+      Temurl: `${apiPath}/user/getTemplate`, //下载模板地址
+      exporturl: `${apiPath}/user/export`, //导出
 
       bostitle: "",
 
@@ -181,11 +188,6 @@ export default {
           this.pageSize = res.data.pageSize;
         })
         .catch(err => {});
-    },
-
-    //状态判断
-    delStatusList(row) {
-      return row.delStatus == 0 ? "正常" : "禁用";
     },
 
     disabledUser() {
@@ -353,14 +355,15 @@ export default {
 
 <style lang="scss" scoped>
 .Bosxx {
-  width: 80%;
+  width: 100%;
   overflow: hidden;
-  margin: 50px auto;
+  // margin: 50px auto;
 }
 .BosTop {
   width: 100%;
   overflow: hidden;
   display: flex;
+  justify-content: flex-end;
   margin-bottom: 20px;
 }
 .BosTop button {
