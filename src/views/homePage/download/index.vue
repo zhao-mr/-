@@ -27,33 +27,18 @@
       </div>
       <div class="aside-content">
         <div class="list">
-          <div class="item">
-            <div class="name">华东理工润尼尔平台实验资源数据回传接口说明文档2.0</div>
-
+          <div class="item" v-for="item in list" :key="item.uploadCentreId">
+            <div class="name">{{item.uploadIntroduce}}</div>
             <a href="#"><i class="el-icon-download"></i>下载</a>
-            <span>2020-06-18</span>
-          </div>
-          <div class="item">
-            <div class="name">华东理工润尼尔平台实验资源数据回传接口说明文档2.0</div>
-            <a href="#">下载</a>
-            <span>2020-06-18</span>
-          </div>
-          <div class="item">
-            <div class="name">华东理工润尼尔平台实验资源数据回传接口说明文档2.0</div>
-            <a href="#">下载</a>
-            <span>2020-06-18</span>
-          </div>
-          <div class="item">
-            <div class="name">华东理工润尼尔平台实验资源数据回传接口说明文档2.0</div>
-            <a href="#">下载</a>
-            <span>2020-06-18</span>
+            <span>{{item.uploadDate}}</span>
           </div>
         </div>
-        <div class="pagination-box">
+        <div class="pagination-box" v-if="list.length > 0">
           <el-pagination
             layout="prev, pager, next"
             :total="total"
             style="margin-bottom: 30px;"
+            @current-change="handleCurrentChange"
           >
           </el-pagination>
         </div>
@@ -64,6 +49,7 @@
 </template>
 
 <script>
+import { getList } from '@/api/webAdmin'
 import Footer from '@/components/Footer'
 
 export default {
@@ -74,12 +60,16 @@ export default {
   data() {
     return {
       active: 'tool',
-      total: 7,
+      pageNum: 1,
+      pageSize: 10,
+      total: 0,
       userName: null,
+      list: []
     }
   },
   mounted() {
     this.userName = this.$store.state.user.name;
+    this.getList();
   },
   methods: {
     toPath(value) {
@@ -131,9 +121,39 @@ export default {
       });
     },
     change(val) {
-      this.active = val
+      this.active = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val;
+      this.getList();
+    },
+    getList() {
+      let uploadCategory = null;
+      if (this.active === 'tool') {
+        uploadCategory = 0
+      } else {
+        uploadCategory = 1
+      }
+      let param = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        uploadCategory
+      }
+      getList(param)
+      .then(res => {
+        if (res.code === 200) {
+          res.data.list.forEach(item => {
+            item.uploadDate = item.uploadDate.split(' ')[0];
+          });
+          this.list = res.data.list;
+          this.total = res.data.total;
+        }
+      })
+      .catch(err => {
+        this.$message.error(res.msg)
+      })
     }
-
   }
 
 }
@@ -230,7 +250,7 @@ export default {
       width: 1200px;
       margin: 30px auto;
       .list {
-        min-height: 380px;
+        min-height: 436px;
         .item {
           height: 55px;
           line-height: 55px;

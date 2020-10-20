@@ -14,8 +14,8 @@
           <div class="header-top-right">
             <el-input
               placeholder="请输入实验名称"
-              suffix-icon="el-icon-search"
               v-model="experimentName">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
             </el-input>
             <span @click="toPath('manager')" v-if="userName">进入</span>
             <span @click="toPath('login')" v-else>登录</span>
@@ -33,11 +33,13 @@
           <div class="college">
             <span>学院：</span>
             <div class="college-list">
-              <span class="active">化工学院1</span>
-              <span>化工学院1</span>
-              <span>化工学院1</span>
-              <span>化工学院1</span>
-              <span>化工学院1</span>
+              <span :class="{'active': selectCollege === null}" @click="handleCollege(null)">全部</span>
+              <span 
+                :class="{'active': selectCollege === item.collegeId}" 
+                v-for="item in collegeList" 
+                :key="item.collegeId"
+                @click="handleCollege(item.collegeId)"
+              >{{item.collegeName}}</span>
             </div>
           </div>
           <!-- <div class="centre">
@@ -53,78 +55,20 @@
       </div>
       <div class="title">全部实验</div>
       <div class="course-list">
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
+
+        <div class="course-item" v-for="item in courseList" :key="item.projectId">
+          <img :src="url+item.cover" :alt="item.projectName">
           <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
+            <p>{{item.projectName}}</p>
             <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
+              <span class="level red" v-if="parseInt(item.projectRank) === 1">国家级</span>
+              <span class="level pink" v-if="parseInt(item.projectRank) === 2">省级</span>
+              <span class="level blue" v-if="parseInt(item.projectRank) === 3">市级</span>
+              <span class="count">{{item.searchExperimentNums}}</span>
             </div>
           </div>
         </div>
 
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
-        <div class="course-item">
-          <img src="http://wenjian.rofall.net/group41/M00/00/01/wKgBFl5T6ueEbB2dAAAAAItrs-k467.png" alt="">
-          <div class="course-text">
-            <p>糖化酶催化啤酒发酵及酵母菌糖化酶催化啤酒发酵及酵母菌</p>
-            <div class="course-info">
-              <span class="level">国家级</span>
-              <span class="count">882</span>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="pagination-box">
         <el-pagination
@@ -132,6 +76,7 @@
           :total="total"
           hide-on-single-page
           style="margin-bottom: 30px;"
+          @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
@@ -142,6 +87,9 @@
 
 <script>
 import Footer from '@/components/Footer'
+import { getCollegeList, getExperimentList } from '@/api/webAdmin'
+import { apiPath } from '@/config/env'
+  import { format } from 'echarts/lib/export'
 
 export default {
   name: "AllExperiment",
@@ -150,13 +98,21 @@ export default {
   },
   data() {
     return {
+      url: apiPath,
       experimentName: '',
-      total: 7,
+      total: 0,
       userName: null,
+      selectCollege: null,
+      collegeList: [],
+      pageNum: 1,
+      pageSize: 10,
+      courseList: []
     }
   },
   mounted() {
     this.userName = this.$store.state.user.name;
+    this.getCollegeList();
+    this.getCourseList();
   },
   methods: {
     toPath(value) {
@@ -205,8 +161,49 @@ export default {
       this.$router.push({
         path: "/download"
       });
+    },
+    getCollegeList() {
+      getCollegeList()
+      .then(res => {
+        if (res.code === 200) {
+          this.collegeList = res.data
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    handleCollege(val) {
+      console.log('val', val)
+      this.selectCollege = val;
+      this.getCourseList();
+    },
+    getCourseList() {
+      let param = {
+        collegeId: this.selectCollege,
+        projectName: this.experimentName,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }
+      getExperimentList(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.courseList = res.data.list;
+          console.log(this.courseList)
+          this.total = res.data.total;
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val;
+      this.getCourseList();
+    },
+    search() {
+      this.getCourseList();
     }
-
   }
 
 }
@@ -293,6 +290,7 @@ export default {
     }
   }
   .content {
+    min-height: calc(100vh - 325px);
     .menu {
       width: 1200px;
       margin: 0 auto;
@@ -341,7 +339,7 @@ export default {
     .course-list {
       width: 1200px;
       margin: 0 auto;
-      min-height: 200px;
+      min-height: 458px;
       .course-item {
         width: 225px;
         height: 210px;
@@ -375,9 +373,17 @@ export default {
               display: block;
               padding: 3px 5px;
               border-radius: 3px;
-              background-color: red;
               display: inline-block;
               float: left;
+            }
+            .red {
+              background-color: red;
+            }
+            .blue {
+              background-color: rgb(63, 4, 224);
+            }
+            .pink {
+              background-color: rgb(165, 4, 144);
             }
             .count {
               display: inline-block;

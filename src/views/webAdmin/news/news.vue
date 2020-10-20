@@ -34,18 +34,18 @@
         >
           <el-table-column type="selection"> </el-table-column>
           <el-table-column
-            prop="noticeContent"
+            prop="newsTitle"
             label="标题"
             show-overflow-tooltip
             align="center"
           >
           </el-table-column>
-          <el-table-column prop="noticeDate" label="发布时间" align="center">
+          <el-table-column prop="newsDate" label="发布时间" align="center">
           </el-table-column>
-          <el-table-column prop="validDate" label="来源" align="center">
+          <el-table-column prop="newsSource" label="来源" align="center">
           </el-table-column>
-          <el-table-column prop="validDate" label="类型" align="center">
-          </el-table-column>
+          <!-- <el-table-column prop="validDate" label="类型" align="center">
+          </el-table-column> -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
@@ -63,11 +63,9 @@
     <div style="text-align: center; margin-top: 30px;">
       <el-pagination
         background
-        layout="total, prev, pager, next, sizes"
+        layout="total, prev, pager, next"
         :total="total"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :page-sizes="[10, 20, 30, 40]"
       >
       </el-pagination>
     </div>
@@ -101,10 +99,11 @@
 </template>
 
 <script>
-import { getAllNotice, batchDel } from "@/api/admin";
+import { batchDel } from "@/api/admin";
+import { getAllNews } from "@/api/webAdmin";
 
 export default {
-  name: "adminNotice",
+  name: "news",
   computed: {},
   data() {
     return {
@@ -130,10 +129,6 @@ export default {
         this.isDisabled = true;
       }
     },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.getAllNews();
-    },
     openPreviewDialog() {
       this.previewDialogVisible = true
     },
@@ -142,37 +137,16 @@ export default {
       this.getAllNews();
     },
     getAllNews() {
-      let d = new Date(this.date);
-      let datetime =
-        d.getFullYear() +
-        "-" +
-        (d.getMonth() + 1) +
-        "-" +
-        d.getDate() +
-        " " +
-        d.getHours() +
-        ":" +
-        d.getMinutes() +
-        ":" +
-        d.getSeconds();
       let param = {
-        noticeContent: this.title,
+        newsTitle: this.title,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
+        year: null,
+        month: null
       };
-      getAllNotice(param)
+      getAllNews(param)
         .then((res) => {
           if (res.code === 200) {
-            let date = new Date();
-            let yesterday = date.setTime(date.getTime()-24*60*60*1000)
-            res.data.list.forEach((item) => {
-              if (item.validDate === null) {
-                item.validDate = "长期有效";
-              }
-              if (yesterday > new Date(item.validDate)) {
-                item.validDate = item.validDate + "(已过期)";
-              }
-            });
             this.tableData = res.data.list;
             this.total = res.data.total;
           }

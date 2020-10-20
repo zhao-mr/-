@@ -26,7 +26,7 @@
         </ul>
       </div>
       <div class="aside-content">
-        <news :isList="isList" />
+        <news :isList="isList" :type="active" />
       </div>
     </div>
     <Footer />

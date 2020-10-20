@@ -9,36 +9,29 @@
         label-width="100px"
         class="add-form"
       >
-        <el-form-item label="资讯标题" prop="noticeContent">
+        <el-form-item label="资讯标题" prop="title">
           <el-input
             type="text"
-            v-model="addForm.noticeContent"
+            v-model="addForm.title"
             style="width: 46%"
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="资讯内容" prop="noticeIntroduce">
+        <el-form-item label="资讯内容" prop="content">
           <editor
             id="editor_id"
             height="300px"
             width="100%"
-            :content.sync="addForm.noticeIntroduce"
+            :content.sync="addForm.content"
             :loadStyleMode="false"
             @on-content-change="onContentChange"
           ></editor>
         </el-form-item>
 
-        <el-form-item label="类型" prop="validDate">
-          <!-- <el-date-picker
-            v-model="addForm.validDate"
-            type="date"
-            placeholder="请选择有限期限"
-            :picker-options="pickerOptions"
-          >
-          </el-date-picker> -->
-          <el-select v-model="addForm.validDate" placeholder="请选择">
-            <el-option label="新闻"></el-option>
-            <el-option label="公告"></el-option>
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="addForm.type" placeholder="请选择">
+            <el-option label="news" value="news"></el-option>
+            <el-option label="notice" value="notice"></el-option>
           </el-select>
         </el-form-item>
 
@@ -55,7 +48,7 @@
 
 <script>
 import editor from "@/components/KindEditor";
-import { addNotice } from "@/api/admin";
+import { addNews, addNotice } from "@/api/webAdmin"
 
 export default {
   name: "addNews",
@@ -65,45 +58,38 @@ export default {
   data() {
     return {
       addForm: {
-        noticeContent: "",
-        noticeIntroduce: "",
-        validDate: null,
+        title: "",
+        content: "",
+        type: "",
       },
       addRules: {
-        noticeContent: [
+        title: [
           { required: true, message: "请输入标题", trigger: "blur" },
         ],
-        noticeIntroduce: [
+        content: [
           { required: true, message: "请输入正文", trigger: "blur" },
         ],
-      },
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() < Date.now() - 3600 * 1000 * 24;
-        },
-      },
+        type: [
+          { required: true, message: "请选择", trigger: "blur" },
+        ]
+      }
     };
   },
   mounted() {},
   methods: {
     onContentChange(val) {
-      this.addForm.noticeIntroduce = val;
+      this.addForm.content = val;
     },
     handlePublish(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          addNotice(this.addForm)
-            .then((res) => {
-              if (res.code === 200) {
-                this.$message.success(res.msg);
-                this.$router.go(-1);
-              }
-            })
-            .catch((err) => {
-              this.$message.error(err.msg);
-            });
+          if (this.addForm.type === 'news') {
+            this.addNews()
+          } else {
+            this.addNotice();
+          }
         } else {
-          console.log("error submit!!");
+          console.log("请输入正确格式");
           return false;
         }
       });
@@ -111,6 +97,41 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    addNews() {
+      let param = {
+        newsTitle: this.addForm.title,
+        newsContent: this.addForm.content,
+        newsSource: this.$store.state.user.name
+      }
+      addNews(param)
+      .then(res => {
+        if (res.code === 200){
+          this.$message.success(res.msg);
+          this.$router.go(-1);
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg);
+      })
+    },
+    addNotice() {
+      let param = {
+        announcementTitle: this.addForm.title,
+        announcementContent: this.addForm.content,
+        announcementSource: this.$store.state.user.name
+      }
+      addNotice(param)
+      .then(res => {
+        if (res.code === 200){
+          this.$message.success(res.msg);
+          this.$router.go(-1);
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg);
+      })
+    }
+    
   },
 };
 </script>
