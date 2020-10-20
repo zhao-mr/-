@@ -1,24 +1,28 @@
 import request from '@/utils/request'
 
-export function login(data) {
+// 获取所有实验
+export function getAllProject(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/student/experiment/searchAllExperiment',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+// 选修列表
+export function getOptionList(data) {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    url: '/student/experiment/getStudentOptionalExperiment',
+    method: 'post',
+    data
   })
 }
 
-export function logout() {
+// 选修实验记录
+export function getOptionRecordList(data) {
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/student/experiment/getStudentExperimentRecord',
+    method: 'post',
+    data
   })
 }

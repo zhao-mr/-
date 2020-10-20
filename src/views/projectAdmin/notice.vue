@@ -99,7 +99,7 @@ export default {
           publishDate: '2016-05-03',
           title: '王小虎',
           validPeriod: '上海市普陀区金沙江路 1518 弄'
-        }, 
+        },
         {
           publishDate: '2016-05-03',
           title: '王小虎',

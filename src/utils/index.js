@@ -1,6 +1,25 @@
 /**
- * Created by PanJiaChen on 16/11/18.
+ * 获取指定时间点
+ * new Date("2018-01-01").customTime(-365) ==> "2017-01-01"
  */
+Date.prototype.customTime = (num, day) => {
+  const today = new Date(day || new Date())
+  const tTime = today.getTime()
+  return dateFormat(new Date(tTime + num * 24 * 60 * 60 * 1000))
+}
+
+/*
+* 转化时间格式为yyyy-mm-dd
+* */
+export const dateFormat = (time) => {
+  var date = new Date(time)
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  // 拼接
+  return year + '-' + month + '-' + day
+}
+
 
 /**
  * Parse the time to string

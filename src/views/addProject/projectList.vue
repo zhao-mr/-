@@ -14,7 +14,7 @@
         <el-button type="primary" @click="toAdd()">添加实验</el-button>
       </el-col>
     </el-row>
-    <div class="data-table mtop20">
+    <div class="data-table">
       <el-table
         :data="projectList.data"
         v-loading="projectList.loading"
@@ -33,8 +33,9 @@
         </el-table-column>
         <el-table-column prop="scaleScore" label="操作" align="center" min-width="180">
           <template slot-scope="scope">
-            <el-button type="primary" class="operate-view">查看</el-button>
+            <!--<el-button type="primary" class="operate-view" @click="toView(scope.row.projectId)">查看</el-button>-->
             <el-button type="primary" class="operate-edit" @click="toEdit(scope.row.projectId)">编辑</el-button>
+            <el-button type="danger" class="operate-delete mleft20" @click="toDelete(scope.row.projectId)" v-if="scope.row.assignStatus!==1">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -53,8 +54,9 @@
 </template>
 
 <script>
-  import { addProjectList } from "../../api/addProject";
+  import { addProjectList, deleteProject } from "../../api/addProject";
   import { getTypeName } from "../../utils/default";
+  import variables from '@/styles/variables.scss'
 
   export default {
   name: 'projectList',
@@ -92,8 +94,29 @@
         this.projectList.loading = false
       })
     },
+    toDelete(_id){
+      this.$confirm('确定删除该实验吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteProject({ projectId: _id}).then(res=>{
+          if(res.code === 200) {
+            this.$message.success('删除成功！')
+            this.getDataList()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      }).catch(() => {
+        console.info('取消删除。。。。。。。')
+      })
+    },
     toAdd(){
       this.$router.push({path: '/projectList/addProject'})
+    },
+    toView(_id){
+
     },
     toEdit(_id){
       this.$router.push({path: '/projectList/addProject', query: {projectId: _id}})
@@ -106,7 +129,7 @@
 }
 </script>
 <style>
-  @import "../../styles/common.css";
+  @import "../../styles/common.scss";
 </style>
 <style lang="scss" scoped>
   .data-table{
