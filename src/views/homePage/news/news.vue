@@ -2,73 +2,35 @@
   <div class="news">
     <div>
       <div class="news-list" v-show="isList">
-        <div class="news-item" @click="toInfo">
+        <div class="news-item" v-for="item in list" :key="item.id" @click="toInfo">
           <div class="date">
-            5
-            <label>/6</label>
-            <p>2020</p>
+            {{item.day}}
+            <label>/{{item.month}}</label>
+            <p>{{item.year}}</p>
           </div>
           <div class="news-content">
-            <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
-            <a>为深入学习贯彻全国教育大会精神，提升育人水平，按照《教育部办公厅关于2017-2...</a>
-            <span>来源：校级内容管理员</span>
+            <p>{{item.title}}</p>
+            <a>{{item.content}}</a>
+            <span>来源：{{item.source}}</span>
           </div>
         </div>
-        <div class="news-item">
-          <div class="date">
-            5
-            <label>/6</label>
-            <p>2020</p>
-          </div>
-          <div class="news-content">
-            <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
-            <a>为深入学习贯彻全国教育大会精神，提升育人水平，按照《教育部办公厅关于2017-2...</a>
-            <span>来源：校级内容管理员</span>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="date">
-            5
-            <label>/6</label>
-            <p>2020</p>
-          </div>
-          <div class="news-content">
-            <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
-            <a>为深入学习贯彻全国教育大会精神，提升育人水平，按照《教育部办公厅关于2017-2...</a>
-            <span>来源：校级内容管理员</span>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="date">
-            5
-            <label>/6</label>
-            <p>2020</p>
-          </div>
-          <div class="news-content">
-            <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
-            <a>为深入学习贯彻全国教育大会精神，提升育人水平，按照《教育部办公厅关于2017-2...</a>
-            <span>来源：校级内容管理员</span>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="date">
-            5
-            <label>/6</label>
-            <p>2020</p>
-          </div>
-          <div class="news-content">
-            <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
-            <a>为深入学习贯彻全国教育大会精神，提升育人水平，按照《教育部办公厅关于2017-2...</a>
-            <span>来源：校级内容管理员</span>
-          </div>
-        </div>
-      
       </div>
-      <div class="pagination-box">
+      <div class="pagination-box" v-show="type === 'news'">
         <el-pagination
           layout="prev, pager, next"
-          :total="total"
+          :total="newsTotal"
           style="margin-bottom: 30px;"
+          @current-change="handleNewsCurrentChange"
+        >
+        </el-pagination>
+      </div>
+
+      <div class="pagination-box" v-show="type === 'notice'">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="noticeTotal"
+          style="margin-bottom: 30px;"
+          @current-change="handleNoticeCurrentChange"
         >
         </el-pagination>
       </div>
@@ -100,21 +62,131 @@
 </template>
 
 <script>
+import { getNewsList, getNoticeList } from '@/api/webAdmin'
+
 export default {
   name: "news",
-  props: ['isList'],
+  props: ['isList', 'type'],
   data() {
     return {
-      total: 7
+      list: [],
+      newsPageNum: 1,
+      newsPageSize: 4,
+      newsTotal: 0,
+      noticePageNum: 1,
+      noticePageSize: 4,
+      noticeTotal: 0,
     }
   },
   mounted() {
-
+    this.getList();
+  },
+  watch: {
+    type(val) {
+      console.log('val', val)
+      if (val === 'news') {
+        this.getNewsList();
+      } else {
+        this.getNoticeList();
+      }
+    }
   },
   methods: {
     toInfo() {
       this.isList = false;
-    }
+    },
+    getNewsList() {
+      let param = {
+        pageNum: this.newsPageNum,
+        pageSize: this.newsPageSize,
+      }
+      getNewsList(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.list = [];
+          res.data.list.forEach(item => {
+            let date = item.newsDate.split(" ")[0];
+            console.log('date', date);
+            let year = date.split("-")[0];
+            let month = date.split("-")[1];
+            let day = date.split("-")[2];
+            console.log('year', year, month, day);
+            let content = "";
+            if (item.newsContent.length < 39) {
+              content = item.newsContent;
+            } else {
+              content = item.newsContent.substr(0,39)+"...";
+            }
+            this.list.push({
+              id: item.newsId,
+              title: item.newsTitle,
+              source: item.newsSource,
+              content,
+              year,
+              month,
+              day
+            })
+          });
+          this.newsTotal = res.data.total;
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+
+    getNoticeList() {
+      let param = {
+        pageNum: this.noticePageNum,
+        pageSize: this.noticePageSize,
+      }
+      getNoticeList(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.list = [];
+          res.data.list.forEach(item => {
+            let date = item.announcementDate.split(" ")[0];
+            console.log('date', date);
+            let year = date.split("-")[0];
+            let month = date.split("-")[1];
+            let day = date.split("-")[2];
+            console.log('year', year, month, day);
+            let content = "";
+            if (item.announcementContent.length < 39) {
+              content = item.announcementContent;
+            } else {
+              content = item.announcementContent.substr(0,39)+"...";
+            }
+            this.list.push({
+              id: item.announcementId,
+              title: item.announcementTitle,
+              source: item.announcementSource,
+              content,
+              year,
+              month,
+              day
+            })
+          });
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    getList() {
+      console.log('this.type', this.type)
+      if (this.type === 'news') {
+        this.getNewsList();
+      } else {
+        this.getNoticeList();
+      }
+    },
+    handleNewsCurrentChange(val) {
+      this.newsPageNum = val;
+    },
+    handleNoticeCurrentChange(val) {
+      this.noticePageNum = val;
+    },
   }
 
 }
@@ -127,6 +199,7 @@ export default {
   font-family: "Microsoft Yahei";
   .news-list {
     width: 1080px;
+    min-height: 362px;
     margin: 50px auto;
     .news-item {
       width: 450px;
@@ -172,11 +245,19 @@ export default {
         font-size: 12px;
         line-height: 22px;
         p {
+          height: 46px;
           color: #24282b;
           font-weight: bold;
           font-size: 14px;
           line-height: 23px;
           margin-bottom: 10px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
         a {
           text-decoration: none;
