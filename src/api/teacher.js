@@ -222,11 +222,3 @@ export function lookCorrect2(data) {
     data
   })
 }
-//导出学生
-// export function exportScore(data) {
-//   return request({
-//     url: '/schoolTeaching/exportScore',
-//     method: 'post',
-//     data
-//   })
-// }

@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="BosConer">
-      <h1>教学列表</h1>
+      <h1>批改共享</h1>
       <div class="Bosaote">
         <div class="">
-          <el-input placeholder="请输入实验名称" v-model="projectName">
+          <el-input placeholder="请输入实验名称" v-model="message">
             <i
               slot="suffix"
               class="el-input__icon el-icon-search"
@@ -46,7 +46,14 @@
           </el-table-column>
           <el-table-column prop="projectPeriod" label="学时" width="">
           </el-table-column>
-          <el-table-column prop="userName" label="项目负责人" width="">
+          <el-table-column
+            prop="projectPrincipalName"
+            label="项目负责人"
+            width=""
+          >
+          </el-table-column>
+          <el-table-column prop="count" label="待批改" width="">
+            <template slot-scope="scope"> {{ scope.row.count }}人 </template>
           </el-table-column>
           <el-table-column label="操作" min-width="60%">
             <template slot-scope="scope">
@@ -54,13 +61,7 @@
                 type="text"
                 size="mini"
                 @click="handleEdit(scope.row.projectId)"
-                >布置实验</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="handleDelete(scope.row.projectId)"
-                >查看布置</el-button
+                >批改</el-button
               >
             </template>
           </el-table-column>
@@ -68,20 +69,13 @@
       </div>
       <!-- 分页 -->
       <div class="beiye">
-        <!-- <el-pagination
-          background
-          layout="prev, pager, next,total"
-          @current-change="handleCurrentChange"
-          :total="1000"
-        >
-        </el-pagination> -->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page.sync="pageNum"
           :page-size="pageSize"
-          background
           layout="prev, pager, next, jumper"
+          background
           :total="total"
         >
         </el-pagination>
@@ -89,16 +83,14 @@
     </div>
 
     <!-- 导出内容 -->
-
     <bosexport ref="son"></bosexport>
   </div>
 </template>
 
 <script>
-import { getChargeProject } from "@/api/teacher";
+import { getChargeProject, getAllCorrectShareProject } from "@/api/teacher";
 import { apiPath } from "@/config/env";
-import bosexport from "@/views/teacher/teachInner/export";
-
+import bosexport from "@/views/teacher/correctionShare/export";
 export default {
   components: {
     bosexport
@@ -106,8 +98,9 @@ export default {
   data() {
     return {
       url: apiPath,
+      input: "", //搜索值
       datalist: [], //列表
-      projectName: "", //项目名称
+      message: "", //项目名称
       pageNum: 1, //默认页
       total: null, //总条数
       pageSize: 10 //每页数量
@@ -115,11 +108,12 @@ export default {
   },
   methods: {
     //获取列表
-    getChargeProject() {
-      getChargeProject({
+
+    getAllCorrectShareProject() {
+      getAllCorrectShareProject({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        projectName: this.projectName
+        message: this.message
       })
         .then(res => {
           // console.log(res.data.list);
@@ -144,13 +138,10 @@ export default {
     },
     //搜索
     btnsearch() {
-      this.getChargeProject();
+      this.getAllCorrectShareProject();
     },
 
     // 导出
-    exportbiao() {
-      alert(111);
-    },
 
     //点击名称查看
     handJump(data) {
@@ -159,29 +150,20 @@ export default {
         query: { projectId: data }
       });
     },
-    //布置实验
+    //批改
     handleEdit(val) {
-      // console.log(val);
       this.$router.push({
-        path: "/teachInner/release",
+        path: "/correctionShare/correctList",
         query: { projectId: val }
       });
     },
-    //查看布置
-    handleDelete(val) {
-      this.$router.push({
-        path: "/teachInner/projectArrangement",
-        query: { projectId: val }
-      });
-    },
-
     //点击成绩导出
     addexport() {
       this.$refs.son.cloBol = true;
     }
   },
   mounted() {
-    this.getChargeProject();
+    this.getAllCorrectShareProject();
   }
 };
 </script>

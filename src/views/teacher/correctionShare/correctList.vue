@@ -11,8 +11,8 @@
             @select="handleSelect"
           >
             <el-menu-item index="">全部</el-menu-item>
-            <el-menu-item index="2">待批改</el-menu-item>
-            <el-menu-item index="3">已批改</el-menu-item>
+            <el-menu-item index="0">待批改</el-menu-item>
+            <el-menu-item index="1">已批改</el-menu-item>
           </el-menu>
         </div>
       </div>
@@ -76,9 +76,9 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="mustSubmitTime" label="	提交时间" width="">
+          <el-table-column prop="submitTime" label="	提交时间" width="">
             <template slot-scope="scope">
-              {{ scope.row.mustSubmitTime || "--" }}
+              {{ scope.row.submitTime || "--" }}
             </template>
           </el-table-column>
           <el-table-column prop="userName" label="	学号" width="">
@@ -90,7 +90,7 @@
               <el-button
                 type="text"
                 size="mini"
-                v-if="scope.row.accomplishCondition == 3"
+                v-if="scope.row.correctStatus == 1"
                 @click="handlelook(scope.row)"
               >
                 查看</el-button
@@ -100,16 +100,16 @@
                 type="text"
                 size="mini"
                 @click="handcorrect(scope.row)"
-                v-if="scope.row.accomplishCondition == 2"
+                v-if="scope.row.correctStatus == 0"
                 >批改</el-button
               >
-              <el-button
+              <!-- <el-button
                 type="text"
                 size="mini"
                 @click="handlerevoke(scope.row)"
                 v-if="scope.row.accomplishCondition == 3"
                 >撤销批改</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
@@ -129,13 +129,12 @@
 </template>
 
 <script>
-import { correct, repealCorrect } from "@/api/teacher";
+import { getCorrectList } from "@/api/teacher";
 export default {
   components: {},
   data() {
     return {
       projectId: "", //项目ID
-      assignId: "", //布置ID
       bosliet: [], //列表
 
       realName: "", //提交人
@@ -147,16 +146,16 @@ export default {
   },
   methods: {
     //获取信息列表
-    correct() {
-      correct({
-        assignId: this.assignId,
+    getCorrectList() {
+      getCorrectList({
+        projectId: this.projectId,
         pageNum: this.pageNum,
         pageSize: 10,
         realName: this.realName, //姓名
         correctStatus: this.correctStatus //状态
       })
         .then(res => {
-          console.log(res);
+          // console.log(res.data.list);
           if (res.code == 200) {
             this.bosliet = res.data.list;
             this.total = res.data.total;
@@ -167,37 +166,34 @@ export default {
 
     //选择状态
     handleSelect(key, keyPath) {
-      // console.log(key, keyPath);
       this.correctStatus = key;
-      this.correct();
+      this.getCorrectList();
     },
 
     //选择第几页
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.pageNum = val;
-      this.correct();
+      this.getCorrectList();
     },
     //搜索
     btnsearch() {
-      this.correct();
+      this.getCorrectList();
     },
 
     //返回
     turnback() {
       this.$router.push({
-        path: "/teachInner/projectArrangement",
-        query: { projectId: this.projectId }
+        path: "/correctionShare"
       });
     },
     //查看
     handlelook(val) {
       this.$router.push({
-        path: "/teachInner/Correcting",
+        path: "/correctionShare/Correcting",
         query: {
           projectId: this.projectId,
-          assignId: this.assignId,
-          submitId: val.submitId
+          correctId: val.correctId
         }
       });
     },
@@ -205,39 +201,37 @@ export default {
     //批改
     handcorrect(val) {
       this.$router.push({
-        path: "/teachInner/Correcting",
+        path: "/correctionShare/Correcting",
         query: {
           projectId: this.projectId,
-          assignId: this.assignId,
           submitId: val.submitId,
           userName: val.userName
         }
       });
-    },
-    //撤销批改
-    handlerevoke(val) {
-      repealCorrect({
-        assignId: this.assignId,
-        submitId: val.submitId,
-        userName: val.userName
-      })
-        .then(res => {
-          console.log(res);
-          if (res.code == 200) {
-            this.$message({
-              type: "success",
-              message: res.msg
-            });
-            this.correct();
-          }
-        })
-        .catch(err => {});
     }
+    //撤销批改
+    // handlerevoke(val) {
+    //   repealCorrect({
+    //     assignId: this.assignId,
+    //     submitId: val.submitId,
+    //     userName: val.userName
+    //   })
+    //     .then(res => {
+    //       console.log(res);
+    //       if (res.code == 200) {
+    //         this.$message({
+    //           type: "success",
+    //           message: res.msg
+    //         });
+    //         this.correct();
+    //       }
+    //     })
+    //     .catch(err => {});
+    // }
   },
   mounted() {
     this.projectId = this.$route.query.projectId;
-    this.assignId = this.$route.query.assignId;
-    this.correct();
+    this.getCorrectList();
   }
 };
 </script>

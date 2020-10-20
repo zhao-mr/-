@@ -57,20 +57,20 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
+                @click="correct(scope.row.assignId)"
               >
                 批改</el-button
               >
               <el-button
                 type="text"
                 size="mini"
-                @click="handleDelete(scope.$index, scope.row)"
+                @click="modify(scope.row.assignId)"
                 >编辑</el-button
               >
               <el-button
                 type="text"
                 size="mini"
-                @click="handleshan(scope.$index, scope.row)"
+                @click="remove(scope.row.assignId)"
                 >删除</el-button
               >
             </template>
@@ -92,12 +92,12 @@
 </template>
 
 <script>
-import { checkAssign } from "@/api/teacher";
+import { checkAssign, deleteAssign } from "@/api/teacher";
 export default {
   components: {},
   data() {
     return {
-      projectId: "", //id
+      projectId: 0, //id
       bosliet: [], //列表
       assignName: "", //名称
 
@@ -115,7 +115,7 @@ export default {
         assignName: this.assignName
       })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.code == 200) {
             this.bosliet = res.data.list;
             this.total = res.data.total;
@@ -133,7 +133,11 @@ export default {
 
     //点击实验名称查看实验信息
     handJump(val) {
-      alert(val);
+      // alert(val);
+      this.$router.push({
+        path: "/teachInner/seeassign",
+        query: { assignId: val, projectId: this.projectId }
+      });
     },
 
     //选择第几页
@@ -147,18 +151,49 @@ export default {
       this.checkAssign();
     },
 
+    //删除
+    remove(val) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          deleteAssign({
+            assignId: val
+          })
+            .then(res => {
+              console.log(res);
+              if (res.code == 200) {
+                this.$message({
+                  type: "success",
+                  message: res.msg
+                });
+                this.checkAssign();
+              }
+            })
+            .catch(err => {});
+        })
+        .catch(() => {});
+    },
+
     //返回
     turnback() {
       this.$router.push({ path: "/teachInner" });
     },
     //编辑
-    handleDelete() {
-      this.$router.push({ path: "/teachInner/release" });
-      // alert(111);
+    modify(val) {
+      this.$router.push({
+        path: "/teachInner/release",
+        query: { projectId: this.projectId, assignId: val }
+      });
     },
     //批改
-    handleEdit() {
-      this.$router.push({ path: "/teachInner/correctList" });
+    correct(val) {
+      this.$router.push({
+        path: "/teachInner/correctList",
+        query: { projectId: this.projectId, assignId: val }
+      });
     }
   },
   mounted() {

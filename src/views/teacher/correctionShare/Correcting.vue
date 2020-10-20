@@ -1,14 +1,14 @@
 <template>
   <div class="BosConer">
     <div class="Bostheme">
-      <h1>{{ assignName }}</h1>
+      <h1>{{ projectName }}</h1>
     </div>
     <div class="zongfei" v-if="bosshow">
       <h2>
         总分:
         <span ref="namezong">
           {{
-            (videoScoreScale * mustVideoStatus) / 100 +
+            (videoScoreScale * videoStatus) / 100 +
               (experimentScoreScale * experimentScore) / 100 +
               (reportScoreScale * this.inputbaogao) / 100
           }}
@@ -25,10 +25,10 @@
           <span
             >评分:
             <span ref="nameshipin">{{
-              (videoScoreScale * mustVideoStatus) / 100
+              (videoScoreScale * videoStatus) / 100
             }}</span></span
           >
-          <span>（={{ mustVideoStatus }}*{{ videoScoreScale }}%）</span>
+          <span>（={{ videoStatus }}*{{ videoScoreScale }}%）</span>
           <span></span>
         </div>
         <!-- bosshow -->
@@ -107,7 +107,7 @@
           type="textarea"
           :rows="6"
           placeholder="请输入内容"
-          v-model="mustExperimentContent"
+          v-model="experimentContent"
         >
         </el-input>
       </div>
@@ -142,22 +142,26 @@
 </template>
 
 <script>
-import { correctUser, correctResult, lookCorrect } from "@/api/teacher";
+import { lookCorrect2, correctShare, correctResult2 } from "@/api/teacher";
 export default {
   data() {
     return {
       projectId: "", //项目ID
-      assignId: "", //布置ID
+      // assignId: "", //布置ID
+      correctId: "", //查看ID
+
       submitId: "", //成绩ID
       userName: "", //用户名
 
-      assignName: "", //名称
+      studentId: "", //提交用户ID
+
+      projectName: "", //名称
 
       videoScoreScale: "", //视频成绩比例
-      mustVideoStatus: "", //视频成绩分数
+      videoStatus: "", //视频成绩分数
       experimentScoreScale: "", //实验成绩比例
       experimentScore: "", //实验成绩
-      mustExperimentContent: "", //报告内容
+      experimentContent: "", //报告内容
       reportScoreScale: "", //报告比例
 
       inputbaogao: "", //输入的值
@@ -171,24 +175,25 @@ export default {
   },
   methods: {
     //获取信息列表
-    correctUser() {
-      correctUser({
+    correctShare() {
+      correctShare({
         submitId: this.submitId
       })
         .then(res => {
           // console.log(res);
           if (res.code == 200) {
-            this.assignName = res.data.assignName;
+            this.projectName = res.data.projectName;
             this.videoScoreScale = res.data.videoScoreScale;
-            if (res.data.mustVideoStatus == true) {
-              this.mustVideoStatus = "100";
+            if (res.data.videoStatus == true) {
+              this.videoStatus = "100";
             } else {
-              this.mustVideoStatus = "0";
+              this.videoStatus = "0";
             }
             this.experimentScoreScale = res.data.experimentScoreScale;
             this.experimentScore = res.data.experimentScore;
-            this.mustExperimentContent = res.data.mustExperimentContent;
+            this.experimentContent = res.data.experimentContent;
             this.reportScoreScale = res.data.reportScoreScale;
+            this.studentId = res.data.studentId;
           }
         })
         .catch(err => {});
@@ -202,7 +207,7 @@ export default {
     //提交
     Result() {
       if (!this.inputbaogao == "" || !this.inputbaogao == null) {
-        this.correctResult();
+        this.correctResult2();
       } else {
         this.$message({
           showClose: true,
@@ -212,8 +217,8 @@ export default {
       }
     },
 
-    correctResult() {
-      correctResult({
+    correctResult2() {
+      correctResult2({
         userName: this.userName, //用户名
         experimentScore: this.$refs.nameshiyan.innerHTML, //实验成绩
         reportScore: this.$refs.namebaogaon.innerHTML, //报告成绩
@@ -224,20 +229,20 @@ export default {
         videoScoreScale: this.videoScoreScale, //视频成绩比例
         exercisesScoreScale: "", //习题成绩比例
         submitId: this.submitId, //学生成绩id
-        assignId: this.assignId, //布置id
+        userId: this.studentId, //用户id
         teacherComment: this.teacherComment, //评语
         totalScore: this.$refs.namezong.innerHTML //总分
       })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.code == 200) {
             this.$message({
               type: "success",
               message: res.msg
             });
             this.$router.push({
-              path: "/teachInner/correctList",
-              query: { projectId: this.projectId, assignId: this.assignId }
+              path: "/correctionShare/correctList",
+              query: { projectId: this.projectId }
             });
           }
         })
@@ -247,29 +252,23 @@ export default {
     //取消/返回
     cancel() {
       this.$router.push({
-        path: "/teachInner/correctList",
-        query: { projectId: this.projectId, assignId: this.assignId }
+        path: "/correctionShare/correctList",
+        query: { projectId: this.projectId }
       });
     },
 
     //查看批改结果
-    lookCorrect() {
-      lookCorrect({
-        assignId: this.assignId,
-        submitId: this.submitId
+    lookCorrect2() {
+      lookCorrect2({
+        correctId: this.correctId
       })
         .then(res => {
           console.log(res);
           if (res.code == 200) {
-            this.assignName = res.data.assignName;
+            this.projectName = res.data.projectName;
             this.totalScore = res.data.totalScore;
             this.videoScore = res.data.videoScore;
             this.videoScoreScale = res.data.videoScoreScale;
-            //   if (res.data.mustVideoStatus == true) {
-            //     this.mustVideoStatus = "100";
-            //   } else {
-            //     this.mustVideoStatus = "0";
-            //   }
             this.experimentScoreScale = res.data.experimentScoreScale;
             this.experimentScore = res.data.experimentScore;
             this.reportScore = res.data.reportScore;
@@ -282,21 +281,35 @@ export default {
   },
   mounted() {
     this.projectId = this.$route.query.projectId;
-    this.assignId = this.$route.query.assignId;
+    // this.correctId = this.$route.query.correctId;correctId
     this.submitId = this.$route.query.submitId;
     this.userName = this.$route.query.userName;
-    console.log(this.$route.query.userName);
+
+    this.correctId = this.$route.query.correctId;
+    //查看ID
     if (
-      this.$route.query.userName == undefined ||
-      this.$route.query.userName == null ||
-      this.$route.query.userName == ""
+      !this.$route.query.correctId == undefined ||
+      !this.$route.query.correctId == "" ||
+      !this.$route.query.correctId == null
     ) {
       this.bosshow = false;
-      this.lookCorrect();
+      this.lookCorrect2();
     } else {
-      this.correctUser();
+      this.correctShare();
       this.bosshow = true;
     }
+
+    // if (
+    //   this.$route.query.userName == undefined ||
+    //   this.$route.query.userName == null ||
+    //   this.$route.query.userName == ""
+    // ) {
+    //   this.bosshow = false;
+    //   this.lookCorrect();
+    // } else {
+    //   this.correctShare();
+    //   this.bosshow = true;
+    // }
   }
 };
 </script>
