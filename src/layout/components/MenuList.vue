@@ -81,19 +81,35 @@
               <i class="el-icon-user"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="/userManage/teacher">教师管理</el-menu-item>
-            <el-menu-item index="/userManage/student">学生管理</el-menu-item>
+            <el-menu-item index="/userManage/teacher">
+              <span>教师管理</span>
+            </el-menu-item>
+            <el-menu-item index="/userManage/student">
+              <span>学生管理</span>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="/groupManage">
             <template slot="title">
               <i class="el-icon-notebook-1"></i>
               <span>分组管理</span>
             </template>
-            <el-menu-item index="/groupManage/college">院校管理</el-menu-item>
-            <el-menu-item index="/groupManage/clazz">班级管理</el-menu-item>
+            <el-menu-item index="/groupManage/college"><span>院校管理</span></el-menu-item>
+            <el-menu-item index="/groupManage/clazz"><span>班级管理</span></el-menu-item>
           </el-submenu>
         </template>
         <!--<sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />-->
+
+        <!--网络管理员-->
+        <template v-if="roles === 6">
+          <el-menu-item index="/news">
+            <i class="el-icon-message"></i>
+            <span>资讯动态</span>
+          </el-menu-item>
+          <el-menu-item index="/downloadCenter">
+            <i class="el-icon-upload"></i>
+            <span>下载中心</span>
+          </el-menu-item>
+        </template>
       </el-menu>
     </el-scrollbar>
   </div>
@@ -148,14 +164,19 @@ export default {
       // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生; addProject 项目添加员
       // 1：系统管理员；2：项目添加员； 3：项目管理员；4：教师；5：student
       
-      let arr = this.$store.state.user.roles;
-      let role = arr[0]; // 最大的角色
-      arr.forEach(item => {
-        if (item.roleId < role.roleId) {
-          role = item
-        }
-      });
-      this.roles = role.roleId
+      if (this.$store.state.user.currentRole) {
+        this.roles = this.$store.state.user.currentRole.roleId
+      } else {
+        let arr = this.$store.state.user.roles;
+        let role = arr[0]; // 最大的角色
+        arr.forEach(item => {
+          if (item.roleId < role.roleId) {
+            role = item
+          }
+        });
+        this.$store.dispatch('setCurrentRole', role)
+        this.roles = this.$store.state.user.currentRole.roleId
+      }
     }
   }
 };
