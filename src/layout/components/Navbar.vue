@@ -57,8 +57,8 @@
       width="30%"
       :modal-append-to-body="false"
     >
-      <el-radio-group v-model="roleId">
-        <el-radio :label="role.roleId" v-for="role in roleList" :key="role.roleId" style="margin-bottom: 16px;">{{role.roleName}}</el-radio>
+      <el-radio-group v-model="role">
+        <el-radio :label="role" v-for="role in roleList" :key="role.roleId" style="margin-bottom: 16px;">{{role.roleName}}</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -85,7 +85,7 @@ export default {
       count: 0,
       noticeList: [],
       dialogVisible: false,
-      roleId: null, // 选中的角色
+      role: null, // 选中的角色
       roleList: [], // 用户所拥有的所有角色
     }
   },
@@ -97,13 +97,7 @@ export default {
   },
   mounted() {
     this.roleList = this.$store.state.user.roles;
-    let role = this.roleList[0]; // 最大的角色
-    this.roleList.forEach(item => {
-      if (item.roleId < role.roleId) {
-        role = item
-      }
-    });
-    this.roleId = role.roleId;
+    this.role = this.$store.state.user.currentRole;
     this.getNewNotice();
     this.$bus.on('noRead', () => {
       console.log('this.$bus.on,noRead')
@@ -121,6 +115,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('logout')
+        this.$store.dispatch('setCurrentRole', null)
         this.$router.push(`/login`)
       }).catch(() => {
         // 如果取消跳转地址栏会变化，这时保持地址栏不变
@@ -170,8 +165,9 @@ export default {
       this.dialogVisible = true;
     },
     changeRole() {
-      this.$bus.emit('changeRole', this.roleId)
+      this.$bus.emit('changeRole', this.role.roleId)
       console.log('this.$bus.emit====changeRole')
+      this.$store.dispatch('setCurrentRole', this.role)
       this.dialogVisible = false
     },
   },

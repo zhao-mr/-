@@ -108,7 +108,39 @@ export default {
           this.$store.dispatch('login', this.loginForm).then(res => {
             if (res.code === 200) {
               this.loading = false
-              this.$router.push({ path: '/home' })
+              // this.$router.push({ path: '/home' })
+              let arr = res.data.roles;
+              let role = arr[0]; // 最大的角色
+              arr.forEach(item => {
+                if (item.roleId < role.roleId) {
+                  role = item
+                }
+              });
+              let path = '';
+              switch(role.roleId) {
+                case 1: // 系统管理员
+                  path = '/userManage/teacher';
+                  break;
+                case 2: // 项目添加人
+                  path = '/projectList/list';
+                  break;
+                case 3: // 项目管理员
+                  path = '/projectManage';
+                  break;
+                case 4: // 项目负责人
+                  path = '/projectMaintain';
+                  break;
+                case 5: // 学生
+                  path = '/allExperiment';
+                  break;
+                case 6: // 门户网站管理员
+                  path = '/news';
+                  break;          
+              }
+              this.$router.push({
+                path: path
+              });
+              this.$store.dispatch('setCurrentRole', role)
             }
           }).catch(error => {
             this.loading = false

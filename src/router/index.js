@@ -35,11 +35,28 @@ import Layout from '@/layout'
 const routerMain = () => import('@/layout/components/AppMain')
 
 export const constantRoutes = [
-  // {
-  //   path: '/home',
-  //   component: () => import('@/views/homePage/index'),
-  //   hidden: true
-  // },
+  {
+    path: '/',
+    component: () => import('@/views/homePage/index'),
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/homePage/allExperiment'),
+        hidden: true,
+      },
+      {
+        path: 'dynamicInfo',
+        component: () => import('@/views/homePage/news/index'),
+        hidden: true,
+      },
+      {
+        path: 'download',
+        component: () => import('@/views/homePage/download/index'),
+        hidden: true,
+      },
+    ]
+  },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -62,15 +79,15 @@ export const constantRoutes = [
     redirect: '/home',
     mark: true,
     children: [
-      {
-        path: 'home',
-        name: 'home',
-        component: () => import('@/views/index'),
-        meta: {
-          title: '首页',
-          icon: 'user'
-        },
-      },
+      // {
+      //   path: 'home',
+      //   name: 'home',
+      //   component: () => import('@/views/index'),
+      //   meta: {
+      //     title: '首页',
+      //     icon: 'user'
+      //   },
+      // },
       {
         path: 'projectList',
         name: 'projectList',
@@ -376,7 +393,46 @@ export const constantRoutes = [
           title: '通知列表',
           icon: ''
         }
-      }
+      },
+      {
+        path: 'news',
+        name: 'news',
+        component: () => import('@/views/webAdmin/news/index'),
+        meta: {
+          title: '资讯动态',
+          icon: ''
+        },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/webAdmin/news/news'),
+          },
+          {
+            path: 'addNews',
+            name: 'addNews',
+            component: () => import('@/views/webAdmin/news/addNews'),
+            meta: {
+              title: '添加资讯',
+              icon: ''
+            },
+          }
+        ]
+      },
+      {
+        path: 'downloadCenter',
+        name: 'downloadCenter',
+        component: () => import('@/views/webAdmin/downloadCenter/index'),
+        meta: {
+          title: '下载中心',
+          icon: ''
+        },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/webAdmin/downloadCenter/download')
+          }
+        ]
+      },
     ]
   },
   /*
