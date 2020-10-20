@@ -1,83 +1,83 @@
 <!--通知管理-->
 <template>
   <div class="notice-container">
-    <!-- <h4>通知管理</h4> -->
-    <div class="header">
-      <div class="header-left">
-        <el-input
-          placeholder="请输入标题"
-          class="title"
-          v-model="title"
-        ></el-input>
-        <!-- <el-input placeholder="请输入标题" class="title" v-model="title">
-          <i slot="suffix" class="el-input__icon el-icon-search"></i>
-        </el-input> -->
-        <el-date-picker
-          v-model="date"
-          align="right"
-          type="date"
-          placeholder="选择发布时间"
-          :picker-options="pickerOptions"
-        >
-        </el-date-picker>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          style="margin-left: 10px"
-          @click="getAllNotice"
-          >搜索</el-button
-        >
+    <el-card>
+      <div class="header">
+        <div class="header-left">
+          <el-input
+            placeholder="请输入标题"
+            class="title"
+            v-model="title"
+          ></el-input>
+          <!-- <el-input placeholder="请输入标题" class="title" v-model="title">
+            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+          </el-input> -->
+          <el-date-picker
+            v-model="date"
+            align="right"
+            type="date"
+            placeholder="选择发布时间"
+            :picker-options="pickerOptions"
+          >
+          </el-date-picker>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            style="margin-left: 10px"
+            @click="getAllNotice"
+            >搜索</el-button
+          >
+        </div>
+        <div class="header-right">
+          <el-button type="primary" @click="turnAddNotice">发布通知</el-button>
+          <el-button type="primary" @click="batchDel" :disabled="isDisabled"
+            >批量删除</el-button
+          >
+        </div>
       </div>
-      <div class="header-right">
-        <el-button type="primary" @click="turnAddNotice">发布通知</el-button>
-        <el-button type="primary" @click="batchDel" :disabled="isDisabled"
-          >批量删除</el-button
+      <div class="main">
+        <el-table
+          border
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%; margin-bottom: 16px"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection"> </el-table-column>
+          <el-table-column
+            prop="noticeContent"
+            label="标题"
+            show-overflow-tooltip
+            align="center"
+          >
+          </el-table-column>
+          <el-table-column prop="noticeDate" label="发布时间" align="center">
+          </el-table-column>
+          <el-table-column prop="validDate" label="有效期限" align="center">
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                @click="toLook(scope.row.noticeId)"
+                type="text"
+                size="small"
+                >查看</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
-    </div>
-    <div class="main">
-      <el-table
-        border
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%; margin-bottom: 16px"
-        @selection-change="handleSelectionChange"
+    </el-card>
+    <div style="text-align: center; margin-top: 30px;">
+      <el-pagination
+        background
+        layout="total, prev, pager, next, sizes"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :page-sizes="[10, 20, 30, 40]"
       >
-        <el-table-column type="selection"> </el-table-column>
-        <el-table-column
-          prop="noticeContent"
-          label="标题"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column prop="noticeDate" label="发布时间" align="center">
-        </el-table-column>
-        <el-table-column prop="validDate" label="有效期限" align="center">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              @click="toLook(scope.row.noticeId)"
-              type="text"
-              size="small"
-              >查看</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div style="text-align: center">
-        <el-pagination
-          background
-          layout="total, prev, pager, next, sizes"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[10, 20, 30, 40]"
-        >
-        </el-pagination>
-      </div>
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -151,6 +151,7 @@ export default {
         path: "/teacherNotice/lookNotice",
         query: {
           noticeId: noticeId,
+          isNoReadPage: false
         },
       });
     },
@@ -181,12 +182,13 @@ export default {
       getAllNotice(param)
         .then((res) => {
           if (res.code === 200) {
-            let time = new Date();
+            let date = new Date();
+            let yesterday = date.setTime(date.getTime()-24*60*60*1000)
             res.data.list.forEach((item) => {
               if (item.validDate === null) {
                 item.validDate = "长期有效";
               }
-              if (time > new Date(item.validDate)) {
+              if (yesterday > new Date(item.validDate)) {
                 item.validDate = item.validDate + "(已过期)";
               }
             });
@@ -244,12 +246,6 @@ export default {
 
 <style lang="scss" scoped>
 .notice-container {
-  padding-top: 15px;
-  // h4 {
-  //   font-size: 20px;
-  //   color: #4a535c;
-  //   margin-top: 0;
-  // }
   .header {
     display: flex;
     justify-content: space-between;
@@ -269,7 +265,7 @@ export default {
     }
   }
   .main {
-    margin-top: 16px;
+    margin-top: 24px;
   }
 }
 </style>
