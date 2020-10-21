@@ -48,16 +48,34 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
+    // if (res.code !== 200) {
+    //   Message({
+    //     message: res.msg || 'Error',
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    //   return Promise.reject(new Error(res.msg || 'Error'))
+    // } else {
+    //   return res
+    // }
+
+
+    if (res.code == 200) {
+      return res
+    } else if (res.code == 413) {
       Message({
         message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-
-      return Promise.reject(new Error(res.msg || 'Error'))
+      this.$router.push('/login')
     } else {
-      return res
+        Message({
+          message: res.msg || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return Promise.reject(new Error(res.msg || 'Error'))
     }
   },
   error => {

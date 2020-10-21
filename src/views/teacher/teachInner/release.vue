@@ -2,7 +2,12 @@
   <div class="bos">
     <div class="botntop">
       <el-row>
-        <el-button type="primary" @click="turnback">返 回</el-button>
+        <el-button type="primary" @click="turnback" v-if="blockbot"
+          >返 回</el-button
+        >
+        <el-button type="primary" @click="turnback2" v-if="!blockbot"
+          >返 回</el-button
+        >
       </el-row>
     </div>
 
@@ -26,6 +31,7 @@
               format="yyyy-MM-dd"
               :picker-options="pickerOptionsStart"
               @change="startTimeStatus"
+              style="width:100%"
             >
             </el-date-picker>
           </div>
@@ -41,6 +47,7 @@
               format="yyyy-MM-dd"
               :picker-options="pickerOptionsEnd"
               @change="endTimeStatus"
+              style="width:100%"
             >
             </el-date-picker>
           </div>
@@ -96,23 +103,30 @@
           <div class="Boslfeit"></div>
           <div class="Boslrige">
             <div class="Bosbian">
-              <el-tag
-                v-for="tag in tagsleit"
-                :key="tag.userId"
-                closable
-                type="success"
-                @close="handleClose(tag)"
-              >
-                {{ tag.realName }}
-              </el-tag>
-              <!-- {{ tagsleit }} -->
+              <div>
+                <el-tag
+                  v-for="tag in tagsleit"
+                  :key="tag.userId"
+                  closable
+                  type="success"
+                  @close="handleClose(tag)"
+                  v-if="isExist(tag.userId)"
+                >
+                  {{ tag.realName }}
+                </el-tag>
+              </div>
+              <div>
+                <el-tag v-for="tag in tagsleit2" :key="tag.userId" type="info">
+                  {{ tag.realName }}
+                </el-tag>
+              </div>
             </div>
           </div>
         </li>
         <li>
           <div class="Boslfeit">成绩比例：</div>
           <div class="Boslrige lrigechen">
-            <div>
+            <div class="Leidiv">
               实验成绩
               <el-input
                 v-model="experimentScore"
@@ -122,7 +136,7 @@
               ></el-input
               >%
             </div>
-            <div>
+            <div class="Leidiv">
               报告成绩<el-input
                 v-model="reportScore"
                 placeholder="请输入"
@@ -130,7 +144,7 @@
               ></el-input
               >%
             </div>
-            <div>
+            <div class="Leidiv">
               视频成绩<el-input
                 v-model="videoScore"
                 placeholder="请输入"
@@ -153,7 +167,13 @@
 </template>
 
 <script>
-import { getAssignProject, getStudent, assignExperiment } from "@/api/teacher";
+import {
+  getAssignProject,
+  getStudent,
+  assignExperiment,
+  getAssignDetails,
+  updateAssign
+} from "@/api/teacher";
 import { getGroup } from "@/api/superAdmin";
 export default {
   data() {
@@ -201,14 +221,25 @@ export default {
       tbClassId: "", //班级的值
 
       tagsleit: [], //学生值
+      tagsleit2: [], //学生回显值
 
-      bostagszhi: [] //传后台学生值
+      bostagszhi: [], //传后台学生值
+
+      assignId: "", //获取内容ID
+      blockbot: true //按钮判断
     };
   },
   methods: {
     //返回
     turnback() {
       this.$router.push({ path: "/teachInner" });
+    },
+    //返回2
+    turnback2() {
+      this.$router.push({
+        path: "/teachInner/projectArrangement",
+        query: { projectId: this.projectId }
+      });
     },
 
     // 时间开始选择器
@@ -331,10 +362,8 @@ export default {
       this.tagsleit.splice(this.tagsleit.indexOf(tag), 1);
     },
 
-    //提交
-    Submit() {
+    tijiao1() {
       var xuenams = this.tagsleit;
-
       for (let i = 0; i < xuenams.length; i++) {
         this.bostagszhi.push(xuenams[i].userName);
       }
@@ -375,9 +404,59 @@ export default {
         }
       }
     },
+    tijiao2() {
+      var xuenams = this.tagsleit;
+      for (let i = 0; i < xuenams.length; i++) {
+        this.bostagszhi.push(xuenams[i].userName);
+      }
+
+      var chenji1 = this.experimentScore; //实验成绩
+      var chenji2 = this.reportScore; //报告成绩
+      var chenji3 = this.videoScore; //视频成绩
+      var boschenji = Number(chenji1) + Number(chenji2) + Number(chenji3);
+
+      if (this.projectName == "") {
+        this.$message({
+          message: "请输入名称",
+          type: "warning"
+        });
+      } else if (this.startTime == "" || this.startTime == null) {
+        this.$message({
+          message: "请输入开始时间",
+          type: "warning"
+        });
+      } else if (this.endTime == "" || this.endTime == null) {
+        this.$message({
+          message: "请输入结束时间",
+          type: "warning"
+        });
+      } else {
+        if (boschenji == 100) {
+          this.updateAssign();
+        } else {
+          this.$message({
+            message: "实验成绩，报告成绩，视频成绩三者必须共达到100%",
+            type: "warning"
+          });
+        }
+      }
+    },
+    //提交
+    Submit() {
+      if (
+        this.assignId == undefined ||
+        this.assignId == "" ||
+        this.assignId == null
+      ) {
+        this.tijiao1();
+      } else {
+        this.tijiao2();
+      }
+    },
 
     assignExperiment() {
       assignExperiment({
+        assignProjectId: this.projectId, //实验ID
         assignName: this.projectName, //名称
         projectBeginTime: this.startTime, //开始时间
         projectEndTime: this.endTime, //结束时间
@@ -400,12 +479,81 @@ export default {
           }
         })
         .catch(err => {});
+    },
+    isExist(_id) {
+      let status = true;
+      for (let i = 0; i < this.tagsleit2.length; i++) {
+        if (this.tagsleit2[i].userId === _id) {
+          status = false;
+        }
+      }
+      return status;
+    },
+    //获取信息
+    getAssignDetails() {
+      getAssignDetails({
+        assignId: this.assignId
+      })
+        .then(res => {
+          // console.log(res);
+          if (res.code == 200) {
+            this.projectName = res.data.assignName;
+            this.startTime = res.data.projectBeginTime;
+            this.endTime = res.data.projectEndTime;
+            this.experimentScore = res.data.experimentScore;
+            this.reportScore = res.data.reportScore;
+            this.videoScore = res.data.videoScore;
+            this.tagsleit2 = res.data.userNames;
+          }
+        })
+        .catch(err => {});
+    },
+    //修改
+    updateAssign() {
+      updateAssign({
+        assignId: this.assignId, //布置的id
+        assignName: this.projectName, //名称
+        projectBeginTime: this.startTime, //开始时间
+        projectEndTime: this.endTime, //结束时间
+        userNames: this.bostagszhi, //学生值
+        experimentScore: this.experimentScore, //实验分数
+        reportScore: this.reportScore, //报告分数
+        videoScore: this.videoScore, //视频分数
+        exercisesScore: ""
+      })
+        .then(res => {
+          console.log(res);
+          if (res.code == 200) {
+            this.$message({
+              showClose: true,
+              message: res.msg,
+              type: "success"
+            });
+            this.$router.push({
+              path: "/teachInner/projectArrangement",
+              query: { projectId: this.projectId }
+            });
+          }
+        })
+        .catch(err => {});
     }
   },
   mounted() {
-    this.projectId = this.$route.query.projectId;
-    this.getAssignProject();
+    this.projectId = this.$route.query.projectId; //项目ID
+    this.assignId = this.$route.query.assignId; //布置ID
+
     this.getGroup();
+    if (
+      !this.assignId == undefined ||
+      !this.assignId == "" ||
+      !this.assignId == null
+    ) {
+      this.getAssignDetails();
+      this.blockbot = false;
+    } else {
+      this.getAssignProject();
+      this.blockbot = true;
+    }
   }
 };
 </script>
@@ -449,6 +597,8 @@ export default {
 
   justify-content: space-between;
 }
+.Leidiv {
+}
 .Condeaout li .auot {
   width: 100%;
   text-align: center;
@@ -465,17 +615,17 @@ export default {
 }
 </style>
 <style>
-.Condeaout li .Boslrige .el-input {
+/* .Condeaout li .Boslrige .el-input {
   width: 300px;
-}
-.Condeaout li .rigeinp .el-input {
+} */
+/* .Condeaout li .rigeinp .el-input {
   width: 200px;
-}
+} */
 .resizeNone .el-textarea__inner {
   resize: none;
 }
 .Condeaout li .lrigechen .el-input {
-  width: 100px;
+  width: 40%;
   margin: 0 5px;
 }
 

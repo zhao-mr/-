@@ -152,8 +152,21 @@ export function getNewNotice() {
  */
 export function getAllNoticeToMe(param) {
   return request({
-    url: 'notice/getAllNoticeToMyself',
-    method: 'get',
-    param
+    url: `notice/getAllNoticeToMyself?pageNum=${param.pageNum}&pageSize=${param.pageSize}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 用户读取通知 (用户点击未读的通知，改变状态已读并返回通知内容，可供查看)
+ * @param {*} noticeId 
+ */
+export function readNotice(noticeId) {
+  return request({
+    url: 'notice/lookNotice',
+    method: 'post',
+    data: {
+      noticeId
+    }
   })
 }

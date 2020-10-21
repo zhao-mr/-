@@ -1,35 +1,24 @@
-<!--通知管理-->
+<!--咨询动态-->
 <template>
-  <div class="notice-container">
-    <el-card>
+  <div class="download-container">
+    <el-card class="box-card">
       <div class="header">
         <div class="header-left">
           <el-input
-            placeholder="请输入标题"
+            placeholder="请输入名称"
             class="title"
             v-model="title"
           ></el-input>
-          <!-- <el-input placeholder="请输入标题" class="title" v-model="title">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input> -->
-          <el-date-picker
-            v-model="date"
-            align="right"
-            type="date"
-            placeholder="选择发布时间"
-            :picker-options="pickerOptions"
-          >
-          </el-date-picker>
           <el-button
             type="primary"
             icon="el-icon-search"
             style="margin-left: 10px"
-            @click="getAllNotice"
+            @click="getAll"
             >搜索</el-button
           >
         </div>
         <div class="header-right">
-          <el-button type="primary" @click="turnAddNotice">发布通知</el-button>
+          <el-button type="primary">上传</el-button>
           <el-button type="primary" @click="batchDel" :disabled="isDisabled"
             >批量删除</el-button
           >
@@ -40,34 +29,27 @@
           border
           :data="tableData"
           tooltip-effect="dark"
-          style="width: 100%; margin-bottom: 16px"
+          style="width: 100%;"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection"> </el-table-column>
           <el-table-column
             prop="noticeContent"
-            label="标题"
+            label="名称"
             show-overflow-tooltip
             align="center"
           >
           </el-table-column>
-          <el-table-column prop="noticeDate" label="发布时间" align="center">
+          <el-table-column prop="noticeDate" label="时间" align="center">
           </el-table-column>
-          <el-table-column prop="validDate" label="有效期限" align="center">
+          <el-table-column prop="validDate" label="上传人" align="center">
           </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <el-button
-                @click="toLook(scope.row.noticeId)"
-                type="text"
-                size="small"
-                >查看</el-button
-              >
-            </template>
+          <el-table-column prop="validDate" label="类型" align="center">
           </el-table-column>
         </el-table>
       </div>
     </el-card>
+    
     <div style="text-align: center; margin-top: 30px;">
       <el-pagination
         background
@@ -79,6 +61,7 @@
       >
       </el-pagination>
     </div>
+
   </div>
 </template>
 
@@ -91,36 +74,6 @@ export default {
   data() {
     return {
       title: "",
-      date: null,
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-        shortcuts: [
-          {
-            text: "今天",
-            onClick(picker) {
-              picker.$emit("pick", new Date());
-            },
-          },
-          {
-            text: "昨天",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit("pick", date);
-            },
-          },
-          {
-            text: "一周前",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", date);
-            },
-          },
-        ],
-      },
       tableData: [],
       multipleSelection: [],
       pageNum: 1,
@@ -130,7 +83,7 @@ export default {
     };
   },
   mounted() {
-    this.getAllNotice();
+    this.getAll();
   },
   methods: {
     handleSelectionChange(val) {
@@ -143,23 +96,13 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      this.getAllNotice();
-    },
-    toLook(noticeId) {
-      console.log(noticeId);
-      this.$router.push({
-        path: "/teacherNotice/lookNotice",
-        query: {
-          noticeId: noticeId,
-          isNoReadPage: false
-        },
-      });
+      this.getAll();
     },
     handleCurrentChange(val) {
       this.pageNum = val;
-      this.getAllNotice();
+      this.getAll();
     },
-    getAllNotice() {
+    getAll() {
       let d = new Date(this.date);
       let datetime =
         d.getFullYear() +
@@ -175,7 +118,6 @@ export default {
         d.getSeconds();
       let param = {
         noticeContent: this.title,
-        noticeDate: datetime === "1970-1-1 8:0:0" ? null : datetime,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
@@ -200,9 +142,6 @@ export default {
           this.$message.error(err.msg);
         });
     },
-    turnAddNotice() {
-      this.$router.push("/teacherNotice/addNotice");
-    },
     batchDel() {
       let ids = [];
       this.multipleSelection.forEach((item) => {
@@ -223,7 +162,7 @@ export default {
                   type: "success",
                   message: "删除成功!",
                 });
-                that.getAllNotice();
+                that.getAll();
               }
             })
             .catch((err) => {
@@ -245,7 +184,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notice-container {
+.download-container {
+  // padding-top: 15px;
   .header {
     display: flex;
     justify-content: space-between;
@@ -267,5 +207,10 @@ export default {
   .main {
     margin-top: 24px;
   }
+
 }
+::v-deep .el-card__body {
+  padding: 40px;
+}
+
 </style>

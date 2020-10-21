@@ -1,7 +1,7 @@
-<!--通知管理-->
+<!--咨询动态-->
 <template>
-  <div class="notice-container">
-    <el-card>
+  <div class="news-container">
+    <el-card class="box-card">
       <div class="header">
         <div class="header-left">
           <el-input
@@ -9,27 +9,16 @@
             class="title"
             v-model="title"
           ></el-input>
-          <!-- <el-input placeholder="请输入标题" class="title" v-model="title">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input> -->
-          <el-date-picker
-            v-model="date"
-            align="right"
-            type="date"
-            placeholder="选择发布时间"
-            :picker-options="pickerOptions"
-          >
-          </el-date-picker>
           <el-button
             type="primary"
             icon="el-icon-search"
             style="margin-left: 10px"
-            @click="getAllNotice"
+            @click="getAllNews"
             >搜索</el-button
           >
         </div>
         <div class="header-right">
-          <el-button type="primary" @click="turnAddNotice">发布通知</el-button>
+          <el-button type="primary" @click="toAddNews">添加资讯</el-button>
           <el-button type="primary" @click="batchDel" :disabled="isDisabled"
             >批量删除</el-button
           >
@@ -40,97 +29,96 @@
           border
           :data="tableData"
           tooltip-effect="dark"
-          style="width: 100%; margin-bottom: 16px"
+          style="width: 100%;"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection"> </el-table-column>
           <el-table-column
-            prop="noticeContent"
+            prop="newsTitle"
             label="标题"
             show-overflow-tooltip
             align="center"
           >
           </el-table-column>
-          <el-table-column prop="noticeDate" label="发布时间" align="center">
+          <el-table-column prop="newsDate" label="发布时间" align="center">
           </el-table-column>
-          <el-table-column prop="validDate" label="有效期限" align="center">
+          <el-table-column prop="newsSource" label="来源" align="center">
           </el-table-column>
+          <!-- <el-table-column prop="validDate" label="类型" align="center">
+          </el-table-column> -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
-                @click="toLook(scope.row.noticeId)"
+                @click="openPreviewDialog()"
                 type="text"
                 size="small"
-                >查看</el-button
+                >预览</el-button
               >
             </template>
           </el-table-column>
         </el-table>
       </div>
     </el-card>
+    
     <div style="text-align: center; margin-top: 30px;">
       <el-pagination
         background
-        layout="total, prev, pager, next, sizes"
+        layout="total, prev, pager, next"
         :total="total"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :page-sizes="[10, 20, 30, 40]"
       >
       </el-pagination>
     </div>
+
+    <!-- 预览 -->
+    <el-dialog
+      title="预览"
+      :visible.sync="previewDialogVisible"
+      width="80%"
+      class="previewDialog"
+    >
+      <div class="preview-news">
+        <div class="preview-news-header">
+          <hr>
+          <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
+          <div>
+            <span style="padding-right: 24px;">来源：校级内容管理员</span>
+            <span>发稿时间：2019-6-5 22:53:00</span>
+          </div>
+        </div>
+        <p class="preview-news-content">
+          为深入学习贯彻全国教育大会及新时代全国高等学校本科教育工作会议精神，深入推进信息技术与高等教育实验教学的深度融合，不断加强高等教育实验教学优质资源建设、应用与共享， 打造实验“金课”，根据《教育部办公厅关于 2017—2020 年开展示范性虚拟仿真实验教学项目建设的通知》（教高厅〔2017〕4 号） 和《上海市教育委员会关于开展 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知》（沪教委高〔2019〕18 号）等文件精神，学校决定组织开展报送 2019 年度上海市级虚拟仿真实验教学项目认定相关工作。现将有关事项通知如下：
+        </p>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="previewDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllNotice, batchDel } from "@/api/admin";
+import { batchDel } from "@/api/admin";
+import { getAllNews } from "@/api/webAdmin";
 
 export default {
-  name: "adminNotice",
+  name: "news",
   computed: {},
   data() {
     return {
       title: "",
-      date: null,
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-        shortcuts: [
-          {
-            text: "今天",
-            onClick(picker) {
-              picker.$emit("pick", new Date());
-            },
-          },
-          {
-            text: "昨天",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit("pick", date);
-            },
-          },
-          {
-            text: "一周前",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", date);
-            },
-          },
-        ],
-      },
       tableData: [],
       multipleSelection: [],
       pageNum: 1,
       pageSize: 10,
       total: 0,
       isDisabled: true,
+      previewDialogVisible: false
     };
   },
   mounted() {
-    this.getAllNotice();
+    this.getAllNews();
   },
   methods: {
     handleSelectionChange(val) {
@@ -141,57 +129,24 @@ export default {
         this.isDisabled = true;
       }
     },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.getAllNotice();
-    },
-    toLook(noticeId) {
-      console.log(noticeId);
-      this.$router.push({
-        path: "/teacherNotice/lookNotice",
-        query: {
-          noticeId: noticeId,
-          isNoReadPage: false
-        },
-      });
+    openPreviewDialog() {
+      this.previewDialogVisible = true
     },
     handleCurrentChange(val) {
       this.pageNum = val;
-      this.getAllNotice();
+      this.getAllNews();
     },
-    getAllNotice() {
-      let d = new Date(this.date);
-      let datetime =
-        d.getFullYear() +
-        "-" +
-        (d.getMonth() + 1) +
-        "-" +
-        d.getDate() +
-        " " +
-        d.getHours() +
-        ":" +
-        d.getMinutes() +
-        ":" +
-        d.getSeconds();
+    getAllNews() {
       let param = {
-        noticeContent: this.title,
-        noticeDate: datetime === "1970-1-1 8:0:0" ? null : datetime,
+        newsTitle: this.title,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
+        year: null,
+        month: null
       };
-      getAllNotice(param)
+      getAllNews(param)
         .then((res) => {
           if (res.code === 200) {
-            let date = new Date();
-            let yesterday = date.setTime(date.getTime()-24*60*60*1000)
-            res.data.list.forEach((item) => {
-              if (item.validDate === null) {
-                item.validDate = "长期有效";
-              }
-              if (yesterday > new Date(item.validDate)) {
-                item.validDate = item.validDate + "(已过期)";
-              }
-            });
             this.tableData = res.data.list;
             this.total = res.data.total;
           }
@@ -200,8 +155,8 @@ export default {
           this.$message.error(err.msg);
         });
     },
-    turnAddNotice() {
-      this.$router.push("/teacherNotice/addNotice");
+    toAddNews() {
+      this.$router.push("/news/addNews");
     },
     batchDel() {
       let ids = [];
@@ -223,7 +178,7 @@ export default {
                   type: "success",
                   message: "删除成功!",
                 });
-                that.getAllNotice();
+                that.getAllNews();
               }
             })
             .catch((err) => {
@@ -245,7 +200,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notice-container {
+.news-container {
+  // padding-top: 15px;
   .header {
     display: flex;
     justify-content: space-between;
@@ -267,5 +223,42 @@ export default {
   .main {
     margin-top: 24px;
   }
+
+  .previewDialog {
+    .preview-news {
+      .preview-news-header {
+        margin-bottom: 20px;
+        border-bottom: 1px #ccc dashed;
+        line-height: 1.8;
+        hr {
+          margin-top: -20px;
+          margin-bottom: 30px;
+          color: #ccc;
+        }
+        p {
+          text-align: center;
+          font-size: 27px;
+          color: #24282b;
+          font-weight: normal;
+        }
+        div {
+          font-family: serif;
+          color: #666;
+          text-align: center;
+          padding: 20px 0;
+          font-size: 15px;
+        }
+      }
+      .preview-news-content {
+        text-indent: 2em;
+        line-height: 24px;
+      }
+    }
+  }
+  
 }
+::v-deep .el-card__body {
+  padding: 40px;
+}
+
 </style>

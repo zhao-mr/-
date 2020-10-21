@@ -35,11 +35,28 @@ import Layout from '@/layout'
 const routerMain = () => import('@/layout/components/AppMain')
 
 export const constantRoutes = [
-  // {
-  //   path: '/home',
-  //   component: () => import('@/views/homePage/index'),
-  //   hidden: true
-  // },
+  {
+    path: '/',
+    component: () => import('@/views/homePage/index'),
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/homePage/allExperiment'),
+        hidden: true,
+      },
+      {
+        path: 'dynamicInfo',
+        component: () => import('@/views/homePage/news/index'),
+        hidden: true,
+      },
+      {
+        path: 'download',
+        component: () => import('@/views/homePage/download/index'),
+        hidden: true,
+      },
+    ]
+  },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -62,15 +79,15 @@ export const constantRoutes = [
     redirect: '/home',
     mark: true,
     children: [
-      {
-        path: 'home',
-        name: 'home',
-        component: () => import('@/views/index'),
-        meta: {
-          title: '首页',
-          icon: 'user'
-        },
-      },
+      // {
+      //   path: 'home',
+      //   name: 'home',
+      //   component: () => import('@/views/index'),
+      //   meta: {
+      //     title: '首页',
+      //     icon: 'user'
+      //   },
+      // },
       {
         path: 'projectList',
         name: 'projectList',
@@ -214,7 +231,18 @@ export const constantRoutes = [
           name: 'projectArrangement',
           component: () => import('@/views/teacher/teachInner/projectArrangement'),
           meta: {
-            title: '查看布置',
+            title: '实验布置列表',
+            icon: ''
+          },
+          hidden: true
+        },
+        ,
+        {
+          path: 'seeassign',
+          name: 'seeassign',
+          component: () => import('@/views/teacher/teachInner/seeassign'),
+          meta: {
+            title: '查看布置实验',
             icon: ''
           },
           hidden: true
@@ -242,33 +270,47 @@ export const constantRoutes = [
         ]
       },
 
-
-      // {
-      //   path: 'teachInner',
-      //   name: 'teachInner',
-      //   component: () => import('@/views/teacher/teachInner'),
-      //   meta: {
-      //     title: '校内教学',
-      //     icon: '',
-      //   },
-      // },
-      // {
-      //   path: 'teachInner/project',
-      //   name: 'teachInner/project',
-      //   component: () => import('@/views/teacher/teachInner/project'),
-      //   meta: {
-      //     title: '项目信息查看',
-      //     icon: ''
-      //   },
-      // },
       {
         path: 'correctionShare',
-        name: 'correctionShare',
-        component: () => import('@/views/teacher/correctionShare'),
-        meta: {
-          title: '批改共享',
-          icon: ''
+        // name: 'correctionShare',
+        // component: () => import('@/views/teacher/correctionShare'),
+        // meta: {
+        //   title: '批改共享',
+        //   icon: ''
+        // },
+        component: routerMain,
+        children:[
+          {
+            path: '/correctionShare',
+            name: 'correctionShare',
+            component: () => import('@/views/teacher/correctionShare'),
+            meta: {
+              title: '批改共享',
+              icon: ''
+            },
+          },
+          ,
+        {
+          path: 'correctList',
+          name: 'correctList',
+          component: () => import('@/views/teacher/correctionShare/correctList'),
+          meta: {
+            title: '批改列表',
+            icon: ''
+          },
+          hidden: true
         },
+        {
+          path: 'Correcting',
+          name: 'Correcting',
+          component: () => import('@/views/teacher/correctionShare/Correcting'),
+          meta: {
+            title: '批改内容',
+            icon: ''
+          },
+          hidden: true
+        }
+        ]
       },
 
       {
@@ -276,7 +318,7 @@ export const constantRoutes = [
         name: 'teacherNotice',
         component: () => import('@/views/teacher/noticeManagement/index'),
         meta: {
-          title: '通知管理',
+          title: '通知列表',
           icon: ''
         },
         children: [
@@ -408,7 +450,46 @@ export const constantRoutes = [
           title: '通知列表',
           icon: ''
         }
-      }
+      },
+      {
+        path: 'news',
+        name: 'news',
+        component: () => import('@/views/webAdmin/news/index'),
+        meta: {
+          title: '资讯动态',
+          icon: ''
+        },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/webAdmin/news/news'),
+          },
+          {
+            path: 'addNews',
+            name: 'addNews',
+            component: () => import('@/views/webAdmin/news/addNews'),
+            meta: {
+              title: '添加资讯',
+              icon: ''
+            },
+          }
+        ]
+      },
+      {
+        path: 'downloadCenter',
+        name: 'downloadCenter',
+        component: () => import('@/views/webAdmin/downloadCenter/index'),
+        meta: {
+          title: '下载中心',
+          icon: ''
+        },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/webAdmin/downloadCenter/download')
+          }
+        ]
+      },
     ]
   },
   /*

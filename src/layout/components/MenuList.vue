@@ -19,7 +19,7 @@
         </el-menu-item>
 
         <!--项目添加员-->
-        <template v-if="roles === 'addProject'">
+        <template v-if="roles === 2">
           <el-menu-item index="/projectList/list">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目列表</span>
@@ -27,7 +27,7 @@
         </template>
 
         <!--教师-->
-        <template v-if="roles === 'teacher'">
+        <template v-if="roles === 4">
           <el-menu-item index="/projectMaintain">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目维护</span>
@@ -47,7 +47,7 @@
         </template>
 
         <!--项目管理员-->
-        <template v-if="roles === 'projectAdmin'">
+        <template v-if="roles === 3">
           <el-menu-item index="/projectManage">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目管理</span>
@@ -63,7 +63,7 @@
         </template>
 
         <!--学生-->
-        <template v-if="roles === 'student'">
+        <template v-if="roles === 5">
           <el-menu-item index="/allExperiment">
             <i class="el-icon-menu"></i>
             <span slot="title">全部实验</span>
@@ -75,38 +75,60 @@
         </template>
 
         <!--系统管理员-->
-        <template v-if="roles === 'superAdmin'">
+        <template v-if="roles === 1">
           <el-submenu index="/userManage">
             <template slot="title">
               <i class="el-icon-user"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="/userManage/teacher">教师管理</el-menu-item>
-            <el-menu-item index="/userManage/student">学生管理</el-menu-item>
+            <el-menu-item index="/userManage/teacher">
+              <span>教师管理</span>
+            </el-menu-item>
+            <el-menu-item index="/userManage/student">
+              <span>学生管理</span>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="/groupManage">
             <template slot="title">
               <i class="el-icon-notebook-1"></i>
               <span>分组管理</span>
             </template>
-            <el-menu-item index="/groupManage/college">院校管理</el-menu-item>
-            <el-menu-item index="/groupManage/clazz">班级管理</el-menu-item>
+            <el-menu-item index="/groupManage/college"><span>院校管理</span></el-menu-item>
+            <el-menu-item index="/groupManage/clazz"><span>班级管理</span></el-menu-item>
           </el-submenu>
         </template>
         <!--<sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />-->
+
+        <!--网络管理员-->
+        <template v-if="roles === 6">
+          <el-menu-item index="/news">
+            <i class="el-icon-message"></i>
+            <span>资讯动态</span>
+          </el-menu-item>
+          <el-menu-item index="/downloadCenter">
+            <i class="el-icon-upload"></i>
+            <span>下载中心</span>
+          </el-menu-item>
+        </template>
       </el-menu>
     </el-scrollbar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Logo from "./Sidebar/Logo";
 
 import variables from "@/styles/variables.scss";
+import user from '@/store/modules/user';
 
 export default {
   components: { Logo },
+  data() {
+    return {
+      roles: null
+    }
+  },
   computed: {
     ...mapGetters(["sidebar"]),
     activeMenu() {
@@ -128,10 +150,33 @@ export default {
     isCollapse() {
       return !this.sidebar.opened;
     },
-    roles() {
+  },
+  mounted() {
+    this.getRole();
+    this.$bus.on('changeRole',roleId => {
+      console.log('this.$bus.on====changeRole')
+      this.roles = roleId;
+    })
+  },
+  methods: {
+    getRole() {
       // console.info(this.$store.state.user.roles)
       // teacher 教师；projectAdmin 项目管理员；superAdmin 系统管理员；student 学生; addProject 项目添加员
-      return "student";
+      // 1：系统管理员；2：项目添加员； 3：项目管理员；4：教师；5：student
+      
+      if (this.$store.state.user.currentRole) {
+        this.roles = this.$store.state.user.currentRole.roleId
+      } else {
+        let arr = this.$store.state.user.roles;
+        let role = arr[0]; // 最大的角色
+        arr.forEach(item => {
+          if (item.roleId < role.roleId) {
+            role = item
+          }
+        });
+        this.$store.dispatch('setCurrentRole', role)
+        this.roles = this.$store.state.user.currentRole.roleId
+      }
     }
   }
 };

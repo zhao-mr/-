@@ -1,33 +1,37 @@
 <!--查看通知-->
 <template>
-  <div class="look-notice">
-    <div class="header">
-      <h4>{{noticeContent}}</h4>
-      <div>
-        <span style="padding-right: 50px;">发布时间：{{noticeDate}}</span>
-        <span>有效日期：{{validDate}}</span>
+  <div>
+    <el-card class="look-notice">
+      <div class="header">
+        <h4>{{ noticeContent }}</h4>
+        <div>
+          <span style="padding-right: 50px">发布时间：{{ noticeDate }}</span>
+          <span>有效日期：{{ validDate }}</span>
+        </div>
       </div>
-    </div>
-    <div class="content">
-      <div class="text">{{noticeIntroduce}}</div>
-      <div class="btn"><el-button type="primary" round @click="goBack">返回</el-button></div>
+      <div class="content">
+        <div class="text">{{ noticeIntroduce }}</div>
+      </div>
+    </el-card>
+    <div class="btn">
+      <el-button type="primary" round @click="goBack">返回</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getNoticeById } from '@/api/admin'
+import { getNoticeById } from "@/api/admin";
 
 export default {
   name: "lookNotice",
   data() {
     return {
       noticeId: Number,
-      noticeContent: '', //标题
-      noticeIntroduce: '', //正文
-      noticeDate: '', // 发布日期
-      validDate: '',
-    }
+      noticeContent: "", //标题
+      noticeIntroduce: "", //正文
+      noticeDate: "", // 发布日期
+      validDate: "",
+    };
   },
   mounted() {
     this.noticeId = this.$route.query.noticeId;
@@ -36,31 +40,29 @@ export default {
   methods: {
     getNoticeById() {
       getNoticeById(this.noticeId)
-      .then(res => {
-        if (res.code === 200) {
-          let time = new Date();
-          this.noticeContent = res.notice.noticeContent;
-          this.noticeIntroduce = res.notice.noticeIntroduce;
-          this.noticeDate = res.notice.noticeDate
-          if (res.notice.validDate === null ) {
-            this.validDate = '永久有效'
-          } else if (time > new Date(res.notice.validDate)) {
-            this.validDate = res.notice.validDate+'(已过期)';
-          } else {
-            this.validDate = res.notice.validDate
+        .then((res) => {
+          if (res.code === 200) {
+            let date = new Date();
+            let yesterday = date.setTime(date.getTime()-24*60*60*1000)
+            this.noticeContent = res.notice.noticeContent;
+            this.noticeIntroduce = res.notice.noticeIntroduce;
+            this.noticeDate = res.notice.noticeDate;
+            if (res.notice.validDate === null) {
+              this.validDate = "永久有效";
+            } else if (yesterday > new Date(res.notice.validDate)) {
+              this.validDate = res.notice.validDate + "(已过期)";
+            } else {
+              this.validDate = res.notice.validDate;
+            }
           }
-        }
-      })
-      .catch(err => {
-
-      }
-      )
+        })
+        .catch((err) => {});
     },
     goBack() {
-      this.$router.go(-1)
-    }
-  }
-}
+      this.$router.go(-1);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -69,7 +71,6 @@ export default {
   padding: 0;
 }
 .look-notice {
-  padding: 15px 30px 30px 30px;
   .header {
     text-align: center;
     border-bottom: 1px solid #eaeef1;
@@ -84,22 +85,23 @@ export default {
       span {
         font-size: 12px;
         color: #4a535c;
-      } 
+      }
     }
   }
   .content {
     .text {
       text-indent: 2em;
-      padding-bottom: 30px;
-      border-bottom: 1px solid #eaeef1;
+      // padding-bottom: 30px;
+      // border-bottom: 1px solid #eaeef1;
     }
-    .btn {
-      margin-top: 30px;
-      text-align: center;
-      .el-button {
-        width: 120px;
-      }
-    }
+    
+  }
+}
+.btn {
+  margin-top: 30px;
+  text-align: center;
+  .el-button {
+    width: 120px;
   }
 }
 </style>

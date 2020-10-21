@@ -7,7 +7,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    userInfo: {}
+    userInfo: {},
+    currentRole: null
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -25,6 +26,9 @@ const user = {
     },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
+    },
+    SET_CURRENT_ROLE: (state, currentRole) => {
+      state.currentRole = currentRole
     }
   },
   actions: {
@@ -52,7 +56,11 @@ const user = {
         try {
           localStorage.clear()
           commit('SET_TOKEN', null)
+          commit('SET_NAME', null)
+          commit('SET_AVATAR', null)
+          commit('SET_ROLES', null)
           commit('SET_USER_INFO', null)
+          localStorage.removeItem('token')
           resetRouter()
           resolve()
         } catch (error) {
@@ -75,6 +83,14 @@ const user = {
         localStorage.clear()
         commit('SET_TOKEN', null)
         commit('RESET_STATE')
+        resolve()
+      })
+    },
+
+    // 设置当前用户登录的角色
+    setCurrentRole({commit}, currentRole) {
+      return new Promise(resolve => {
+        commit('SET_CURRENT_ROLE', currentRole)
         resolve()
       })
     }
