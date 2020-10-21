@@ -45,8 +45,26 @@ export function getProVideo(data) {
   })
 }
 
-// 负责人 - 编辑实验视频
-export function editProVideo(data) {
+// 负责人 - 删除学习视频
+export function delVideo(data) {
+  return request({
+    url: '/experiment/deleteProjectVideo',
+    method: 'post',
+    data
+  })
+}
+
+// 负责人 - 获取学习资料
+export function getStudyFiles(data) {
+  return request({
+    url: '/experiment/getProjectLearnMaterials',
+    method: 'post',
+    data
+  })
+}
+
+// 负责人 - 添加实验视频
+export function addProVideo(data) {
   return request({
     url: '/experiment/editProjectVideo',
     method: 'post',
@@ -54,6 +72,32 @@ export function editProVideo(data) {
   })
 }
 
+// 负责人 - 编辑实验视频
+export function editProVideo(data) {
+  return request({
+    url: '/experiment/updateProjectVideo',
+    method: 'post',
+    data
+  })
+}
+
+// 负责人 - 获取实验报告
+export function getProReport(data) {
+  return request({
+    url: '/experiment/getProjectReport',
+    method: 'post',
+    data
+  })
+}
+
+// 负责人 - 编辑实验报告
+export function editProReport(data) {
+  return request({
+    url: '/experiment/editProjectReport',
+    method: 'post',
+    data
+  })
+}
 
 //获取当前负责的项目列表
 export function getChargeProject(data) {

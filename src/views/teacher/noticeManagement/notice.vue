@@ -70,7 +70,7 @@
       <div style="text-align: center">
         <el-pagination
           background
-          layout="total, prev, pager, next, sizes"
+          layout="total, prev, pager, next, sizes, jumper"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"

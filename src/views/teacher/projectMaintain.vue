@@ -3,7 +3,7 @@
   <div>
     <el-row>
       <el-col :span="20">
-        <el-input type="text" style="width: 260px;" v-model="projectList.keyword" placeholder="请输入关键字">
+        <el-input style="width: 260px;" clearable v-model="projectList.keyword" @change="getDataList()" placeholder="请输入关键字">
           <i
             class="el-icon-search el-input__icon"
             slot="prefix">
@@ -44,16 +44,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="mtop20 text-center">
-        <el-pagination
-          background
-          :current-page.sync="projectList.pageNum"
-          :page-size="projectList.pageSize"
-          :page-sizes="[10, 15, 20, 30]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="projectList.total">
-        </el-pagination>
-      </div>
+    </div>
+    <div class="mtop20 text-center">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="projectList.pageNum"
+        :page-size="projectList.pageSize"
+        :page-sizes="[10, 15, 20, 30]"
+        layout="total, prev, pager, next, sizes, jumper"
+        :total="projectList.total">
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -91,7 +92,7 @@
       maintainList({
         "pageNum": 1,
         "pageSize": 10,
-        "projectName": ""
+        "projectName": this.projectList.keyword
       }).then(res=>{
         this.projectList.data = res.data.list
         this.projectList.total = res.data.total
@@ -99,9 +100,16 @@
         this.projectList.loading = false
       })
     },
-    toEdit(_id){
+    handleCurrentChange(val){
 
-    }
+    },
+    handleSizeChange(val){
+
+    },
+    toEdit(_id){
+      this.$router.push({ path: '/projectMaintain/projectEdit', query: { projectId: _id } })
+    },
+
   }
 }
 </script>

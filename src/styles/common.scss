@@ -335,7 +335,7 @@ div::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
 }
 
 .project-card {
-  margin-left: .8%;
+  margin-left: 1.5%;
   margin-top: 20px;
   position: relative;
   border-radius: 4px;
@@ -377,7 +377,7 @@ div::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
 
 @media screen and (max-width: 1400px) {
   .project-card {
-    width: 32%;
+    width: 31%;
   }
 }
 
@@ -401,4 +401,21 @@ div::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
 
 .no-share:hover {
   cursor: not-allowed;
+}
+
+.edit-project {
+  .el-collapse-item__content{
+    padding: 15px 10px;
+  }
+  .el-collapse-item__header{
+    padding: 0 15px;
+  }
+}
+
+.edit-project .el-collapse{
+  border-top: 0px;
+}
+
+.edit-project .el-collapse-item__header.is-active{
+  border-bottom-color: #eee;
 }

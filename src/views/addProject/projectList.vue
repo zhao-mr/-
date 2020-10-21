@@ -45,7 +45,7 @@
           :current-page.sync="projectList.pageNum"
           :page-size="projectList.pageSize"
           :page-sizes="[10, 15, 20, 30]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, sizes, jumper"
           :total="projectList.total">
         </el-pagination>
       </div>

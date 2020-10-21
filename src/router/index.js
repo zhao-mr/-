@@ -104,11 +104,21 @@ export const constantRoutes = [
       {
         path: 'projectMaintain',
         name: 'projectMaintain',
-        component: () => import('@/views/teacher/projectMaintain'),
-        meta: {
-          title: '项目维护',
-          icon: ''
-        },
+        component: routerMain,
+        redirect: '/projectMaintain',
+        meta: {title: '项目维护', icon: ''},
+        children: [
+          {
+          path: '/',
+          component: () => import('@/views/teacher/projectMaintain'),
+          },
+          {
+            path: 'projectEdit',
+            name: 'projectEdit',
+            component: () => import('@/views/teacher/projectEdit'),
+            meta: {title: '编辑项目', icon: ''},
+          }
+        ]
       },
       {
         path: 'projectManage',
@@ -297,11 +307,33 @@ export const constantRoutes = [
       {
         path: 'allExperiment',
         name: 'allExperiment',
-        component: () => import('@/views/student/all'),
-        meta: {
-          title: '全部实验',
-          icon: 'user'
-        },
+        component: routerMain,
+        meta: { title: '全部实验', icon: 'user'},
+        redirect: '/allExperiment',
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/student/all')
+          },
+          {
+            path: 'electiveView',
+            name: 'electiveView',
+            component: () => import('@/views/student/electiveView'),
+            meta: {
+              title: '',
+              icon: ''
+            }
+          },
+          {
+            path: 'electiveExperiment',
+            name: 'electiveExperiment',
+            component: () => import('@/views/student/electiveExperiment'),
+            meta: {
+              title: '开始实验',
+              icon: ''
+            }
+          }
+        ]
       },
       {
         path: 'myExperiment',

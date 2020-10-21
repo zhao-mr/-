@@ -14,7 +14,7 @@
         </el-form-item>
         <template v-if="form.projectType === 1">
           <el-form-item prop="projectType" label="实验链接">
-            <el-input placeholder="请输入" maxlength="15" style="width: 400px;" v-model.trim="form.link"></el-input>
+            <el-input placeholder="请输入" style="width: 400px;" v-model.trim="form.link"></el-input>
             <el-radio-group class="mleft20" v-model="form.isHref">
               <el-radio :label="0">嵌套</el-radio>
               <el-radio :label="1">跳转</el-radio>

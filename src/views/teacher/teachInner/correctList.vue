@@ -90,7 +90,7 @@
       <div class="beiye">
         <el-pagination
           background
-          layout="prev, pager, next,total"
+          layout="total, prev, pager, next, sizes, jumper"
           @current-change="handleCurrentChange"
           :total="1000"
         >

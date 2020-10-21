@@ -30,6 +30,15 @@ export function checkAssigned(data) {
   })
 }
 
+// 获取布置过该实验的教师
+export function getTeacherAssign(data) {
+  return request({
+    url: '/experiment/checkProjectAssign',
+    method: 'post',
+    data
+  })
+}
+
 export function getAllNotice(param) {
   let url = '';
   if (param.noticeDate) {
@@ -65,7 +74,7 @@ export function getNoticeById(noticeId) {
 
 /**
  * 删除通知
- * @param {*} noticeIds 
+ * @param {*} noticeIds
  */
 export function batchDel(noticeIds) {
   return request({
@@ -89,7 +98,7 @@ export function getExperimentList() {
 
 /**
  * 教师负责人选择试验后，选择某一次的布置
- * @param {*} projectId 
+ * @param {*} projectId
  */
 export function getAssignList(projectId) {
   return request({
@@ -103,7 +112,7 @@ export function getAssignList(projectId) {
 
 /**
  * 选择某一次布置之后，返回此次布置的所有学生，展示并默认全选
- * @param {*} assignId 
+ * @param {*} assignId
  */
 export function getStudentList(assignId) {
   return request({
@@ -117,7 +126,7 @@ export function getStudentList(assignId) {
 
 /**
  * 教师发布通知
- * @param {*} data 
+ * @param {*} data
  */
 export function addNoticeOfTeacher(data) {
   return request({
@@ -139,7 +148,7 @@ export function getNewNotice() {
 
 /**
  * 查看发给自己的所有通知，包括已读未读
- * @param {*} param 
+ * @param {*} param
  */
 export function getAllNoticeToMe(param) {
   return request({

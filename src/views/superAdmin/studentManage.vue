@@ -108,7 +108,7 @@
             :current-page.sync="currentPage"
             :page-sizes="[10, 15, 20]"
             :page-size="pageSize"
-            layout="total, prev, pager, next,sizes"
+            layout="total, prev, pager, next, sizes, jumper"
             :total="zongshu"
           >
           </el-pagination>

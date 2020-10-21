@@ -26,7 +26,7 @@
             <div class="flex-between-center mtop10">
               <div></div>
               <template v-if="item.whetherOpen">
-                <el-button type="primary" class="start-experiment">
+                <el-button type="primary" class="start-experiment" @click="toView(item.projectId)">
                   开始实验
                 </el-button>
               </template>
@@ -44,7 +44,7 @@
           :current-page.sync="list.pageNum"
           :page-size="list.pageSize"
           :page-sizes="[10, 15, 20, 30]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, sizes, jumper"
           @change="pageChange"
           :total="list.total">
         </el-pagination>
@@ -96,6 +96,9 @@ export default {
     },
     pageChange(){
 
+    },
+    toView(_id){
+      this.$router.push({ path: '/allExperiment/electiveView', query:{ projectId: _id} })
     }
   }
 }
