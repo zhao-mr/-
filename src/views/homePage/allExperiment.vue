@@ -56,7 +56,7 @@
       <div class="title">全部实验</div>
       <div class="course-list">
 
-        <div class="course-item" v-for="item in courseList" :key="item.projectId">
+        <div class="course-item" v-for="item in courseList" :key="item.projectId" @click="toInfo(item.projectId)">
           <img :src="url+item.cover" :alt="item.projectName">
           <div class="course-text">
             <p>{{item.projectName}}</p>
@@ -154,7 +154,7 @@ export default {
     },
     toNews() {
       this.$router.push({
-        path: "/dynamicInfo",
+        path: "/dynamicInfo"
       });
     },
     toDownload() {
@@ -203,6 +203,20 @@ export default {
     },
     search() {
       this.getCourseList();
+    },
+    toInfo(experimentId) {
+      // let current = this.$store.state.user.currentRole
+      // if (current) {
+      //   let path = current.roleId === 5 ? '' : '/teachInner/project'
+      //   this.$router.push({
+      //     path: path,
+      //     query: {
+      //       projectId: experimentId
+      //     }
+      //   })
+      // } else {
+      //   this.$message.info('请先登录！')
+      // }
     }
   }
 

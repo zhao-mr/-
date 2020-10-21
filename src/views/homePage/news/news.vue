@@ -1,8 +1,8 @@
 <template>
   <div class="news">
-    <div>
-      <div class="news-list" v-show="isList">
-        <div class="news-item" v-for="item in list" :key="item.id" @click="toInfo">
+    <div  v-show="isList">
+      <div class="news-list">
+        <div class="news-item" v-for="item in list" :key="item.id" @click="toInfo(item.id)">
           <div class="date">
             {{item.day}}
             <label>/{{item.month}}</label>
@@ -39,30 +39,26 @@
     <div class="info" v-show="!isList">
       <div class="info-header">
         <p>
-          华东理工大学关于开展报送 2019
-          年度上海市级虚拟仿真实验教学项目认定工作的通知
+          {{title}}
         </p>
         <div>
-          <span style="padding-right: 24px">来源：校级内容管理员</span>
-          <span>发稿时间：2019-6-5 22:53:00</span>
+          <span style="padding-right: 24px">来源：{{source}}</span>
+          <span>发稿时间：{{date}}</span>
         </div>
       </div>
       <p class="info-content">
-        为深入学习贯彻全国教育大会及新时代全国高等学校本科教育工作会议精神，深入推进信息技术与高等教育实验教学的深度融合，不断加强高等教育实验教学优质资源建设、应用与共享，
-        打造实验“金课”，根据《教育部办公厅关于 2017—2020
-        年开展示范性虚拟仿真实验教学项目建设的通知》（教高厅〔2017〕4 号）
-        和《上海市教育委员会关于开展 2019
-        年度上海市级虚拟仿真实验教学项目认定工作的通知》（沪教委高〔2019〕18
-        号）等文件精神，学校决定组织开展报送 2019
-        年度上海市级虚拟仿真实验教学项目认定相关工作。现将有关事项通知如下：
+        {{content}}
       </p>
+      <div class="btn">
+        <el-button type="primary" round @click="goBack">返回</el-button>
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import { getNewsList, getNoticeList } from '@/api/webAdmin'
+import { getNewsList, getNoticeList, getNewsById, getNoticeById } from '@/api/webAdmin'
 
 export default {
   name: "news",
@@ -76,6 +72,12 @@ export default {
       noticePageNum: 1,
       noticePageSize: 4,
       noticeTotal: 0,
+      id: null,
+      // 详情
+      title: '',
+      source: '',
+      date: '',
+      content: ''
     }
   },
   mounted() {
@@ -92,8 +94,16 @@ export default {
     }
   },
   methods: {
-    toInfo() {
-      this.isList = false;
+    toInfo(id) {
+      this.$emit('changeIsList', false)
+      this.id = id;
+      if (this.type === 'news') {
+        this.resetData();
+        this.getNewsInfo();
+      } else {
+        this.resetData();
+        this.getNoticeInfo();
+      }
     },
     getNewsList() {
       let param = {
@@ -187,6 +197,50 @@ export default {
     handleNoticeCurrentChange(val) {
       this.noticePageNum = val;
     },
+    getNewsInfo() {
+      let param = {
+        newsId: this.id
+      }
+      getNewsById(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.title = res.data.newsTitle;
+          this.source = res.data.newsSource;
+          this.date = res.data.newsDate;
+          this.content = res.data.newsContent;
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    getNoticeInfo() {
+      let param = {
+        announcementId: this.id
+      }
+      getNoticeById(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.title = res.data.announcementTitle;
+          this.source = res.data.announcementSource;
+          this.date = res.data.announcementDate;
+          this.content = res.data.announcementContent;
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    },
+    goBack() {
+      this.$emit('changeIsList', true)
+      this.$emit('changeActive', this.type)
+    },
+    resetData() {
+      this.title = '';
+      this.source = '';
+      this.date = '';
+      this.content = '';
+    }
   }
 
 }
@@ -207,7 +261,7 @@ export default {
       background: #f4f7f9;
       position: relative;
       margin: 25px 45px;
-      display: inline-block;
+      float: left;
       cursor: pointer;
       .date {
         width: 80px;
@@ -296,8 +350,13 @@ export default {
       }
     }
     .info-content {
+      min-height: 238px;
       text-indent: 2em;
       line-height: 24px;
+    }
+    .btn {
+      margin-top: 30px;
+      text-align: center;
     }
   }
 

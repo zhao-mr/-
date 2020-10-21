@@ -34,17 +34,17 @@
         >
           <el-table-column type="selection"> </el-table-column>
           <el-table-column
-            prop="noticeContent"
+            prop="uploadIntroduce"
             label="名称"
             show-overflow-tooltip
             align="center"
           >
           </el-table-column>
-          <el-table-column prop="noticeDate" label="时间" align="center">
+          <el-table-column prop="uploadDate" label="时间" align="center">
           </el-table-column>
-          <el-table-column prop="validDate" label="上传人" align="center">
-          </el-table-column>
-          <el-table-column prop="validDate" label="类型" align="center">
+          <!-- <el-table-column prop="validDate" label="上传人" align="center">
+          </el-table-column> -->
+          <el-table-column prop="uploadCategory" label="类型" align="center">
           </el-table-column>
         </el-table>
       </div>
@@ -55,9 +55,7 @@
         background
         layout="total, prev, pager, next, sizes"
         :total="total"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :page-sizes="[10, 20, 30, 40]"
       >
       </el-pagination>
     </div>
@@ -67,10 +65,10 @@
 
 <script>
 import { getAllNotice, batchDel } from "@/api/admin";
+import { getList } from "@/api/webAdmin";
 
 export default {
-  name: "adminNotice",
-  computed: {},
+  name: "download",
   data() {
     return {
       title: "",
@@ -94,46 +92,26 @@ export default {
         this.isDisabled = true;
       }
     },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.getAll();
-    },
     handleCurrentChange(val) {
       this.pageNum = val;
       this.getAll();
     },
     getAll() {
-      let d = new Date(this.date);
-      let datetime =
-        d.getFullYear() +
-        "-" +
-        (d.getMonth() + 1) +
-        "-" +
-        d.getDate() +
-        " " +
-        d.getHours() +
-        ":" +
-        d.getMinutes() +
-        ":" +
-        d.getSeconds();
       let param = {
-        noticeContent: this.title,
+        // noticeContent: this.title,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
-      getAllNotice(param)
-        .then((res) => {
+      getList(param)
+        .then(res => {
           if (res.code === 200) {
-            let date = new Date();
-            let yesterday = date.setTime(date.getTime()-24*60*60*1000)
-            res.data.list.forEach((item) => {
-              if (item.validDate === null) {
-                item.validDate = "长期有效";
+            res.data.list.forEach(item => {
+              if (item.uploadCategory === 0) {
+                item.uploadCategory = '工具'
+              } else if (item.uploadCategory === 1) {
+                item.uploadCategory = '文件'
               }
-              if (yesterday > new Date(item.validDate)) {
-                item.validDate = item.validDate + "(已过期)";
-              }
-            });
+            })
             this.tableData = res.data.list;
             this.total = res.data.total;
           }
