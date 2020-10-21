@@ -26,7 +26,7 @@
         </ul>
       </div>
       <div class="aside-content">
-        <news :isList="isList" :type="active" />
+        <news :isList="isList" :type="active" v-on:changeActive="changeActive" v-on:changeIsList="changeIsList" />
       </div>
     </div>
     <Footer />
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       active: 'news',
-      total: 7,
+      total: 0,
       isList: true,
       userName: null,
     }
@@ -106,8 +106,13 @@ export default {
     change(val) {
       this.active = val;
       this.isList = true;
+    },
+    changeActive(val) {
+      this.active = val
+    },
+    changeIsList(val) {
+      this.isList = val
     }
-
   }
 
 }
