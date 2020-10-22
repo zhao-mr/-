@@ -86,4 +86,31 @@ export function getList(data) {
   })
 }
 
+// 上传
+export function upload(data) {
+  return request({
+    url: '/experimentPortal/addUploadInfo',
+    method: 'post',
+    data
+  })
+}
+
+// 批量删除新闻
+export function batchDelNews(data) {
+  return request({
+    url: '/experimentPortal/deleteNews',
+    method: 'post',
+    data
+  })
+}
+
+// 批量删除下载
+export function batchDelUpload(data) {
+  return request({
+    url: '/experimentPortal/deleteDownTool',
+    method: 'post',
+    data
+  })
+}
+
 

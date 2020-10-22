@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="content">
-        <div class="text">{{ noticeIntroduce }}</div>
+        <div class="text" v-html="noticeIntroduce"></div>
       </div>
     </el-card>
     <div class="btn">

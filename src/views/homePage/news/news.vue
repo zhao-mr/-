@@ -10,14 +10,15 @@
           </div>
           <div class="news-content">
             <p>{{item.title}}</p>
-            <a>{{item.content}}</a>
-            <span>来源：{{item.source}}</span>
+            <a v-html="item.content"></a>
+            <!-- <span>来源：{{item.source}}</span> -->
           </div>
         </div>
       </div>
       <div class="pagination-box" v-show="type === 'news'">
         <el-pagination
           layout="prev, pager, next"
+          :page-size="newsPageSize"
           :total="newsTotal"
           style="margin-bottom: 30px;"
           @current-change="handleNewsCurrentChange"
@@ -28,6 +29,7 @@
       <div class="pagination-box" v-show="type === 'notice'">
         <el-pagination
           layout="prev, pager, next"
+          :page-size="noticePageSize"
           :total="noticeTotal"
           style="margin-bottom: 30px;"
           @current-change="handleNoticeCurrentChange"
@@ -46,11 +48,9 @@
           <span>发稿时间：{{date}}</span>
         </div>
       </div>
-      <p class="info-content">
-        {{content}}
-      </p>
+      <p class="info-content" v-html="content"></p>
       <div class="btn">
-        <el-button type="primary" round @click="goBack">返回</el-button>
+        <el-button type="primary" round @click="goBack" style="width: 120px;">返回</el-button>
       </div>
     </div>
 
@@ -114,29 +114,22 @@ export default {
       .then(res => {
         if (res.code === 200) {
           this.list = [];
-          res.data.list.forEach(item => {
+          for (let index = 0; index < res.data.list.length; index++) {
+            const item = res.data.list[index];
             let date = item.newsDate.split(" ")[0];
-            console.log('date', date);
             let year = date.split("-")[0];
             let month = date.split("-")[1];
             let day = date.split("-")[2];
-            console.log('year', year, month, day);
-            let content = "";
-            if (item.newsContent.length < 39) {
-              content = item.newsContent;
-            } else {
-              content = item.newsContent.substr(0,39)+"...";
-            }
             this.list.push({
               id: item.newsId,
               title: item.newsTitle,
               source: item.newsSource,
-              content,
+              content: item.newsContent,
               year,
               month,
               day
             })
-          });
+          }
           this.newsTotal = res.data.total;
         }
       })
@@ -156,22 +149,14 @@ export default {
           this.list = [];
           res.data.list.forEach(item => {
             let date = item.announcementDate.split(" ")[0];
-            console.log('date', date);
             let year = date.split("-")[0];
             let month = date.split("-")[1];
             let day = date.split("-")[2];
-            console.log('year', year, month, day);
-            let content = "";
-            if (item.announcementContent.length < 39) {
-              content = item.announcementContent;
-            } else {
-              content = item.announcementContent.substr(0,39)+"...";
-            }
             this.list.push({
               id: item.announcementId,
               title: item.announcementTitle,
               source: item.announcementSource,
-              content,
+              content: item.announcementContent,
               year,
               month,
               day
@@ -184,7 +169,6 @@ export default {
       })
     },
     getList() {
-      console.log('this.type', this.type)
       if (this.type === 'news') {
         this.getNewsList();
       } else {
@@ -193,9 +177,11 @@ export default {
     },
     handleNewsCurrentChange(val) {
       this.newsPageNum = val;
+      this.getNewsList();
     },
     handleNoticeCurrentChange(val) {
       this.noticePageNum = val;
+      this.getNoticeList();
     },
     getNewsInfo() {
       let param = {
@@ -240,7 +226,7 @@ export default {
       this.source = '';
       this.date = '';
       this.content = '';
-    }
+    },
   }
 
 }
@@ -314,11 +300,18 @@ export default {
           -webkit-box-orient: vertical;
         }
         a {
+          display: block;
+          width: 100%;
+          height: 44px;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
           text-decoration: none;
         }
-        span {
-          float: right;
-        }
+        // span {
+        //   float: right;
+        // }
       }
     }
   }

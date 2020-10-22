@@ -18,7 +18,7 @@
           >
         </div>
         <div class="header-right">
-          <el-button type="primary">上传</el-button>
+          <el-button type="primary" @click="openUploadDialog">上传</el-button>
           <el-button type="primary" @click="batchDel" :disabled="isDisabled"
             >批量删除</el-button
           >
@@ -53,19 +53,65 @@
     <div style="text-align: center; margin-top: 30px;">
       <el-pagination
         background
-        layout="total, prev, pager, next, sizes"
+        layout="total, prev, pager, next"
+        :page-size="pageSize"
         :total="total"
         @current-change="handleCurrentChange"
       >
       </el-pagination>
     </div>
 
+    <el-dialog
+      title="上传"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      类型：<el-radio-group v-model="uploadType">
+        <el-radio :label="0">工具</el-radio>
+        <el-radio :label="1">文件</el-radio>
+      </el-radio-group>
+      <!-- <div class="upload">
+        内容：<el-button type="primary">选择文件</el-button>
+        <input type="file" id="file" />
+      </div> -->
+      <div class="upload-box">
+        <span>内容：</span>
+        <div class="upload">
+          <el-upload
+            class="upload-demo"
+            action="#"
+            :on-change="handleChange"
+            :on-remove="handleRemove"
+            :limit="1"
+            :on-exceed="handleExceed"
+            :http-request="upload"
+            :auto-upload="false"
+            :file-list="fileList"
+            >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </div>
+      </div>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="upload">确 定</el-button>
+      </span>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <div class="">
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <input type="file" id="file" />
+        </div>
+      </span> -->
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
-import { getAllNotice, batchDel } from "@/api/admin";
-import { getList } from "@/api/webAdmin";
+import { getList, upload, batchDelUpload } from "@/api/webAdmin";
 
 export default {
   name: "download",
@@ -78,6 +124,9 @@ export default {
       pageSize: 10,
       total: 0,
       isDisabled: true,
+      dialogVisible: false,
+      uploadType: 0,
+      fileList: [],
     };
   },
   mounted() {
@@ -98,7 +147,8 @@ export default {
     },
     getAll() {
       let param = {
-        // noticeContent: this.title,
+        uploadIntroduce: this.title,
+        uploadCategory: null,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
@@ -123,7 +173,7 @@ export default {
     batchDel() {
       let ids = [];
       this.multipleSelection.forEach((item) => {
-        ids.push(item.noticeId);
+        ids.push(item.uploadCentreId);
       });
       let that = this;
       that
@@ -133,7 +183,10 @@ export default {
           type: "warning",
         })
         .then(() => {
-          batchDel(ids)
+          let param = {
+            uploadCentreId: ids.join(',')
+          }
+          batchDelUpload(param)
             .then((res) => {
               if (res.code === 200) {
                 that.$message({
@@ -142,12 +195,6 @@ export default {
                 });
                 that.getAll();
               }
-            })
-            .catch((err) => {
-              that.$message({
-                type: "error",
-                message: err.msg,
-              });
             });
         })
         .catch(() => {
@@ -156,6 +203,41 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    openUploadDialog() {
+      this.dialogVisible = true;
+    },
+    upload() {
+      // let file = document.getElementById('file').files[0];
+      let file = this.fileList[0];
+      console.log('file', file)
+      let fileName = file.name.split('.')[0]
+      let form = new FormData();
+      form.append("file",file);
+      form.append("uploadIntroduce",fileName);
+      form.append("uploadCategory",this.uploadType);
+      upload(form)
+      .then(res => {
+        if (res.code === 200) {
+          this.$message.success(res.msg);
+          this.dialogVisible = false;
+          this.fileList = []
+          this.getAll();
+        }
+      })
+      .catch(err => {
+          this.$message.error(err.msg);
+      })
+    },
+    handleChange(file) {
+      this.fileList = [];
+      this.fileList.push(file.raw)
+    },
+    handleRemove() {
+      this.fileList = [];
+    },
+    handleExceed() {
+      this.$message.warning('一次只能选择一个文件');
     },
   },
 };
@@ -185,10 +267,31 @@ export default {
   .main {
     margin-top: 24px;
   }
-
+  .upload-box {
+    margin-top: 25px;
+    height: 67px;
+    span {
+      float: left;
+      padding-top: 6px;
+    }
+    .upload {
+      display: inline-block;
+      #file {
+        position: absolute;
+        width: 98px;
+        height: 40px;
+        top: 1px;
+        left: 42px;
+        opacity: 0;
+      }
+  }
+  }
 }
 ::v-deep .el-card__body {
   padding: 40px;
 }
 
+.demo ::v-deep .upload-demo {
+  display: inline-block;
+}
 </style>

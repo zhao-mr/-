@@ -74,11 +74,10 @@
     <div style="text-align: center; margin-top: 30px;">
       <el-pagination
         background
-        layout="total, prev, pager, next, sizes"
+        layout="total, prev, pager, next"
+        :page-size="pageSize"
         :total="total"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :page-sizes="[10, 20, 30, 40]"
       >
       </el-pagination>
     </div>
@@ -143,10 +142,6 @@ export default {
       } else {
         this.isDisabled = true;
       }
-    },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.getAllNotice();
     },
     toLook(noticeId) {
       console.log(noticeId);

@@ -29,13 +29,14 @@
         <div class="list">
           <div class="item" v-for="item in list" :key="item.uploadCentreId">
             <div class="name">{{item.uploadIntroduce}}</div>
-            <a href="#"><i class="el-icon-download"></i>下载</a>
+            <a :href="url+'/experimentPortal/downloadInfo?uploadCentreId='+item.uploadCentreId"><i class="el-icon-download"></i>下载</a>
             <span>{{item.uploadDate}}</span>
           </div>
         </div>
         <div class="pagination-box" v-if="list.length > 0">
           <el-pagination
             layout="prev, pager, next"
+            :page-size="pageSize"
             :total="total"
             style="margin-bottom: 30px;"
             @current-change="handleCurrentChange"
@@ -51,6 +52,9 @@
 <script>
 import { getList } from '@/api/webAdmin'
 import Footer from '@/components/Footer'
+import {
+  apiPath
+} from "@/config/env";
 
 export default {
   name: "AllExperiment",
@@ -64,7 +68,8 @@ export default {
       pageSize: 10,
       total: 0,
       userName: null,
-      list: []
+      list: [],
+      url: apiPath
     }
   },
   mounted() {
