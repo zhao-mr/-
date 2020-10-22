@@ -72,7 +72,7 @@ export default {
         message: ""
       })
         .then(res => {
-          console.log(res.data.list);
+          // console.log(res.data.list);
           this.datalist = res.data.list;
         })
         .catch(err => {});
