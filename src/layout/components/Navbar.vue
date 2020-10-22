@@ -5,7 +5,7 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
+      <el-dropdown class="avatar-container" trigger="hover">
         <div class="avatar-wrapper">
           <img src="@/assets/icon/5.svg" class="user-avatar">
           <i class="el-icon-caret-bottom" />
@@ -58,7 +58,7 @@
       :modal-append-to-body="false"
     >
       <el-radio-group v-model="role.roleId">
-        <el-radio :label="item.roleId" v-for="item in roleList" :key="item.roleId" style="margin-bottom: 16px;">{{item.roleId}}</el-radio>
+        <el-radio :label="item.roleId" v-for="item in roleList" :key="item.roleId" style="margin-bottom: 16px;">{{item.roleName}}</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -161,20 +161,35 @@ export default {
     },
     openDialog() {
       this.dialogVisible = true;
-      this.roleList = JSON.parse(JSON.stringify(this.$store.state.user.roles));
-      this.role = this.$store.state.user.currentRole;
-      console.log(this.$store.state.user.roles, 'roleList', this.roleList)
-      console.log('role', this.role)
+      this.roleList = this.deepClone(this.$store.state.user.roles);
+      this.role = this.deepClone(this.$store.state.user.currentRole);;
+    },
+    // 深拷贝
+    deepClone (obj) {
+      const objClone = Array.isArray(obj) ? [] : {}
+      if (obj && typeof obj === 'object') {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            // 判断obj子元素是否为对象，如果是，递归拷贝
+            if (obj[key] && typeof obj[key] === 'object') {
+              objClone[key] = this.deepClone(obj[key])
+            } else {
+              objClone[key] = obj[key]
+            }
+            objClone[key] = obj[key]
+          }
+        }
+      }
+      return objClone
     },
     changeRole() {
       this.$bus.emit('changeRole', this.role.roleId)
-      console.log('this.$bus.emit====changeRole')
       this.$store.dispatch('setCurrentRole', this.role)
       this.dialogVisible = false
     },
   },
 
- 
+
 }
 </script>
 <style lang="scss" scoped>

@@ -296,25 +296,15 @@
       arrangedResultView(_row) {
         this.$router.push({
           path: '/teachInner/Correcting/',
-          query: {projectId: _row.assignProjectId, correctId: _row.submitId, assignId: _row.assignId}
+          query: {projectId: _row.assignProjectId, submitId: _row.submitId, assignId: _row.assignId}
         })
       },
       // 选修 - 查看实验成绩
       resultView(_row) {
         this.$router.push({
           path: '/correctionShare/Correcting/',
-          query: {projectId: _row.experimentId, correctId: _row.submitId}
+          query: {projectId: _row.experimentId, correctId: _row.correctId}
         })
-      },
-      // 必修实验是否过期
-      isExpired(end){
-        console.info(end)
-        return end < this.today
-      },
-      // 必修实验是否开始
-      isStart(start){
-        // console.info(start, dateFormat())
-        return start < this.today
       }
     }
   }
