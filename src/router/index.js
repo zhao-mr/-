@@ -449,7 +449,22 @@ export const constantRoutes = [
         meta: {
           title: '通知列表',
           icon: ''
-        }
+        },
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/noReadNotice/list'),
+          },
+          {
+            path: 'lookNotice',
+            name: 'lookNotice',
+            component: () => import('@/views/noReadNotice/noticeInfo'),
+            meta: {
+              title: '查看通知',
+              icon: ''
+            },
+          }
+        ]
       },
       {
         path: 'news',

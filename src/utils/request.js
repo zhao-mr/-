@@ -67,7 +67,8 @@ service.interceptors.response.use(
         message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000
-      })
+      });
+      store.dispatch('logout', null)
       this.$router.push('/login')
     } else {
         Message({

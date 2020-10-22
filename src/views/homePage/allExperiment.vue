@@ -174,7 +174,6 @@ export default {
       })
     },
     handleCollege(val) {
-      console.log('val', val)
       this.selectCollege = val;
       this.getCourseList();
     },
@@ -189,7 +188,6 @@ export default {
       .then(res => {
         if (res.code === 200) {
           this.courseList = res.data.list;
-          console.log(this.courseList)
           this.total = res.data.total;
         }
       })
@@ -205,18 +203,18 @@ export default {
       this.getCourseList();
     },
     toInfo(experimentId) {
-      // let current = this.$store.state.user.currentRole
-      // if (current) {
-      //   let path = current.roleId === 5 ? '' : '/teachInner/project'
-      //   this.$router.push({
-      //     path: path,
-      //     query: {
-      //       projectId: experimentId
-      //     }
-      //   })
-      // } else {
-      //   this.$message.info('请先登录！')
-      // }
+      let current = this.$store.state.user.currentRole
+      if (current) {
+        let path = current.roleId === 5 ? '/allExperiment/electiveView' : '/teachInner/project'
+        this.$router.push({
+          path: path,
+          query: {
+            projectId: experimentId
+          }
+        })
+      } else {
+        this.$message.info('请先登录！')
+      }
     }
   }
 

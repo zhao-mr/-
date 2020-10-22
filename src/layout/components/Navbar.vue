@@ -57,8 +57,8 @@
       width="30%"
       :modal-append-to-body="false"
     >
-      <el-radio-group v-model="role">
-        <el-radio :label="role" v-for="role in roleList" :key="role.roleId" style="margin-bottom: 16px;">{{role.roleName}}</el-radio>
+      <el-radio-group v-model="role.roleId">
+        <el-radio :label="item.roleId" v-for="item in roleList" :key="item.roleId" style="margin-bottom: 16px;">{{item.roleId}}</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -85,7 +85,7 @@ export default {
       count: 0,
       noticeList: [],
       dialogVisible: false,
-      role: null, // 选中的角色
+      role: {}, // 选中的角色
       roleList: [], // 用户所拥有的所有角色
     }
   },
@@ -96,8 +96,6 @@ export default {
     ])
   },
   mounted() {
-    this.roleList = this.$store.state.user.roles;
-    this.role = this.$store.state.user.currentRole;
     this.getNewNotice();
     this.$bus.on('noRead', () => {
       console.log('this.$bus.on,noRead')
@@ -163,6 +161,10 @@ export default {
     },
     openDialog() {
       this.dialogVisible = true;
+      this.roleList = JSON.parse(JSON.stringify(this.$store.state.user.roles));
+      this.role = this.$store.state.user.currentRole;
+      console.log(this.$store.state.user.roles, 'roleList', this.roleList)
+      console.log('role', this.role)
     },
     changeRole() {
       this.$bus.emit('changeRole', this.role.roleId)

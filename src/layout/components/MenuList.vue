@@ -28,11 +28,11 @@
 
         <!--教师-->
         <template v-if="roles === 4">
-          <el-menu-item index="/projectMaintain">
+          <el-menu-item index="/projectMaintain" :class="{'blue': selectItem === 'projectMaintain'}">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目维护</span>
           </el-menu-item>
-          <el-menu-item index="/teachInner">
+          <el-menu-item index="/teachInner" :class="{'blue': selectItem === 'teachInner'}">
             <i class="el-icon-school"></i>
             <span slot="title">校内教学</span>
           </el-menu-item>
@@ -101,13 +101,13 @@
 
         <!--网络管理员-->
         <template v-if="roles === 6">
-          <el-menu-item index="/news">
+          <el-menu-item index="/news" :class="{'blue': selectItem === 'news'}">
             <i class="el-icon-message"></i>
-            <span>资讯动态</span>
+            <span slot="title">资讯动态</span>
           </el-menu-item>
           <el-menu-item index="/downloadCenter">
             <i class="el-icon-upload"></i>
-            <span>下载中心</span>
+            <span slot="title">下载中心</span>
           </el-menu-item>
         </template>
       </el-menu>
@@ -126,7 +126,8 @@ export default {
   components: { Logo },
   data() {
     return {
-      roles: null
+      roles: null,
+      selectItem: '',
     }
   },
   computed: {
@@ -151,11 +152,51 @@ export default {
       return !this.sidebar.opened;
     },
   },
+  watch:{
+    $route:{
+      handler(val){
+        console.log(val);//新路由信息
+        if (val.path === '/projectMaintain') {
+          this.selectItem = 'projectMaintain'
+        } else if (val.path === '/teachInner') {
+          this.selectItem = 'teachInner'
+        } else if (val.path === '/news') {
+          this.selectItem = 'news'
+        }
+      },
+      // 深度观察监听
+      deep: true
+    }
+  },
   mounted() {
     this.getRole();
     this.$bus.on('changeRole',roleId => {
       console.log('this.$bus.on====changeRole')
       this.roles = roleId;
+      let path = '';
+      switch(roleId) {
+        case 1:
+          path = '/userManage/teacher';
+          break;
+        case 2:
+          path = '/projectList/list';
+          break;
+        case 3:
+          path = '/projectManage';
+          break;
+        case 4:
+          path = '/projectMaintain';
+          break;
+        case 5: // 学生
+          path = '/allExperiment';
+          break;
+        case 6:
+          path = '/news';
+          break;          
+      }
+      this.$router.push({
+        path: path
+      })
     })
   },
   methods: {
@@ -181,3 +222,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.blue {
+  color: #409EFF;
+}
+</style>
