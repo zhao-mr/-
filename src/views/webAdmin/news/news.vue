@@ -49,7 +49,7 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
-                @click="openPreviewDialog()"
+                @click="openPreviewDialog(scope.row.newsId)"
                 type="text"
                 size="small"
                 >预览</el-button
@@ -64,6 +64,7 @@
       <el-pagination
         background
         layout="total, prev, pager, next"
+        :page-size="pageSize"
         :total="total"
         @current-change="handleCurrentChange"
       >
@@ -80,14 +81,13 @@
       <div class="preview-news">
         <div class="preview-news-header">
           <hr>
-          <p>华东理工大学关于开展报送 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知</p>
+          <p>{{obj.title}}</p>
           <div>
-            <span style="padding-right: 24px;">来源：校级内容管理员</span>
-            <span>发稿时间：2019-6-5 22:53:00</span>
+            <span style="padding-right: 24px;">来源：{{obj.source}}</span>
+            <span>发稿时间：{{obj.date}}</span>
           </div>
         </div>
-        <p class="preview-news-content">
-          为深入学习贯彻全国教育大会及新时代全国高等学校本科教育工作会议精神，深入推进信息技术与高等教育实验教学的深度融合，不断加强高等教育实验教学优质资源建设、应用与共享， 打造实验“金课”，根据《教育部办公厅关于 2017—2020 年开展示范性虚拟仿真实验教学项目建设的通知》（教高厅〔2017〕4 号） 和《上海市教育委员会关于开展 2019 年度上海市级虚拟仿真实验教学项目认定工作的通知》（沪教委高〔2019〕18 号）等文件精神，学校决定组织开展报送 2019 年度上海市级虚拟仿真实验教学项目认定相关工作。现将有关事项通知如下：
+        <p class="preview-news-content" v-html="obj.content">
         </p>
       </div>
 
@@ -99,8 +99,7 @@
 </template>
 
 <script>
-import { batchDel } from "@/api/admin";
-import { getAllNews } from "@/api/webAdmin";
+import { getAllNews, getNewsById, batchDelNews } from "@/api/webAdmin";
 
 export default {
   name: "news",
@@ -114,7 +113,14 @@ export default {
       pageSize: 10,
       total: 0,
       isDisabled: true,
-      previewDialogVisible: false
+      previewDialogVisible: false,
+      obj: {
+        id: null,
+        title: '',
+        source: '',
+        date: '',
+        content: ''
+      }
     };
   },
   mounted() {
@@ -129,8 +135,10 @@ export default {
         this.isDisabled = true;
       }
     },
-    openPreviewDialog() {
-      this.previewDialogVisible = true
+    openPreviewDialog(newsId) {
+      this.previewDialogVisible = true;
+      this.obj.id = newsId;
+      this.getNewsById();
     },
     handleCurrentChange(val) {
       this.pageNum = val;
@@ -161,7 +169,7 @@ export default {
     batchDel() {
       let ids = [];
       this.multipleSelection.forEach((item) => {
-        ids.push(item.noticeId);
+        ids.push(item.newsId);
       });
       let that = this;
       that
@@ -171,7 +179,10 @@ export default {
           type: "warning",
         })
         .then(() => {
-          batchDel(ids)
+          let param = {
+            newsId: ids.join(',')
+          }
+          batchDelNews(param)
             .then((res) => {
               if (res.code === 200) {
                 that.$message({
@@ -181,12 +192,6 @@ export default {
                 that.getAllNews();
               }
             })
-            .catch((err) => {
-              that.$message({
-                type: "error",
-                message: err.msg,
-              });
-            });
         })
         .catch(() => {
           that.$message({
@@ -195,6 +200,23 @@ export default {
           });
         });
     },
+    getNewsById() {
+      let param = {
+        newsId: this.obj.id
+      }
+      getNewsById(param)
+      .then(res => {
+        if (res.code === 200) {
+          this.obj.title = res.data.newsTitle;
+          this.obj.source = res.data.newsSource;
+          this.obj.date = res.data.newsDate;
+          this.obj.content = res.data.newsContent;
+        }
+      })
+      .catch(err => {
+        this.$message.error(err.msg)
+      })
+    }
   },
 };
 </script>
