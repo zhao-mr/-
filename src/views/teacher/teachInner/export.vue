@@ -50,13 +50,20 @@
                 </el-table-column>
                 <el-table-column align="right" width="">
                   <template slot="header" slot-scope="scope">
-                    <el-input placeholder="请输入项目名称" v-model="assignName">
-                      <i
+                    <el-input
+                      placeholder="请输入项目名称"
+                      v-model="assignName"
+                      @change="checkAssign()"
+                      clearable
+                    >
+                      <i class="el-icon-search el-input__icon" slot="prefix">
+                      </i>
+                      <!-- <i
                         slot="suffix"
                         class="el-input__icon el-icon-search"
                         id="submit"
                         @click="btnsearch"
-                      ></i>
+                      ></i> -->
                     </el-input>
                   </template>
                 </el-table-column>

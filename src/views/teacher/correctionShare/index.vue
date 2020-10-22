@@ -3,13 +3,19 @@
     <div class="BosConer">
       <div class="Bosaote">
         <div class="">
-          <el-input placeholder="请输入实验名称" v-model="message">
-            <i
+          <el-input
+            placeholder="请输入实验名称"
+            v-model="message"
+            @change="getAllCorrectShareProject()"
+            clearable
+          >
+            <i class="el-icon-search el-input__icon" slot="prefix"> </i>
+            <!-- <i
               slot="suffix"
               class="el-input__icon el-icon-search"
               id="submit"
               @click="btnsearch"
-            ></i>
+            ></i> -->
           </el-input>
         </div>
         <div class="">

@@ -1,82 +1,91 @@
 <template>
   <div>
     <div class="BosConer">
-      <h1>查看布置</h1>
+      <!-- <h1>查看布置</h1> -->
       <div class="Bosaote">
         <div class="">
           <el-button type="primary" @click="turnback">返回</el-button>
         </div>
         <div class="">
-          <el-input placeholder="请输入已布置实验名称" v-model="assignName">
-            <i
+          <el-input
+            placeholder="请输入已布置实验名称"
+            v-model="assignName"
+            @change="checkAssign()"
+            clearable
+          >
+            <i class="el-icon-search el-input__icon" slot="prefix"> </i>
+            <!-- <i
               slot="suffix"
               class="el-input__icon el-icon-search"
               id="submit"
               @click="btnsearch"
-            ></i>
+            ></i> -->
           </el-input>
         </div>
       </div>
       <!-- 列表 -->
-      <div class="Boslei">
-        <el-table :data="bosliet" style="width: 100%">
-          <el-table-column label="实验名称" min-width="100%">
-            <template slot-scope="scope">
-              <!-- <a href="">实验的名字倒是</a> -->
-              <el-button
-                type="text"
-                size="mini"
-                @click="handJump(scope.row.assignId)"
-                >{{ scope.row.assignName }}</el-button
-              >
-            </template>
-          </el-table-column>
-          <el-table-column prop="realName" label="教学教师" width="">
-          </el-table-column>
-          <el-table-column
-            prop="count"
-            label="实验人数"
-            :formatter="formcount"
-            width=""
-          >
-          </el-table-column>
-          <el-table-column prop="" label="实验时间" width="">
-            <template slot-scope="scope">
-              {{ scope.row.projectBeginTime }} ~ {{ scope.row.projectEndTime }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="waitCount"
-            label="待批改"
-            :formatter="formwait"
-            width=""
-          >
-          </el-table-column>
-          <el-table-column label="操作" min-width="60%">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                size="mini"
-                @click="correct(scope.row.assignId)"
-              >
-                批改</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="modify(scope.row.assignId)"
-                >编辑</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click="remove(scope.row.assignId)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+      <el-card class="box-card">
+        <div class="Boslei">
+          <el-table :data="bosliet" style="width: 100%">
+            <el-table-column label="实验名称" min-width="100%">
+              <template slot-scope="scope">
+                <!-- <a href="">实验的名字倒是</a> -->
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="handJump(scope.row.assignId)"
+                  >{{ scope.row.assignName }}</el-button
+                >
+              </template>
+            </el-table-column>
+            <el-table-column prop="realName" label="教学教师" width="">
+            </el-table-column>
+            <el-table-column
+              prop="count"
+              label="实验人数"
+              :formatter="formcount"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column prop="" label="实验时间" width="">
+              <template slot-scope="scope">
+                {{ scope.row.projectBeginTime }} ~
+                {{ scope.row.projectEndTime }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="waitCount"
+              label="待批改"
+              :formatter="formwait"
+              width=""
+            >
+            </el-table-column>
+            <el-table-column label="操作" min-width="60%">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="correct(scope.row.assignId)"
+                >
+                  批改</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="modify(scope.row.assignId)"
+                  >编辑</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="remove(scope.row.assignId)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-card>
       <!-- 分页 -->
       <div class="beiye">
         <el-pagination

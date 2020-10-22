@@ -41,7 +41,7 @@ export function getExperimentList(data) {
   })
 }
 
-// 门户网站 -- 资讯中心 -- 资讯列表
+// 门户网站 -- 资讯动态 -- 资讯列表
 export function getNewsList(data) {
   return request({
     url: '/experimentPortal/getNews',
@@ -50,7 +50,7 @@ export function getNewsList(data) {
   })
 }
 
-// 门户网站 -- 资讯中心 -- 资讯列表
+// 门户网站 -- 资讯动态 -- 公告列表
 export function getNoticeList(data) {
   return request({
     url: '/experimentPortal/getAnnouncement',
@@ -59,7 +59,25 @@ export function getNoticeList(data) {
   })
 }
 
-// 门户网站 -- 资讯中心 -- 下载列表
+// 门户网站 -- 资讯动态 -- 新闻详情
+export function getNewsById(data) {
+  return request({
+    url: 'experimentPortal/getNewsDetail',
+    method: 'post',
+    data
+  })
+}
+
+// 门户网站 -- 资讯动态 -- 公告详情
+export function getNoticeById(data) {
+  return request({
+    url: '/experimentPortal/getAnnouncementId',
+    method: 'post',
+    data
+  })
+}
+
+// 门户网站 -- 下载中心 -- 下载列表
 export function getList(data) {
   return request({
     url: '/experimentPortal/getUploadInfo',
@@ -67,3 +85,5 @@ export function getList(data) {
     data
   })
 }
+
+
