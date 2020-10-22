@@ -9,7 +9,7 @@
         <el-step title="实验报告" icon="el-icon-s-claim" @click="stepNumber = 3"></el-step>
       </el-steps>
     </div>
-    <div class="mtop15 padding10">
+    <div class="mtop10">
       <div v-if="stepNumber===0" class="bg-white padding10">
         <el-form ref="info" :model="info" :rules="rules" class="edit-info" label-position="right" label-width="120px">
           <el-form-item prop="projectName" label="实验名称">
@@ -120,8 +120,7 @@
       </div>
       <div v-if="stepNumber===1" class="bg-white padding10">
          <div v-if="video.list.length === 0">
-           <div class="flex-left-top" >
-             <div style="width: 50%;">
+           <div class="" style="width: 480px;">
                <div class="flex-between-center">
                  <div class="video-name">
                    视频名称： <el-input v-model="video.name" placeholder="请输入" style="width: 200px;"></el-input>
@@ -146,10 +145,9 @@
                    </el-upload>
                  </div>
                </div>
-               <div class="video-introduce">
-                 视频介绍：<el-input type="textarea" v-model="video.introduce" :rows="5"></el-input>
+               <div class="video-introduce flex-left-top">
+                 视频介绍： <el-input type="textarea" v-model="video.introduce" :rows="5" style="width: 400px;"></el-input>
                </div>
-             </div>
            </div>
          </div>
         <div class="flex-left-top" v-for="item in video.list" >
@@ -161,7 +159,7 @@
               <div class="video-name">
                 视频名称： <el-input v-model="item.videoName" placeholder="请输入" style="width: 200px;"></el-input>
               </div>
-              <div>
+              <div class="flex-left-center">
                 <el-upload
                 :action="video.uploadUrl"
                 :auto-upload="true"
@@ -241,7 +239,6 @@
               <el-button type="primary">上传文件</el-button>
             </el-upload>
           </div>-->
-
         </div>
         <el-collapse v-model="studyResource.open" class="mtop15">
           <el-collapse-item name="video">
@@ -617,8 +614,8 @@
       editReport(){
         editProReport({
           projectId: this.projectId,
-          experimentReportTemplate: this.report.required,
-          experimentReportContent: this.report.template
+          experimentReportTemplate: this.report.template,
+          experimentReportContent: this.report.required
         }).then(res=>{
           if (res.code===200){
             this.$message.success('操作成功！')

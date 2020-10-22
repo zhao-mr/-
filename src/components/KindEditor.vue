@@ -8,6 +8,7 @@
   import '../../node_modules/kindeditor/kindeditor-all.js'
   import '../../node_modules/kindeditor/lang/zh-CN.js'
   import '../../node_modules/kindeditor/themes/default/default.css'
+  import { apiPath } from "../config/env";
 
   export default {
     name: 'kindeditor',
@@ -120,7 +121,8 @@
         default: false
       },
       basePath: {
-        type: String
+        type: String,
+        default: apiPath,
       },
       themesPath: {
         type: String

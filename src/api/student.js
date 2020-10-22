@@ -37,8 +37,8 @@ export function getOptionRecordList(data) {
 }
 
 
-// 撤销批改
-export function cancleCommit(data) {
+// 撤销提交
+export function cancelCommit(data) {
   return request({
     url: '/student/experiment/revocationCorrect',
     method: 'post',
@@ -109,12 +109,38 @@ export function getReportRecord(data) {
   })
 }
 
-// 暂存或提交
-export function saveExperiment(data) {
+// 获取实验记录
+export function getRecordDetail(data) {
   return request({
-    url: '/student/experiment/getAddressLink',
+    url: '/student/experiment/getExperimentSubmit',
     method: 'post',
     data
   })
 }
 
+// 必修 - 暂存或提交
+export function submitArranged(data) {
+  return request({
+    url: '/student/experiment/submitMustExperiment',
+    method: 'post',
+    data
+  })
+}
+
+// 选修 - 暂存或提交
+export function submitElective(data) {
+  return request({
+    url: '/student/experiment/submitExperiment',
+    method: 'post',
+    data
+  })
+}
+
+// 更新最近开始实验时间
+export function updateStartTime(data) {
+  return request({
+    url: '/student/experiment/updateSubmitDate',
+    method: 'post',
+    data
+  })
+}

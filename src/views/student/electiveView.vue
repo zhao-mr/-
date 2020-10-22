@@ -38,13 +38,11 @@
           {{info.introduce || '暂无实验介绍'}}
         </el-tab-pane>
         <el-tab-pane label="学习资料" name="files">
-          <div>
-
-          </div>
+          <div></div>
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div v-if="activeName==='files'">
+    <div v-if="activeName==='files'" class="mtop10">
       <el-collapse v-model="learnInfo.open" class="">
         <el-collapse-item name="video">
           <template slot="title">
@@ -58,13 +56,13 @@
               </div>
               <div class="mleft10 flex-between-center">
                 <span>{{item.materialsName}}</span>
-                <el-button type="text">删除</el-button>
+                <span></span>
               </div>
             </div>
           </div>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="learnInfo.open1" class="mtop15">
+      <el-collapse v-model="learnInfo.open1" class="mtop10">
         <el-collapse-item name="images">
           <template slot="title">
             <span class="study-title">图片资料</span> <i class="header-icon el-icon-info"></i>
@@ -79,7 +77,7 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="learnInfo.open2" class="mtop15">
+      <el-collapse v-model="learnInfo.open2" class="mtop10">
         <el-collapse-item name="files">
           <template slot="title">
             <span class="study-title">文件资料</span> <i class="header-icon el-icon-info"></i>
@@ -88,19 +86,22 @@
             <div class="flex-left-center" v-for="item in learnInfo.files">
               <div class="resource-name">{{item.materialsName}}</div>
               <div>
-                <!--<el-button type="text" class="mleft10" @click="downloadResource(item.learnId)">下载</el-button>-->
+                <el-button type="text" class="mleft10" @click="downloadResource(item.learnId)">下载</el-button>
               </div>
             </div>
           </div>
         </el-collapse-item>
       </el-collapse>
     </div>
+    <div class="mtop10 text-center">
+      <el-button type="primary" @click="$router.go(-1)">返回</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 
-  import { getProjectInfo, createRecord } from "../../api/student";
+  import { getProjectInfo, createRecord, updateStartTime } from "../../api/student";
   import {apiPath} from "../../config/env";
 
   export default {
@@ -112,6 +113,8 @@
         activeName: 'introduce',
         projectId: undefined,
         info: {},
+        recordId: undefined,
+        assignId: null,
         learnInfo: {
           open: 'video',
           open1: 'images',
@@ -130,11 +133,15 @@
     methods: {
       init() {
         this.projectId = this.$route.query.projectId
+        this.recordId = this.$route.query.recordId
+        this.assignId = this.$route.query.assignId
         this.getInfo()
       },
       // 获取基本数据
       getInfo() {
-        getProjectInfo({projectId: this.projectId}).then(res => {
+        getProjectInfo({
+          projectId: this.projectId
+        }).then(res => {
           if (res.code === 200) {
             this.info = res.data.roProject
             let learn=res.data.learnMaterialsList
@@ -153,17 +160,40 @@
           }
         })
       },
+      // 下载学习资料
+      downloadResource(_id){
+        window.open(`${apiPath}/experiment/downloadProjectLearnMaterials?learnId=${_id}`)
+      },
       // 开始实验
       start(){
-        // 生成记录
-        createRecord({
-          projectId: this.projectId,
-          status: this.$route.name === 'electiveView' ? 0 : 1 // 0为选修，1为必修
-        }).then(res=>{
-          if(res.code === 200){
-            this.$router.push({ path: '/allExperiment/electiveExperiment', query: { projectId: this.projectId, recordId: res.data }})
+        let isOption = this.$route.name === 'electiveView'
+        if(this.recordId === undefined || this.recordId === null){
+          // 生成记录
+          createRecord({
+            projectId: this.projectId,
+            assignId: isOption ? null : this.assignId,
+            status: isOption ? 0 : 1 // 0为选修，1为必修
+          }).then(res=>{
+            if(res.code === 200){
+              if(isOption){
+                this.$router.push({ path: '/allExperiment/electiveExperiment', query: { projectId: this.projectId, recordId: res.data }})
+              } else {
+                this.$router.push({ path: '/myExperiment/arrangedExperiment', query: { projectId: this.projectId, recordId: res.data }})
+              }
+            }
+          })
+        } else {
+          // 更新最近时间
+          updateStartTime({
+            status: isOption ? 0 : 1,
+            submitId: this.recordId
+          })
+          if(isOption){
+            this.$router.push({ path: '/allExperiment/electiveExperiment', query: { projectId: this.projectId, recordId: this.recordId }})
+          } else {
+            this.$router.push({ path: '/myExperiment/arrangedExperiment', query: { projectId: this.projectId, recordId: this.recordId }})
           }
-        })
+        }
       }
     }
   }

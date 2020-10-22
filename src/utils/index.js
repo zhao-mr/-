@@ -12,7 +12,7 @@ Date.prototype.customTime = (num, day) => {
 * 转化时间格式为yyyy-mm-dd
 * */
 export const dateFormat = (time) => {
-  var date = new Date(time)
+  var date = time ? new Date(time) : new Date()
   var year = date.getFullYear()
   var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
   var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()

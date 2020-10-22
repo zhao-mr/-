@@ -399,8 +399,10 @@ div::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
   background: #eee;
 }
 
-.no-share:hover {
+.no-share:hover,.no-share:focus {
   cursor: not-allowed;
+  background: #eee;
+  color: #666;
 }
 
 .edit-project {

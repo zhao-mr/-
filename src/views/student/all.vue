@@ -2,19 +2,19 @@
 <template>
   <div>
     <div class="param-card flex-left-center">
-      <div>
+      <!--<div>
         学院名称：
         <el-input placeholder="请输入" v-model="keyword" style="width: 200px" />
       </div>
       <div class="mleft20">
         学科分类：
         <el-input placeholder="请输入" v-model="keyword" style="width: 200px" />
-      </div>
+      </div>-->
       <div class="mleft20">
-        实验名称：<el-input placeholder="请输入" v-model="keyword" style="width: 200px" />
+        实验名称：<el-input placeholder="请输入" v-model="keyword" clearable @change="getDataList()" style="width: 200px" />
       </div>
     </div>
-    <div class="mtop20">
+    <div class="mtop10">
       <div class="flex-left-center" style="flex-wrap: wrap;background: #fff;padding-bottom: 20px;">
         <div v-for="item in list.data" :key="item.projectId" class="project-card">
           <div style="height: 200px;">
@@ -84,7 +84,7 @@ export default {
       getAllProject( {
         "collegeId": "",
         "majorId": "",
-        "projectName": "",
+        "projectName": this.keyword,
         "pageNum": 1,
         "pageSize": 10
       }).then(res=>{

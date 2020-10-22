@@ -380,11 +380,33 @@ export const constantRoutes = [
       {
         path: 'myExperiment',
         name: 'myExperiment',
-        component: () => import('@/views/student/my'),
-        meta: {
-          title: '我的实验',
-          icon: 'user'
-        },
+        component: routerMain,
+        meta: {title: '我的实验', icon: 'user'},
+        redirect: '/myExperiment',
+        children: [
+          {
+            path: '/',
+            component: () => import('@/views/student/my')
+          },
+          {
+            path: 'arrangedView',
+            name: 'arrangedView',
+            component: () => import('@/views/student/electiveView'),
+            meta: {
+              title: '',
+              icon: ''
+            }
+          },
+          {
+            path: 'arrangedExperiment',
+            name: 'arrangedExperiment',
+            component: () => import('@/views/student/electiveExperiment'),
+            meta: {
+              title: '开始实验',
+              icon: ''
+            }
+          }
+        ]
       },
       {
         path: '/userManage',
