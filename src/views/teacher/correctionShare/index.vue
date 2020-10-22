@@ -28,7 +28,7 @@
       <div class="Boslei">
         <el-card class="box-card">
           <el-table :data="datalist" style="width: 100%">
-            <el-table-column min-width="60%">
+            <el-table-column>
               <template slot-scope="scope">
                 <div class="Imgbos">
                   <img :src="url + scope.row.cover" alt="图片" />
@@ -203,11 +203,8 @@ export default {
 }
 .beiye {
   width: 100%;
-  overflow: hidden;
   text-align: center;
-  margin-top: 35px;
-  /* position: relative;
-  top: 50px; */
+  margin-top: 20px;
 }
 </style>
 <style>

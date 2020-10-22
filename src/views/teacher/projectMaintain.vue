@@ -23,13 +23,16 @@
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="cover" align="center" label="实验封面" min-width="120">
+        <el-table-column prop="cover" align="center" label="实验名称" min-width="220">
           <template slot-scope="scope">
-            <img :src="scope.row.cover ? url + scope.row.cover : 'icon.png'" height="80" />
+            <div class="flex-left-center">
+              <img :src="scope.row.cover ? url + scope.row.cover : 'icon.png'" height="80" width="140" />
+              <el-button type="text" class="mleft10" @click="toView(scope.row)">{{scope.row.projectName}}</el-button>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="projectName" align="center" label="实验名称" min-width="200">
-        </el-table-column>
+        <!--<el-table-column prop="projectName" align="center" label="实验名称" min-width="200">
+        </el-table-column>-->
         <el-table-column prop="collegeName" align="center" label="学院" min-width="120">
         </el-table-column>
         <el-table-column prop="majorName" align="center" label="学科" min-width="120">
@@ -47,11 +50,9 @@
     </div>
     <div class="mtop20 text-center">
       <el-pagination
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="projectList.pageNum"
         :page-size="projectList.pageSize"
-        :page-sizes="[10, 15, 20, 30]"
         layout="total, prev, pager, next, jumper"
         :total="projectList.total">
       </el-pagination>
@@ -90,8 +91,8 @@
     getDataList(){
       this.projectList.loading = true
       maintainList({
-        "pageNum": 1,
-        "pageSize": 10,
+        "pageNum": this.projectList.pageNum,
+        "pageSize": this.projectList.pageSize,
         "projectName": this.projectList.keyword
       }).then(res=>{
         this.projectList.data = res.data.list
@@ -101,15 +102,15 @@
       })
     },
     handleCurrentChange(val){
-
-    },
-    handleSizeChange(val){
-
+      this.projectList.pageNum = val
+      this.getDataList()
     },
     toEdit(_id){
       this.$router.push({ path: '/projectMaintain/projectEdit', query: { projectId: _id } })
     },
-
+    toView(_row){
+      this.$router.push({ path: '/teachInner/project', query: { projectId: _row.projectId }})
+    }
   }
 }
 </script>

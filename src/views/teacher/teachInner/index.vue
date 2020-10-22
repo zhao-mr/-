@@ -28,7 +28,7 @@
       <div class="Boslei">
         <el-card class="box-card">
           <el-table :data="datalist" style="width: 100%">
-            <el-table-column min-width="60%">
+            <el-table-column>
               <template slot-scope="scope">
                 <div class="Imgbos">
                   <img :src="url + scope.row.cover" alt="图片" />
@@ -38,7 +38,7 @@
             <el-table-column
               label="实验名称"
               :show-overflow-tooltip="true"
-              min-width="100%"
+              min-width="120px"
             >
               <template slot-scope="scope">
                 <el-button
@@ -64,11 +64,11 @@
               width=""
             >
             </el-table-column>
-            <el-table-column prop="projectPeriod" label="学时" width="">
+            <el-table-column prop="projectPeriod" label="学时" >
             </el-table-column>
-            <el-table-column prop="userName" label="项目负责人" width="">
+            <el-table-column prop="userName" label="项目负责人">
             </el-table-column>
-            <el-table-column label="操作" min-width="60%">
+            <el-table-column label="操作" min-width="200" align="center">
               <template slot-scope="scope">
                 <el-button
                   type="text"
@@ -235,11 +235,8 @@ export default {
 }
 .beiye {
   width: 100%;
-  overflow: hidden;
   text-align: center;
-  margin-top: 35px;
-  /* position: relative;
-  top: 50px; */
+  margin-top: 20px;
 }
 </style>
 <style>

@@ -157,7 +157,6 @@ export const constantRoutes = [
       },
       {
         path: 'adminNotice',
-        name: 'adminNotice',
         component: () => import('@/views/projectAdmin/noticeManagement/index'),
         meta: {
           title: '通知公告',
@@ -166,6 +165,7 @@ export const constantRoutes = [
         children: [
           {
             path: '/',
+            name: 'adminNotice',
             component: () => import('@/views/projectAdmin/noticeManagement/notice'),
           },
           {
@@ -315,7 +315,6 @@ export const constantRoutes = [
 
       {
         path: 'teacherNotice',
-        name: 'teacherNotice',
         component: () => import('@/views/teacher/noticeManagement/index'),
         meta: {
           title: '通知列表',
@@ -324,6 +323,7 @@ export const constantRoutes = [
         children: [
           {
             path: '/',
+            name: 'teacherNotice',
             component: () => import('@/views/teacher/noticeManagement/notice')
           },
           {
@@ -466,7 +466,6 @@ export const constantRoutes = [
       },
       {
         path: 'noReadNotice',
-        name: 'noReadNotice',
         component: () => import('@/views/noReadNotice'),
         meta: {
           title: '通知列表',
@@ -475,6 +474,7 @@ export const constantRoutes = [
         children: [
           {
             path: '/',
+            name: 'noReadNotice',
             component: () => import('@/views/noReadNotice/list'),
           },
           {
@@ -490,7 +490,6 @@ export const constantRoutes = [
       },
       {
         path: 'news',
-        name: 'news',
         component: () => import('@/views/webAdmin/news/index'),
         meta: {
           title: '资讯动态',
@@ -499,6 +498,7 @@ export const constantRoutes = [
         children: [
           {
             path: '/',
+            name: 'news',
             component: () => import('@/views/webAdmin/news/news'),
           },
           {
@@ -514,7 +514,6 @@ export const constantRoutes = [
       },
       {
         path: 'downloadCenter',
-        name: 'downloadCenter',
         component: () => import('@/views/webAdmin/downloadCenter/index'),
         meta: {
           title: '下载中心',
@@ -523,6 +522,7 @@ export const constantRoutes = [
         children: [
           {
             path: '/',
+            name: 'downloadCenter',
             component: () => import('@/views/webAdmin/downloadCenter/download')
           }
         ]
