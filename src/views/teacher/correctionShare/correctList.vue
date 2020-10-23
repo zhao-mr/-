@@ -295,10 +295,8 @@ export default {
 }
 .beiye {
   width: 100%;
-  overflow: hidden;
   text-align: center;
-  position: relative;
-  top: 50px;
+  margin-top: 20px;
 }
 </style>
 <style>

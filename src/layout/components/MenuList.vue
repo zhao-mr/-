@@ -2,7 +2,7 @@
   <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu
+      <!-- <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
         :background-color="variables.menuBg"
@@ -12,15 +12,24 @@
         :collapse-transition="false"
         router
         mode="vertical"
+      > -->
+      <el-menu
+        :collapse="isCollapse"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :unique-opened="false"
+        :collapse-transition="false"
+        router
+        mode="vertical"
       >
-        <el-menu-item index="/home">
+        <el-menu-item index="/home" :class="{'is-active': selectItem === '/home'}">
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
 
         <!--项目添加员-->
         <template v-if="roles === 2">
-          <el-menu-item index="/projectList/list">
+          <el-menu-item index="/projectList/list" :class="{'is-active': selectItem === '/projectList/list'}">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目列表</span>
           </el-menu-item>
@@ -28,19 +37,19 @@
 
         <!--教师-->
         <template v-if="roles === 4">
-          <el-menu-item index="/projectMaintain" :class="{'blue': selectItem === 'projectMaintain'}">
+          <el-menu-item index="/projectMaintain" :class="{'is-active': selectItem === '/projectMaintain'}">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目维护</span>
           </el-menu-item>
-          <el-menu-item index="/teachInner" :class="{'blue': selectItem === 'teachInner'}">
+          <el-menu-item index="/teachInner" :class="{'is-active': selectItem === '/teachInner'}">
             <i class="el-icon-school"></i>
             <span slot="title">校内教学</span>
           </el-menu-item>
-          <el-menu-item index="/correctionShare">
+          <el-menu-item index="/correctionShare" :class="{'is-active': selectItem === '/correctionShare'}">
             <i class="el-icon-share"></i>
             <span slot="title">批改共享</span>
           </el-menu-item>
-          <el-menu-item index="/teacherNotice">
+          <el-menu-item index="/teacherNotice" :class="{'is-active': selectItem === '/teacherNotice'}">
             <i class="el-icon-message"></i>
             <span slot="title">通知管理</span>
           </el-menu-item>
@@ -48,15 +57,15 @@
 
         <!--项目管理员-->
         <template v-if="roles === 3">
-          <el-menu-item index="/projectManage">
+          <el-menu-item index="/projectManage" :class="{'is-active': selectItem === '/projectManage'}">
             <i class="el-icon-set-up"></i>
             <span slot="title">项目管理</span>
           </el-menu-item>
-          <el-menu-item index="/projectStatistics">
+          <el-menu-item index="/projectStatistics" :class="{'is-active': selectItem === '/projectStatistics'}">
             <i class="el-icon-school"></i>
             <span slot="title">项目统计</span>
           </el-menu-item>
-          <el-menu-item index="/adminNotice">
+          <el-menu-item index="/adminNotice" :class="{'is-active': selectItem === '/adminNotice'}">
             <i class="el-icon-share"></i>
             <span slot="title">通知管理</span>
           </el-menu-item>
@@ -64,11 +73,11 @@
 
         <!--学生-->
         <template v-if="roles === 5">
-          <el-menu-item index="/allExperiment">
+          <el-menu-item index="/allExperiment" :class="{'is-active': selectItem === '/allExperiment'}">
             <i class="el-icon-menu"></i>
             <span slot="title">全部实验</span>
           </el-menu-item>
-          <el-menu-item index="/myExperiment">
+          <el-menu-item index="/myExperiment" :class="{'is-active': selectItem === '/myExperiment'}">
             <i class="el-icon-user-solid"></i>
             <span slot="title">我的实验</span>
           </el-menu-item>
@@ -81,10 +90,10 @@
               <i class="el-icon-user"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="/userManage/teacher">
+            <el-menu-item index="/userManage/teacher" :class="{'is-active': selectItem === '/userManage/teacher'}">
               <span>教师管理</span>
             </el-menu-item>
-            <el-menu-item index="/userManage/student">
+            <el-menu-item index="/userManage/student" :class="{'is-active': selectItem === '/userManage/student'}">
               <span>学生管理</span>
             </el-menu-item>
           </el-submenu>
@@ -93,19 +102,23 @@
               <i class="el-icon-notebook-1"></i>
               <span>分组管理</span>
             </template>
-            <el-menu-item index="/groupManage/college"><span>院校管理</span></el-menu-item>
-            <el-menu-item index="/groupManage/clazz"><span>班级管理</span></el-menu-item>
+            <el-menu-item index="/groupManage/college" :class="{'is-active': selectItem === '/groupManage/college'}">
+              <span>院校管理</span>
+            </el-menu-item>
+            <el-menu-item index="/groupManage/clazz" :class="{'is-active': selectItem === '/groupManage/clazz'}">
+              <span>班级管理</span>
+            </el-menu-item>
           </el-submenu>
         </template>
         <!--<sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />-->
 
         <!--网络管理员-->
         <template v-if="roles === 6">
-          <el-menu-item index="/news" :class="{'blue': selectItem === 'news'}">
+          <el-menu-item index="/news" :class="{'is-active': selectItem === '/news'}">
             <i class="el-icon-message"></i>
             <span slot="title">资讯动态</span>
           </el-menu-item>
-          <el-menu-item index="/downloadCenter">
+          <el-menu-item index="/downloadCenter" :class="{'is-active': selectItem === '/downloadCenter'}">
             <i class="el-icon-upload"></i>
             <span slot="title">下载中心</span>
           </el-menu-item>
@@ -156,13 +169,7 @@ export default {
     $route:{
       handler(val){
         console.log(val);//新路由信息
-        if (val.path === '/projectMaintain') {
-          this.selectItem = 'projectMaintain'
-        } else if (val.path === '/teachInner') {
-          this.selectItem = 'teachInner'
-        } else if (val.path === '/news') {
-          this.selectItem = 'news'
-        }
+        this.matchRouter(val)
       },
       // 深度观察监听
       deep: true
@@ -197,7 +204,8 @@ export default {
       this.$router.push({
         path: path
       })
-    })
+    });
+    this.matchRouter(this.$route)
   },
   methods: {
     getRole() {
@@ -218,13 +226,50 @@ export default {
         this.$store.dispatch('setCurrentRole', role)
         this.roles = this.$store.state.user.currentRole.roleId
       }
+    },
+    matchRouter(val) {
+      if (val.path.indexOf('/home') !== -1) {
+        this.selectItem = '/home'
+      } else if (val.path.indexOf('/projectList/list') !== -1) {
+        this.selectItem = '/projectList/list'
+      } else if (val.path.indexOf('/projectMaintain') !== -1) {
+        this.selectItem = '/projectMaintain'
+      } else if (val.path.indexOf('/teachInner') !== -1) {
+        this.selectItem = '/teachInner'
+      } else if (val.path.indexOf('/correctionShare') !== -1) {
+        this.selectItem = '/correctionShare'
+      } else if (val.path.indexOf('/teacherNotice') !== -1) {
+        this.selectItem = '/teacherNotice'
+      } else if (val.path.indexOf('/projectManage') !== -1) {
+        this.selectItem = '/projectManage'
+      } else if (val.path.indexOf('/projectStatistics') !== -1) {
+        this.selectItem = '/projectStatistics'
+      } else if (val.path.indexOf('/adminNotice') !== -1) {
+        this.selectItem = '/adminNotice'
+      } else if (val.path.indexOf('/allExperiment') !== -1) {
+        this.selectItem = '/allExperiment'
+      } else if (val.path.indexOf('/myExperiment') !== -1) {
+        this.selectItem = '/myExperiment'
+      } else if (val.path.indexOf('/userManage/teacher') !== -1) {
+        this.selectItem = '/userManage/teacher'
+      } else if (val.path.indexOf('/userManage/student') !== -1) {
+        this.selectItem = '/userManage/student'
+      } else if (val.path.indexOf('/groupManage/college') !== -1) {
+        this.selectItem = '/groupManage/college'
+      } else if (val.path.indexOf('/groupManage/clazz') !== -1) {
+        this.selectItem = '/groupManage/clazz'
+      } else if (val.path.indexOf('/news') !== -1) {
+        this.selectItem = '/news'
+      } else if (val.path.indexOf('/downloadCenter') !== -1) {
+        this.selectItem = '/downloadCenter'
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.blue {
-  color: #409EFF;
+.is-active {
+  color: #409EFF !important;
 }
 </style>

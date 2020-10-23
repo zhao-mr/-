@@ -10,7 +10,8 @@
           </div>
           <div class="news-content">
             <p>{{item.title}}</p>
-            <a v-html="item.content"></a>
+            <a v-if="item.Introduce">{{item.Introduce}}</a>
+            <a v-else>暂无简讯</a>
             <!-- <span>来源：{{item.source}}</span> -->
           </div>
         </div>
@@ -48,7 +49,16 @@
           <span>发稿时间：{{date}}</span>
         </div>
       </div>
-      <p class="info-content" v-html="content"></p>
+      <!-- <p class="info-content" v-html="content"></p> -->
+      <div class="introduce">
+        <label>简介：</label>
+        <div v-if="introduce">{{introduce}}</div>
+        <div v-else>暂无简介</div>
+      </div>
+      <div class="content">
+        <label>内容：</label>
+        <p class="info-content" v-html="content"></p>
+      </div>
       <div class="btn">
         <el-button type="primary" round @click="goBack" style="width: 120px;">返回</el-button>
       </div>
@@ -77,6 +87,7 @@ export default {
       title: '',
       source: '',
       date: '',
+      introduce: '',
       content: ''
     }
   },
@@ -124,6 +135,7 @@ export default {
               id: item.newsId,
               title: item.newsTitle,
               source: item.newsSource,
+              introduce: item.newsIntroduce,
               content: item.newsContent,
               year,
               month,
@@ -132,9 +144,6 @@ export default {
           }
           this.newsTotal = res.data.total;
         }
-      })
-      .catch(err => {
-        this.$message.error(err.msg)
       })
     },
 
@@ -156,6 +165,7 @@ export default {
               id: item.announcementId,
               title: item.announcementTitle,
               source: item.announcementSource,
+              introduce: item.announcementIntroduce,
               content: item.announcementContent,
               year,
               month,
@@ -193,6 +203,7 @@ export default {
           this.title = res.data.newsTitle;
           this.source = res.data.newsSource;
           this.date = res.data.newsDate;
+          this.introduce = res.data.newsIntroduce;
           this.content = res.data.newsContent;
         }
       })
@@ -210,6 +221,7 @@ export default {
           this.title = res.data.announcementTitle;
           this.source = res.data.announcementSource;
           this.date = res.data.announcementDate;
+          this.introduce = res.data.announcementIntroduce;
           this.content = res.data.announcementContent;
         }
       })
@@ -343,9 +355,28 @@ export default {
       }
     }
     .info-content {
+      margin-top: 20px;
       min-height: 238px;
       text-indent: 2em;
       line-height: 24px;
+    }
+    .introduce {
+      margin-bottom: 16px;
+      label {
+        font-weight: bold;
+        font-size: 16px;
+      }
+      >div {
+        margin-top: 20px;
+        text-indent: 2em;
+        line-height: 24px;
+      }
+    }
+    .content {
+      label {
+        font-weight: bold;
+        font-size: 16px;
+      }
     }
     .btn {
       margin-top: 30px;

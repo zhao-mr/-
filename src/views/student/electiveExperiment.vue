@@ -35,10 +35,13 @@
         <iframe :src="link" height="700px" width="100%"></iframe>
       </div>
       <div v-if="stepNumber===2" class="bg-white padding10">
-        <h2>实验报告要求</h2>
+        <h3>实验报告要求</h3>
         <div style="border: 1px solid #eee;" class="padding10" v-html="report.required||'暂无数据'"></div>
-        <h2 class="mtop30">实验报告内容</h2>
-        <div v-html="report.template"></div>
+        <h3 class="mtop30">实验报告内容</h3>
+        <editor id="editor_id" height="400px" width="100%" :content.sync="report.template"
+                :afterChange="afterChange()"
+                :loadStyleMode="false"
+                @on-content-change="onContentChange"></editor>
       </div>
     </div>
     <div class="text-center bg-white mtop10 padding10">
@@ -53,9 +56,12 @@
 <script>
   import { getExperimentVideo, getExperimentLink, submitArranged, submitElective, updateExperimentVideo, getReportRecord, getRecordDetail } from "../../api/student";
   import {apiPath} from "../../config/env";
-
+  import editor from '../../components/KindEditor'
   export default {
     name: 'electiveExperiment',
+    components:{
+      editor
+    },
     data() {
       return {
         loading: false,
@@ -76,6 +82,7 @@
           template: ''
         },
         isElective: true, // 是否为选修
+        editorTextCopy: ''
       }
     },
     watch: {
@@ -216,7 +223,12 @@
             this.$router.go(-2)
           }
         })
-      }
+      },
+      onContentChange(val) {
+        this.editorTextCopy = val;
+      },
+      afterChange() {
+      },
     }
   }
 </script>

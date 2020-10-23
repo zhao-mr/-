@@ -87,8 +87,15 @@
             <span>发稿时间：{{obj.date}}</span>
           </div>
         </div>
-        <p class="preview-news-content" v-html="obj.content">
-        </p>
+        <div class="introduce">
+          <label>简介：</label>
+          <div v-if="obj.introduce">{{obj.introduce}}</div>
+          <div v-else>暂无简介</div>
+        </div>
+        <div class="content">
+          <label>内容：</label>
+          <p class="preview-news-content" v-html="obj.content"></p>
+        </div>
       </div>
 
       <span slot="footer" class="dialog-footer">
@@ -119,6 +126,7 @@ export default {
         title: '',
         source: '',
         date: '',
+        introduce: '',
         content: ''
       }
     };
@@ -210,6 +218,7 @@ export default {
           this.obj.title = res.data.newsTitle;
           this.obj.source = res.data.newsSource;
           this.obj.date = res.data.newsDate;
+          this.obj.introduce = res.data.newsIntroduce;
           this.obj.content = res.data.newsContent;
         }
       })
@@ -272,8 +281,27 @@ export default {
         }
       }
       .preview-news-content {
+        margin-top: 20px;
         text-indent: 2em;
         line-height: 24px;
+      }
+      .introduce {
+        margin-bottom: 16px;
+        label {
+          font-weight: bold;
+          font-size: 16px;
+        }
+        >div {
+          margin-top: 20px;
+          text-indent: 2em;
+          line-height: 24px;
+        }
+      }
+      .content {
+        label {
+          font-weight: bold;
+          font-size: 16px;
+        }
       }
     }
   }

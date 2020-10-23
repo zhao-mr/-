@@ -27,7 +27,7 @@
       <el-card class="box-card">
         <div class="Boslei">
           <el-table :data="bosliet" style="width: 100%">
-            <el-table-column label="实验名称" min-width="100%">
+            <el-table-column label="实验名称" min-width="200">
               <template slot-scope="scope">
                 <!-- <a href="">实验的名字倒是</a> -->
                 <el-button
@@ -38,7 +38,7 @@
                 >
               </template>
             </el-table-column>
-            <el-table-column prop="realName" label="教学教师" width="">
+            <el-table-column prop="realName" label="教学教师">
             </el-table-column>
             <el-table-column
               prop="count"
@@ -47,7 +47,7 @@
               width=""
             >
             </el-table-column>
-            <el-table-column prop="" label="实验时间" width="">
+            <el-table-column prop="" label="起止时间" width="200">
               <template slot-scope="scope">
                 {{ scope.row.projectBeginTime }} ~
                 {{ scope.row.projectEndTime }}
@@ -60,7 +60,7 @@
               width=""
             >
             </el-table-column>
-            <el-table-column label="操作" min-width="60%">
+            <el-table-column label="操作" align="center" min-width="200px">
               <template slot-scope="scope">
                 <el-button
                   type="text"
@@ -242,10 +242,8 @@ export default {
 }
 .beiye {
   width: 100%;
-  overflow: hidden;
   text-align: center;
-  position: relative;
-  top: 50px;
+  margin-top: 20px;
 }
 </style>
 <style>

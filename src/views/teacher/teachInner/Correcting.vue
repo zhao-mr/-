@@ -23,7 +23,7 @@
         <div class="lfet">
           <span>视频学习：</span>
           <span
-            >评分:
+          >评分:
             <span ref="nameshipin">{{
               (videoScoreScale * mustVideoStatus) / 100
             }}</span></span
@@ -51,7 +51,7 @@
         <div class="lfet">
           <span>虚拟实验操作：</span>
           <span
-            >评分:
+          >评分:
             <span ref="nameshiyan">{{
               (experimentScoreScale * experimentScore) / 100
             }}</span>
@@ -84,16 +84,16 @@
             }}</span>
           </span>
           <span
-            >（=<el-input
-              v-model="inputbaogao"
-              placeholder="请输入"
-              class="Bosinput"
-              @input="gaibian"
-              maxlength="3"
-              oninput="value=value.replace(/[^\d]/g,'')"
-              clearable
-            ></el-input
-            >*{{ reportScoreScale }}%）</span
+          >（=<el-input
+            v-model="inputbaogao"
+            placeholder="请输入"
+            class="Bosinput"
+            @input="gaibian"
+            maxlength="3"
+            oninput="value=value.replace(/[^\d]/g,'')"
+            clearable
+          ></el-input
+          >*{{ reportScoreScale }}%）</span
           >
           <span></span>
         </div>
@@ -143,224 +143,240 @@
 </template>
 
 <script>
-import { correctUser, correctResult, lookCorrect } from "@/api/teacher";
-export default {
-  data() {
-    return {
-      projectId: "", //项目ID
-      assignId: "", //布置ID
-      submitId: "", //成绩ID
-      userName: "", //用户名
+  import {correctUser, correctResult, lookCorrect} from "@/api/teacher";
 
-      assignName: "", //名称
+  export default {
+    data() {
+      return {
+        projectId: "", //项目ID
+        assignId: "", //布置ID
+        submitId: "", //成绩ID
+        userName: "", //用户名
 
-      videoScoreScale: "", //视频成绩比例
-      mustVideoStatus: "", //视频成绩分数
-      experimentScoreScale: "", //实验成绩比例
-      experimentScore: "", //实验成绩
-      mustExperimentContent: "", //报告内容
-      reportScoreScale: "", //报告比例
+        assignName: "", //名称
 
-      inputbaogao: "", //输入的值
-      teacherComment: "", //评语
+        videoScoreScale: "", //视频成绩比例
+        mustVideoStatus: "", //视频成绩分数
+        experimentScoreScale: "", //实验成绩比例
+        experimentScore: "", //实验成绩
+        mustExperimentContent: "", //报告内容
+        reportScoreScale: "", //报告比例
 
-      bosshow: true,
-      totalScore: "", //总分
-      videoScore: "", //视频批改后得分
-      reportScore: "" //报告批改后得分
-    };
-  },
-  methods: {
-    //获取信息列表
-    correctUser() {
-      correctUser({
-        submitId: this.submitId
-      })
-        .then(res => {
-          // console.log(res);
-          if (res.code == 200) {
-            this.assignName = res.data.assignName;
-            this.videoScoreScale = res.data.videoScoreScale;
-            if (res.data.mustVideoStatus == true) {
-              this.mustVideoStatus = "100";
-            } else {
-              this.mustVideoStatus = "0";
-            }
-            this.experimentScoreScale = res.data.experimentScoreScale;
-            this.experimentScore = res.data.experimentScore;
-            this.mustExperimentContent = res.data.mustExperimentContent;
-            this.reportScoreScale = res.data.reportScoreScale;
-          }
+        inputbaogao: "", //输入的值
+        teacherComment: "", //评语
+
+        bosshow: true,
+        totalScore: "", //总分
+        videoScore: "", //视频批改后得分
+        reportScore: "" //报告批改后得分
+      };
+    },
+    methods: {
+      //获取信息列表
+      correctUser() {
+        correctUser({
+          submitId: this.submitId
         })
-        .catch(err => {});
-    },
+          .then(res => {
+            // console.log(res);
+            if (res.code == 200) {
+              this.assignName = res.data.assignName;
+              this.videoScoreScale = res.data.videoScoreScale;
+              if (res.data.mustVideoStatus == true) {
+                this.mustVideoStatus = "100";
+              } else {
+                this.mustVideoStatus = "0";
+              }
+              this.experimentScoreScale = res.data.experimentScoreScale;
+              this.experimentScore = res.data.experimentScore;
+              this.mustExperimentContent = res.data.mustExperimentContent;
+              this.reportScoreScale = res.data.reportScoreScale;
+            }
+          })
+          .catch(err => {
+          });
+      },
 
-    //填写报告成绩
-    gaibian(val) {
-      this.inputbaogao = val;
-    },
+      //填写报告成绩
+      gaibian(val) {
+        this.inputbaogao = val;
+      },
 
-    //提交
-    Result() {
-      if (!this.inputbaogao == "" || !this.inputbaogao == null) {
-        this.correctResult();
-      } else {
-        this.$message({
-          showClose: true,
-          message: "请填写实验报告成绩",
-          type: "warning"
-        });
+      //提交
+      Result() {
+        if (!this.inputbaogao == "" || !this.inputbaogao == null) {
+          this.correctResult();
+        } else {
+          this.$message({
+            showClose: true,
+            message: "请填写实验报告成绩",
+            type: "warning"
+          });
+        }
+      },
+
+      correctResult() {
+        correctResult({
+          userName: this.userName, //用户名
+          experimentScore: this.$refs.nameshiyan.innerHTML, //实验成绩
+          reportScore: this.$refs.namebaogaon.innerHTML, //报告成绩
+          videoScore: this.$refs.nameshipin.innerHTML, //视频成绩
+          exercisesScore: 0, //习题成绩
+          experimentScoreScale: this.experimentScoreScale, //实验成绩比例
+          reportScoreScale: this.reportScoreScale, //报告成绩比例
+          videoScoreScale: this.videoScoreScale, //视频成绩比例
+          exercisesScoreScale: "", //习题成绩比例
+          submitId: this.submitId, //学生成绩id
+          assignId: this.assignId, //布置id
+          teacherComment: this.teacherComment, //评语
+          totalScore: this.$refs.namezong.innerHTML //总分
+        })
+          .then(res => {
+            console.log(res);
+            if (res.code == 200) {
+              this.$message({
+                type: "success",
+                message: res.msg
+              });
+              this.$router.push({
+                path: "/teachInner/correctList",
+                query: {projectId: this.projectId, assignId: this.assignId}
+              });
+            }
+          })
+          .catch(err => {
+          });
+      },
+
+      //取消/返回
+      cancel() {
+        // this.$router.push({
+        //   path: "/teachInner/correctList",
+        //   query: { projectId: this.projectId, assignId: this.assignId }
+        // });
+        this.$router.go(-1)
+      },
+
+      //查看批改结果
+      lookCorrect() {
+        lookCorrect({
+          assignId: this.assignId,
+          submitId: this.submitId
+        })
+          .then(res => {
+            console.log(res);
+            if (res.code == 200) {
+              this.assignName = res.data.assignName;
+              this.totalScore = res.data.totalScore;
+              this.videoScore = res.data.videoScore;
+              this.videoScoreScale = res.data.videoScoreScale;
+              //   if (res.data.mustVideoStatus == true) {
+              //     this.mustVideoStatus = "100";
+              //   } else {
+              //     this.mustVideoStatus = "0";
+              //   }
+              this.experimentScoreScale = res.data.experimentScoreScale;
+              this.experimentScore = res.data.experimentScore;
+              this.reportScore = res.data.reportScore;
+              this.reportScoreScale = res.data.reportScoreScale;
+              this.teacherComment = res.data.teacherComment;
+            }
+          })
+          .catch(err => {
+          });
       }
     },
-
-    correctResult() {
-      correctResult({
-        userName: this.userName, //用户名
-        experimentScore: this.$refs.nameshiyan.innerHTML, //实验成绩
-        reportScore: this.$refs.namebaogaon.innerHTML, //报告成绩
-        videoScore: this.$refs.nameshipin.innerHTML, //视频成绩
-        exercisesScore: 0, //习题成绩
-        experimentScoreScale: this.experimentScoreScale, //实验成绩比例
-        reportScoreScale: this.reportScoreScale, //报告成绩比例
-        videoScoreScale: this.videoScoreScale, //视频成绩比例
-        exercisesScoreScale: "", //习题成绩比例
-        submitId: this.submitId, //学生成绩id
-        assignId: this.assignId, //布置id
-        teacherComment: this.teacherComment, //评语
-        totalScore: this.$refs.namezong.innerHTML //总分
-      })
-        .then(res => {
-          console.log(res);
-          if (res.code == 200) {
-            this.$message({
-              type: "success",
-              message: res.msg
-            });
-            this.$router.push({
-              path: "/teachInner/correctList",
-              query: { projectId: this.projectId, assignId: this.assignId }
-            });
-          }
-        })
-        .catch(err => {});
-    },
-
-    //取消/返回
-    cancel() {
-      this.$router.push({
-        path: "/teachInner/correctList",
-        query: { projectId: this.projectId, assignId: this.assignId }
-      });
-    },
-
-    //查看批改结果
-    lookCorrect() {
-      lookCorrect({
-        assignId: this.assignId,
-        submitId: this.submitId
-      })
-        .then(res => {
-          console.log(res);
-          if (res.code == 200) {
-            this.assignName = res.data.assignName;
-            this.totalScore = res.data.totalScore;
-            this.videoScore = res.data.videoScore;
-            this.videoScoreScale = res.data.videoScoreScale;
-            //   if (res.data.mustVideoStatus == true) {
-            //     this.mustVideoStatus = "100";
-            //   } else {
-            //     this.mustVideoStatus = "0";
-            //   }
-            this.experimentScoreScale = res.data.experimentScoreScale;
-            this.experimentScore = res.data.experimentScore;
-            this.reportScore = res.data.reportScore;
-            this.reportScoreScale = res.data.reportScoreScale;
-            this.teacherComment = res.data.teacherComment;
-          }
-        })
-        .catch(err => {});
+    mounted() {
+      this.projectId = this.$route.query.projectId;
+      this.assignId = this.$route.query.assignId;
+      this.submitId = this.$route.query.submitId;
+      this.userName = this.$route.query.userName;
+      console.log(this.$route.query.userName);
+      if (
+        this.$route.query.userName == undefined ||
+        this.$route.query.userName == null ||
+        this.$route.query.userName == ""
+      ) {
+        this.bosshow = false;
+        this.lookCorrect();
+      } else {
+        this.correctUser();
+        this.bosshow = true;
+      }
     }
-  },
-  mounted() {
-    this.projectId = this.$route.query.projectId;
-    this.assignId = this.$route.query.assignId;
-    this.submitId = this.$route.query.submitId;
-    this.userName = this.$route.query.userName;
-    console.log(this.$route.query.userName);
-    if (
-      this.$route.query.userName == undefined ||
-      this.$route.query.userName == null ||
-      this.$route.query.userName == ""
-    ) {
-      this.bosshow = false;
-      this.lookCorrect();
-    } else {
-      this.correctUser();
-      this.bosshow = true;
-    }
-  }
-};
+  };
 </script>
 
 <style scoped>
-.BosConer {
-  width: 100%;
-  padding: 0 50px;
-}
-.Bostheme {
-  width: 100%;
-  text-align: center;
-}
-.content {
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-.content .lfet {
-  width: 80%;
-  display: flex;
-  align-items: center;
-}
-.content .rieng {
-  width: 20%;
-  display: flex;
-  align-items: center;
-}
-.content .rieng span {
-  margin-right: 10px;
-}
-.content .lfet span {
-  margin-right: 20px;
-}
-.box-card {
-  margin: 50px 0;
-}
-.Bosbootm {
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-.Bosbootm button {
-  font-size: 16px;
-  padding: 12px 50px;
-  margin: 0 20px;
-}
-.zongfei {
-  width: 100%;
-  text-align: right;
-  color: red;
-}
+  .BosConer {
+    width: 100%;
+    padding: 0 50px;
+  }
+
+  .Bostheme {
+    width: 100%;
+    text-align: center;
+  }
+
+  .content {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .content .lfet {
+    width: 80%;
+    display: flex;
+    align-items: center;
+  }
+
+  .content .rieng {
+    width: 20%;
+    display: flex;
+    align-items: center;
+  }
+
+  .content .rieng span {
+    margin-right: 10px;
+  }
+
+  .content .lfet span {
+    margin-right: 20px;
+  }
+
+  .box-card {
+    margin: 50px 0;
+  }
+
+  .Bosbootm {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .Bosbootm button {
+    font-size: 16px;
+    padding: 12px 50px;
+    margin: 0 20px;
+  }
+
+  .zongfei {
+    width: 100%;
+    text-align: right;
+    color: red;
+  }
 </style>
 <style scoped>
-.BosConer .el-card.is-always-shadow,
-.el-card.is-hover-shadow:focus,
-.el-card.is-hover-shadow:hover {
-  box-shadow: 0 0px 12px 0 rgba(0, 0, 0, 0.2);
-}
-.Bosinput {
-  width: 100px;
-}
+  .BosConer .el-card.is-always-shadow,
+  .el-card.is-hover-shadow:focus,
+  .el-card.is-hover-shadow:hover {
+    box-shadow: 0 0px 12px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .Bosinput {
+    width: 100px;
+  }
 </style>
