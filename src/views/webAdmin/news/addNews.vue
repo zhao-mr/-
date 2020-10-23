@@ -17,6 +17,15 @@
           ></el-input>
         </el-form-item>
 
+        <el-form-item label="资讯简介" prop="introduce">
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            v-model="addForm.introduce">
+          </el-input>
+        </el-form-item>
+
         <el-form-item label="资讯内容" prop="content">
           <editor
             id="editor_id"
@@ -59,12 +68,16 @@ export default {
     return {
       addForm: {
         title: "",
+        introduce: "",
         content: "",
         type: "",
       },
       addRules: {
         title: [
           { required: true, message: "请输入标题", trigger: "blur" },
+        ],
+        introduce: [
+          { required: true, message: "请输入简介", trigger: "blur" },
         ],
         content: [
           { required: true, message: "请输入正文", trigger: "blur" },
@@ -100,6 +113,7 @@ export default {
     addNews() {
       let param = {
         newsTitle: this.addForm.title,
+        newsIntroduce: this.addForm.introduce,
         newsContent: this.addForm.content,
         newsSource: this.$store.state.user.name
       }
