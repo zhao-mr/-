@@ -7,11 +7,9 @@
 
 <script>
 export default {
-  name: 'collegeManage',
-  computed: {
-  }
-}
+  name: "collegeManage",
+  computed: {}
+};
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

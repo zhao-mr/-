@@ -103,13 +103,14 @@
         </div>
       </div>
       <div class="" style="margin-top: 10px;">
-        <el-input
+        <div v-html="mustExperimentContent"></div>
+        <!-- <el-input
           type="textarea"
           :rows="6"
           placeholder="请输入内容"
           v-model="mustExperimentContent"
         >
-        </el-input>
+        </el-input> -->
       </div>
     </el-card>
 

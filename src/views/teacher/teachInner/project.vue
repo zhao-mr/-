@@ -7,7 +7,8 @@
     </div>
     <div class="Boaoute">
       <div class="imglfet">
-        <img :src="cover" alt="图片" />
+        <!-- <img :src="cover" alt="图片" /> -->
+        <el-image :src="cover" class="cover"></el-image>
       </div>
       <div class="conring">
         <h2>{{ projectName }}</h2>
@@ -56,7 +57,8 @@
           {{ introduce }}
         </el-tab-pane>
         <el-tab-pane label="实验资源" name="second">
-          {{ addressLink }}
+          <!-- {{ addressLink }} -->
+          <div v-html="addressLink"></div>
         </el-tab-pane>
         <el-tab-pane label="学习资料" name="xuexi">
           <el-collapse v-model="activeNames" @change="handleChange">
@@ -131,11 +133,12 @@
         <el-tab-pane label="实验报告" name="fourth">
           <div class="Baogao">
             <p>1.实验报告要求</p>
-            <p>{{ experimentReportContent }}</p>
+            <div v-html="experimentReportContent"></div>
           </div>
           <div class="Baogao">
             <p>2.实验报告模板</p>
-            <p>{{ experimentReportTemplate }}</p>
+            <div v-html="experimentReportTemplate"></div>
+            <!-- <p>{{ experimentReportTemplate }}</p> -->
           </div>
         </el-tab-pane>
         <!-- <el-tab-pane label="实验报告模板" name="moban"
@@ -305,7 +308,8 @@ export default {
 
     //返回
     turnback() {
-      this.$router.push({ path: "/projectMaintain" });
+      // this.$router.push({ path: "/projectMaintain" });
+      this.$router.go(-1);
     }
   },
   mounted() {
@@ -342,6 +346,10 @@ export default {
   width: 100%;
   height: 100%;
   border-radius: 10px;
+}
+.imglfet .cover {
+  width: 100%;
+  height: 100%;
 }
 .Boaoute .conring {
   float: right;
